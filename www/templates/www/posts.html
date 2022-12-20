@@ -1,0 +1,8 @@
+{% for post in posts %}
+<div class="post">
+    <iframe src="{{ post.url }}/embed" class="mastodon-embed" allowfullscreen="allowfullscreen" width="640"></iframe>
+    <div style=" text-align: right;">
+        <a class="home-link" href="{{ post.home_url }}" target="_blank">Link</a>
+    </div>
+</div>
+{% endfor %}

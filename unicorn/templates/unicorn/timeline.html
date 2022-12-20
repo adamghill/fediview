@@ -1,0 +1,97 @@
+<div id="container">
+    <header>
+        <h1>fedigest</h1>
+
+        <details class="render-info">
+            <summary>Code and Acknowledgements</summary>
+            Original, offline code:
+            <a href="https://github.com/hodgesmr/mastodon_digest">https://github.com/hodgesmr/mastodon_digest</a>
+            <br />
+            fedigest.adamghill.com code:
+            <a href="https://github.com/adamghill/fedigest">https://github.com/adamghill/fedigest</a>
+            <br />
+        </details>
+
+        <form>
+            <p>
+                <label for="username">Username</label>
+                <input u:model.defer="mastodon_username" id="username"></input>
+            </p>
+            <p>
+                <label for="base_url">Base URL</label>
+                <input u:model.defer="mastodon_base_url" id="base_url"></input>
+            </p>
+            <p>
+                <label for="token">Token</label>
+                <input u:model.defer="mastodon_token" id="token"></input>
+            </p>
+            <p>
+                <label for="timeline">Timeline</label>
+                <select u:model.defer="timeline" id="timeline">
+                    <option value="home">Home</option>
+                    <option value="local">Local</option>
+                    <option value="federated">Federated</option>
+                </select>
+            </p>
+            <p>
+                <label for="hours">Hours</label>
+                <input type="range" min="1" max="24" u:model.defer="hours" id="hours">
+                <span style="display: none;" id="hoursOutput">
+                    <span id="hoursValue"></span> hours
+                </span>
+            </p>
+            <p>
+                <label for="scorer">Scorer</label>
+                <select u:model.defer="scorer" id="scorer">
+                    <option value="Simple">Simple</option>
+                    <option value="SimpleWeighted">Simple Weighted</option>
+                    <option value="ExtendedSimple">Extended Simple</option>
+                    <option value="ExtendedSimpleWeighted">Extended Simple Weighted</option>
+                </select>
+            </p>
+            <p>
+                <label for="threshold">Threshold</label>
+                <select u:model.defer="threshold" id="threshold">
+                    <option value="lax">Lax (90)</option>
+                    <option value="normal">Normal (95)</option>
+                    <option value="strict">Strict (98)</option>
+                </select>
+            </p>
+        </form>
+
+        <script>
+            var hours = document.getElementById("hours");
+            var hoursOutput = document.getElementById("hoursOutput");
+            var hoursValue = document.getElementById("hoursValue");
+
+            // Update the current slider value (each time you drag the slider handle)
+            hours.oninput = function () {
+                hoursOutput.style.display = '';
+                hoursValue.innerHTML = this.value;
+            }
+        </script>
+
+        <button u:click="get_results" u:loading.remove>Get Digest</button>
+        <div u:loading>Building digest...</div>
+    </header>
+
+    {% if has_results %}
+    <section class="posts" u:loading.remove>
+        {% if posts %}
+        <h2>Popular Posts</h2>
+        {% with posts=posts %}
+        {% include "www/posts.html" %}
+        {% endwith %}
+        {% endif %}
+    </section>
+
+    <section class="posts" u:loading.remove>
+        {% if boosts %}
+        <h2>Popular Boosts</h2>
+        {% with posts=boosts %}
+        {% include "www/posts.html" %}
+        {% endwith %}
+        {% endif %}
+    </section>
+    {% endif %}
+</div>

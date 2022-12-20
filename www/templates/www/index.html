@@ -1,0 +1,80 @@
+{% load cache static unicorn %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta chartset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mastodon Digest</title>
+    <style>
+        body {
+            background-color: #292c36;
+            font-family: "Arial", sans-serif;
+            color: #D3D3D3;
+        }
+
+        div#container {
+            margin: auto;
+            max-width: 640px;
+            padding: 10px;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .posts {
+            align: center;
+            margin-top: 50px;
+        }
+
+        div.post {
+            margin-top: 20px;
+        }
+
+        h1 {
+            color: white;
+        }
+
+        h2 {
+            color: white;
+        }
+
+        a {
+            color: white;
+        }
+
+        span.link-divider {
+            color: white;
+        }
+
+        .render-info {
+            color: #D3D3D3;
+            max-width: 640px;
+        }
+
+        .render-info summary {
+            cursor: pointer;
+            margin-bottom: 10px
+        }
+
+        .render-info-value {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        iframe.mastodon-embed {
+            max-width: 100%;
+            border: 0;
+        }
+    </style>
+    <script src="https://static-cdn.mastodon.social/embed.js" async="async"></script>
+
+    {% unicorn_scripts %}
+</head>
+
+<body>
+    {% csrf_token %}
+    {% unicorn 'timeline' %}
+</body>
+
+</html>
