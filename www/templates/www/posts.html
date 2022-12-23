@@ -1,8 +1,43 @@
 {% for post in posts %}
 <div class="post">
-    <iframe src="{{ post.url }}/embed" class="mastodon-embed" allowfullscreen="allowfullscreen" width="640"></iframe>
-    <div style=" text-align: right;">
-        <a class="home-link" href="{{ post.home_url }}" target="_blank">Link</a>
+    <div class="avatar">
+        <a target="_blank" href="{{ post.account_url }}">
+            <img src="{{ post.account_avatar }}">
+        </a>
+    </div>
+
+    <div class="status">
+        <div class="user">
+            <a target="_blank" href="{{ post.account_url }}">
+                <span class="displayname">{{ post.display_name|safe }}</span>
+                <span class="username">@{{ post.username }}</span>
+            </a>
+        </div>
+
+        <div class="status_content">
+            <div class="content">
+                {{ post.content|safe }}
+            </div>
+            {% if post.media %}
+            <div class="medias">
+                {{ post.media|safe }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="footer">
+            <span style="margin-right: 10px;">{{ post.home_link|safe }}</span>
+
+            <div class="date">
+                {{ post.created_at }} UTC
+            </div>
+
+            <div class="reactions">
+                <span title="Replies">⥄ {{ post.replies_count }}</span>
+                <span title="Boosts" style="margin-left: 5px;">↻ {{ post.reblogs_count }}</span>
+                <span title="Favourites" style="margin-left: 5px;">★ {{ post.favourites_count }}</span>
+            </div>
+        </div>
     </div>
 </div>
 {% endfor %}

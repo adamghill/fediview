@@ -5,24 +5,29 @@
         <form>
             <table style="width: 100%;">
                 <tr>
-                    <td>
+                    <td style="padding-bottom: 10px;">
                         <label for="username">Username</label>
-                        <input u:model.defer="mastodon_username" id="username"></input>
+                        <input u:model.defer="mastodon_username" id="username" placeholder="@username"></input>
                     </td>
-                    <td>
+                    <td style="padding-bottom: 10px;">
                         <label for="base_url">Base URL</label>
-                        <input u:model.defer="mastodon_base_url" id="base_url"></input>
+                        <input u:model.defer="mastodon_base_url" id="base_url"
+                            placeholder="https://mastodon.social"></input>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2" style="padding-top: 0">
                         <label for="token">Token</label>
                         <input u:model.defer="mastodon_token" id="token"></input>
+                        <div style="font-size: smaller;">Generate a token by going to <em>Edit
+                                profile</em>
+                            -> <em>Development</em> -> <em>New application</em>. Only <strong>read</strong> access is
+                            required.</div>
                     </td>
                 </tr>
             </table>
 
-            <table style="width: 100%;">
+            <table style="width: 100%; border-top: 0;">
                 <tr>
                     <td>
                         <label for="timeline">Timeline</label>
@@ -33,7 +38,7 @@
                         </select>
                     </td>
                     <td>
-                        <label for="scorer">Scorer</label>
+                        <label for="scorer">Algorithm</label>
                         <select u:model.defer="scorer" id="scorer">
                             <option value="Simple">Simple</option>
                             <option value="SimpleWeighted">Simple Weighted</option>
@@ -52,12 +57,12 @@
                 </tr>
                 <tr>
                     <td></td>
-                    <td style="padding-top: 0">
-                        <label for="hours" style="padding-right: 20px;">Hours</label>
-                        <input type="range" min="1" max="24" u:model.defer="hours" id="hours">
-                        <span style="display: none;" id="hoursOutput">
-                            <span id="hoursValue"></span>
-                        </span>
+                    <td style="padding-top: 0; width: 300px;">
+                        <label for="hours"
+                            style="padding-left: 2px; padding-right: 10px; top: -5px; position: relative;">Hours</label>
+                        <input type="range" min="1" max="24" u:model.defer="hours" id="hours" style="margin-top: 0px;">
+                        <span id="hoursValue"
+                            style="padding-left: 6px; top: -5px; position: relative;">{{ hours }}</span>
                     </td>
                     <td></td>
                 </tr>
@@ -66,13 +71,13 @@
 
         <script>
             var hours = document.getElementById("hours");
-            var hoursOutput = document.getElementById("hoursOutput");
             var hoursValue = document.getElementById("hoursValue");
 
             // Update the current slider value (each time you drag the slider handle)
             hours.oninput = function () {
-                hoursOutput.style.display = '';
-                hoursValue.innerHTML = this.value;
+                var val = this.value;
+
+                hoursValue.innerHTML = val;
             }
         </script>
 
@@ -80,37 +85,96 @@
             <button u:click="get_results">Get Popular Toots</button>
         </div>
         <div u:loading style="padding-top: 10px; text-align: center;">
-            Building digest... this might take a few seconds...
+            <em>Building digest... this might take a few seconds...</em>
         </div>
     </header>
 
+    {% if message %}
+    <div>
+        {{ message }}
+    </div>
+    {% endif %}
+
     {% if has_results %}
-    <section class="posts" u:loading.remove>
-        {% if posts %}
+    <section class="posts" u:loading.remove style="padding-top: 30px;">
         <h2>Popular Posts</h2>
+
+        {% if posts %}
         {% with posts=posts %}
         {% include "www/posts.html" %}
         {% endwith %}
+        {% else %}
+        No posts available.
         {% endif %}
     </section>
 
-    <section class="posts" u:loading.remove>
-        {% if boosts %}
+    <section class="posts" u:loading.remove style="padding-top: 20px;">
         <h2>Popular Boosts</h2>
+
+        {% if boosts %}
         {% with posts=boosts %}
         {% include "www/posts.html" %}
         {% endwith %}
+        {% else %}
+        No boosts available.
         {% endif %}
     </section>
     {% endif %}
 
-    <footer style="margin-top: 200px; border-top: white 1px dashed;">
-        <ul>
-            <li>Original, offline code:
-                <a href="https://github.com/hodgesmr/mastodon_digest">https://github.com/hodgesmr/mastodon_digest</a>
+    <footer style="margin-top: 200px; border-top: black 1px dashed;">
+        <table style="border-top: 0;">
+            <tr>
+                <td style="width: 50%; text-align: left;">
+                    <ul>
+                        <li>
+                            <a href="https://github.com/hodgesmr/mastodon_digest">Original script repo</a> by <a
+                                href="https://github.com/hodgesmr">hodgesmr</a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/mauforonda/mastodon_digest/">Fork without iframes</a> by <a
+                                href="https://github.com/mauforonda">mauforonda</a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/adamghill/fedigest">Fedigest repo</a> by <a
+                                href="https://github.com/adamghill">adamghill</a>
+                        </li>
+                    </ul>
+                </td>
+                <td style="vertical-align: top; text-align: left;">
+                    <ul>
+                        <li>
+                            <a href="https://www.djangoproject.com">Django</a>
+                        </li>
+                        <li>
+                            <a href="https://www.django-unicorn.com">django-unicorn</a>
+                        </li>
+                        <li>
+                            <a href="https://mblode.github.io/marx/">Marx CSS</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+
+        {% comment %} <ul style="width: 100%;">
+            <li>
+                <a href="https://github.com/hodgesmr/mastodon_digest">Original, offline repo</a> by <a
+                    href="https://github.com/hodgesmr">hodgesmr</a>
             </li>
-            <li>fedigest.adamghill.com code:
-                <a href="https://github.com/adamghill/fedigest">https://github.com/adamghill/fedigest</li>
-        </ul>
+            <li>
+                <a href="https://github.com/mauforonda/mastodon_digest/">Fork without iframes</a> by <a
+                    href="https://github.com/mauforonda">mauforonda</a>
+            </li>
+            <li>
+                <a href="https://github.com/adamghill/fedigest">Fedigest repo</li> by <a
+                href="https://github.com/adamghill">adamghill</a>
+            </li>
+            <li>
+                <a href="https://www.django-unicorn.com">django-unicorn</a>
+            </li>
+            <li>
+                <a href="https://mblode.github.io/marx/">Marx CSS</a>
+            </li>
+        </ul> {% endcomment %}
     </footer>
 </main>

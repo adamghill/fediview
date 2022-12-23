@@ -1,9 +1,10 @@
+from os import getenv
 from pathlib import Path
 
 from django_unicorn.components import UnicornView
 
 from mastodon_digest import run as mastodon_digest_run
-from mastodon_digest.models import ScoredPost
+from mastodon_digest.formatters import format_posts
 from mastodon_digest.run import run, sys
 from mastodon_digest.scorers import (
     ExtendedSimpleScorer,
@@ -14,42 +15,43 @@ from mastodon_digest.scorers import (
 from mastodon_digest.thresholds import Threshold
 
 
-class TimelineView(UnicornView):
-    hours: int = 6
-    scorer: str = "SimpleWeighted"
-    threshold: str = "normal"
-    timeline: str = "home"  # TODO: Support hashtag:tagName, list:list-name
-    mastodon_base_url: str = ""
-    mastodon_username: str = ""
-    mastodon_token: str = ""
-    message: str = ""
+class Digester:
+    """
+    Wraps `mastodon_digest.run`.
+    """
 
-    has_results: bool = False
-    posts: list[dict] = []
-    boosts: list[dict] = []
+    def __init__(
+        self,
+        timeline: str,
+        scorer: str,
+        threshold: str,
+        hours: str,
+        mastodon_base_url: str,
+        mastodon_username: str,
+        mastodon_token: str,
+    ):
+        self.scorer = self._get_scorer(scorer)
+        self.threshold = Threshold[threshold.upper()]
+        self.hours = hours
+        self.timeline = timeline
+        self.mastodon_base_url = mastodon_base_url
+        self.mastodon_username = mastodon_username
+        self.mastodon_token = mastodon_token
+        self.message = ""
 
-    def _convert_scored_post_to_dict(self, scored_post: ScoredPost) -> dict:
-        scorer = self._get_scorer()
-
-        return {
-            "url": scored_post.url,
-            "home_url": scored_post.get_home_url(self.mastodon_base_url),
-            "score": float(scored_post.get_score(scorer)),
-        }
-
-    def _get_scorer(self):
-        if self.scorer == "Simple":
+    def _get_scorer(self, scorer_name):
+        if scorer_name == "Simple":
             return SimpleScorer
-        elif self.scorer == "SimpleWeighted":
+        elif scorer_name == "SimpleWeighted":
             return SimpleWeightedScorer
-        elif self.scorer == "ExtendedSimple":
+        elif scorer_name == "ExtendedSimple":
             return ExtendedSimpleScorer
-        elif self.scorer == "ExtendedSimpleWeighted":
+        elif scorer_name == "ExtendedSimpleWeighted":
             return ExtendedSimpleWeightedScorer
 
         raise Exception("Unknown scorer")
 
-    def get_results(self):
+    def make_digest(self) -> dict:
         global exit_message
         exit_message = ""
 
@@ -73,8 +75,8 @@ class TimelineView(UnicornView):
         try:
             run(
                 hours=int(self.hours),
-                scorer=self._get_scorer(),
-                threshold=Threshold[self.threshold.upper()],
+                scorer=self.scorer,
+                threshold=self.threshold,
                 mastodon_token=self.mastodon_token,
                 mastodon_base_url=self.mastodon_base_url,
                 mastodon_username=self.mastodon_username,
@@ -86,15 +88,48 @@ class TimelineView(UnicornView):
         except Exception as e:
             self.message = str(e)
 
-        # print("unicorn digest_context", digest_context)
+        return digest_context
 
-        scored_posts = digest_context.get("posts", [])
-        self.posts = [self._convert_scored_post_to_dict(p) for p in scored_posts]
 
-        scored_boosts = digest_context.get("boosts", [])
-        self.boosts = [self._convert_scored_post_to_dict(p) for p in scored_boosts]
+class TimelineView(UnicornView):
+    hours: str = "2"
+    scorer: str = "Simple"
+    threshold: str = "normal"
+    timeline: str = "home"  # TODO: Support hashtag:tagName, list:list-name
+    mastodon_base_url: str = ""
+    mastodon_username: str = ""
+    mastodon_token: str = ""
+    message: str = ""
 
-        self.rendered_at = digest_context.get("rendered_at")
+    digester: Digester = None
+    has_results: bool = False
+    posts: list[dict] = []
+    boosts: list[dict] = []
+
+    def mount(self):
+        self.mastodon_base_url = getenv("MASTODON_BASE_URL", "")
+        self.mastodon_username = getenv("MASTODON_USERNAME", "")
+        self.mastodon_token = getenv("MASTODON_TOKEN", "")
+
+    def hydrate(self):
+        self.digester = Digester(
+            self.timeline,
+            self.scorer,
+            self.threshold,
+            self.hours,
+            self.mastodon_base_url,
+            self.mastodon_username,
+            self.mastodon_token,
+        )
+
+    def get_results(self):
+        context = self.digester.make_digest()
+
+        scored_posts = context.get("posts", [])
+        self.posts = format_posts(scored_posts, self.mastodon_base_url)
+
+        scored_boosts = context.get("boosts", [])
+        self.boosts = format_posts(scored_boosts, self.mastodon_base_url)
 
         self.has_results = True
 
@@ -103,4 +138,5 @@ class TimelineView(UnicornView):
             "mastodon_base_url",
             "mastodon_token",
             "mastodon_username",
+            "digester",
         )

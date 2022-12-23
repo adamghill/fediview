@@ -20,3 +20,6 @@ class ScoredPost:
     def get_score(self, scorer: Scorer) -> float:
         return scorer.score(self)
 
+    @property
+    def data(self):
+        return self.info

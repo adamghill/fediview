@@ -162,8 +162,6 @@ if ENVIRONMENT == "live":
     DEBUG = False
     ALLOWED_HOSTS = getenv("ALLOWED_HOSTS", "").split(",")
     CSRF_TRUSTED_ORIGINS = [f"https://{h}" for h in ALLOWED_HOSTS]
-    print("ALLOWED_HOSTS", ALLOWED_HOSTS)
-    print("CSRF_TRUSTED_ORIGINS", CSRF_TRUSTED_ORIGINS)
 
     CACHES = {
         "default": {
