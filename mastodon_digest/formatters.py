@@ -29,10 +29,9 @@ def format_post(post, mastodon_base_url) -> dict:
     username = post.data["account"]["username"]
     content = post.data["content"]
     media = "\n".join([format_media(media) for media in post.data.media_attachments])
-    created_at = post.data["created_at"].strftime("%B %d, %Y at %H:%M")
-    home_link = (
-        f'<a href="{post.get_home_url(mastodon_base_url)}" target="_blank">🔗</a>'
-    )
+    created_at = post.data["created_at"]
+    home_url = post.get_home_url(mastodon_base_url)
+    home_link = f'<a href="{home_url}" target="_blank">🔗</a>'
     original_link = f'<a href="{post.data.url}" target="_blank">original</a>'
     replies_count = post.data["replies_count"]
     reblogs_count = post.data["reblogs_count"]
@@ -47,6 +46,7 @@ def format_post(post, mastodon_base_url) -> dict:
         media=media,
         created_at=created_at,
         home_link=home_link,
+        home_url=home_url,
         original_link=original_link,
         replies_count=replies_count,
         reblogs_count=reblogs_count,

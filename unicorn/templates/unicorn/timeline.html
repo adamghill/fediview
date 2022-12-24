@@ -1,4 +1,4 @@
-{% load static unicorn %}
+{% load humanize static unicorn %}
 
 <main>
     <header>
@@ -20,18 +20,19 @@
                 <tr>
                     <td style="padding-bottom: 10px;">
                         <label for="username">Username</label>
-                        <input u:model.defer="mastodon_username" id="username" placeholder="@username"></input>
+                        <input u:model.defer="mastodon_username" u:keydown.enter="get_results" id="username"
+                            placeholder="@username"></input>
                     </td>
                     <td style="padding-bottom: 10px;">
                         <label for="base_url">Base URL</label>
-                        <input u:model.defer="mastodon_base_url" id="base_url"
+                        <input u:model.defer="mastodon_base_url" u:keydown.enter="get_results" id="base_url"
                             placeholder="https://mastodon.social"></input>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2" style="padding-top: 0">
                         <label for="token">Token</label>
-                        <input u:model.defer="mastodon_token" id="token"></input>
+                        <input u:model.defer="mastodon_token" u:keydown.enter="get_results" id="token"></input>
                         <div style="font-size: smaller;">
                             Generate a token by going to <em>Edit profile</em>
                             -> <em>Development</em> -> <em>New application</em>. Only
@@ -107,38 +108,48 @@
     </header>
 
     {% if error or unicorn.errors %}
-    <div style="text-align: center; color: red;" u:loading.remove>
-        {% if error %}
-        {{ error }}
-        {% else %}
+    <div class="errors" u:loading.remove>
+        <ul>
+            {% if error %}
+            <li>
+                {{ error }}
+            </li>
+            {% else %}
 
-        <!-- base URL -->
-        {% for field in unicorn.errors.mastodon_base_url %}
-        {% for error in field.message %}
-        {{ error }}
-        {% endfor %}
-        {% endfor %}
+            <!-- base URL -->
+            {% for field in unicorn.errors.mastodon_base_url %}
+            {% for error in field.message %}
+            <li>
+                <a href="#base_url" onclick="document.getElementById('base_url').focus();">{{ error }}</a>
+            </li>
+            {% endfor %}
+            {% endfor %}
 
-        <!-- token -->
-        {% for field in unicorn.errors.mastodon_token %}
-        {% for error in field.message %}
-        {{ error }}
-        {% endfor %}
-        {% endfor %}
+            <!-- token -->
+            {% for field in unicorn.errors.mastodon_token %}
+            {% for error in field.message %}
+            <li>
+                <a href="#token" onclick="document.getElementById('token').focus();">{{ error }}</a>
+            </li>
+            {% endfor %}
+            {% endfor %}
 
-        <!-- username -->
-        {% for field in unicorn.errors.mastodon_username %}
-        {% for error in field.message %}
-        {{ error }}
-        {% endfor %}
-        {% endfor %}
+            <!-- username -->
+            {% for field in unicorn.errors.mastodon_username %}
+            {% for error in field.message %}
+            <li>
+                <a href=" #username" onclick="document.getElementById('username').focus();">{{ error }}</a>
+            </li>
+            {% endfor %}
+            {% endfor %}
 
-        {% endif %}
+            {% endif %}
+        </ul>
     </div>
     {% endif %}
 
     {% if has_results %}
-    <section class="posts" u:loading.remove style="padding-top: 30px;">
+    <section class=" posts" u:loading.remove style="padding-top: 30px;">
         <h2>Popular Posts</h2>
 
         {% if posts %}
@@ -169,12 +180,12 @@
                 <td style="width: 50%; text-align: left;">
                     <ul>
                         <li>
-                            <a href="https://github.com/hodgesmr/mastodon_digest">Original script repo</a> by <a
-                                href="https://github.com/hodgesmr">hodgesmr</a>
+                            <a href="https://github.com/hodgesmr/mastodon_digest">Original script
+                                repo</a> by <a href="https://github.com/hodgesmr">hodgesmr</a>
                         </li>
                         <li>
-                            <a href="https://github.com/mauforonda/mastodon_digest/">Fork without iframes</a> by <a
-                                href="https://github.com/mauforonda">mauforonda</a>
+                            <a href="https://github.com/mauforonda/mastodon_digest/">Fork without
+                                iframes</a> by <a href="https://github.com/mauforonda">mauforonda</a>
                         </li>
                         <li>
                             <a href="https://github.com/adamghill/fedigest">Fedigest repo</a> by <a

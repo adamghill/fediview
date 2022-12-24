@@ -178,3 +178,12 @@ a.mention,
 td {
     border-bottom: 0;
 }
+
+div.errors {
+    text-align: center;
+    color: red;
+}
+
+div.errors li a {
+    color: red;
+}

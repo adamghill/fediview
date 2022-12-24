@@ -120,29 +120,28 @@ class TimelineView(UnicornView):
         self.mastodon_username = getenv("MASTODON_USERNAME", "")
         self.mastodon_token = getenv("MASTODON_TOKEN", "")
 
-    def get_results(self):
-        self.errors = {}
+    def clean(self) -> None:
+        validation_errors = {}
 
         if not self.mastodon_username:
-            raise ValidationError(
-                {"mastodon_username": "Missing username"}, code="required"
-            )
+            validation_errors["mastodon_username"] = "Missing username"
         elif not self.mastodon_username.startswith("@"):
-            raise ValidationError(
-                {"mastodon_username": "Username must start with @"}, code="invalid"
-            )
+            validation_errors["mastodon_username"] = "Username must start with @"
 
         if not self.mastodon_base_url:
-            raise ValidationError(
-                {"mastodon_base_url": "Missing base URL"}, code="required"
-            )
+            validation_errors["mastodon_base_url"] = "Missing base URL"
         elif not self.mastodon_base_url.startswith("https://"):
-            raise ValidationError(
-                {"mastodon_base_url": "URL must start with https://"}, code="invalid"
-            )
+            validation_errors["mastodon_base_url"] = "URL must start with https://"
 
         if not self.mastodon_token:
-            raise ValidationError({"mastodon_token": "Missing token"}, code="required")
+            validation_errors["mastodon_token"] = "Missing token"
+
+        if validation_errors:
+            raise ValidationError(validation_errors, code="invalid")
+
+    def get_results(self):
+        self.errors = {}
+        self.clean()
 
         digester = Digester(
             self.timeline,

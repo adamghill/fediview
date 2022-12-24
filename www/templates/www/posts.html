@@ -1,3 +1,5 @@
+{% load humanize %}
+
 {% for post in posts %}
 <div class="post">
     <div class="avatar">
@@ -26,10 +28,8 @@
         </div>
 
         <div class="footer">
-            <span style="margin-right: 10px;">{{ post.home_link|safe }}</span>
-
             <div class="date">
-                {{ post.created_at }} UTC
+                <a href="{{ post.home_url }}" target="_blank">🔗&nbsp;{{ post.created_at|naturaltime }}</a>
             </div>
 
             <div class="reactions">
