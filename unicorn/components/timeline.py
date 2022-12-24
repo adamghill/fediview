@@ -1,7 +1,9 @@
 from os import getenv
 from pathlib import Path
 
+from django.forms import ValidationError
 from django_unicorn.components import UnicornView
+from mastodon.errors import MastodonError
 
 from mastodon_digest import run as mastodon_digest_run
 from mastodon_digest.formatters import format_posts
@@ -37,7 +39,7 @@ class Digester:
         self.mastodon_base_url = mastodon_base_url
         self.mastodon_username = mastodon_username
         self.mastodon_token = mastodon_token
-        self.message = ""
+        self.error = ""
 
     def _get_scorer(self, scorer_name):
         if scorer_name == "Simple":
@@ -84,9 +86,16 @@ class Digester:
                 output_dir=None,
             )
 
-            self.message = exit_message
+            self.error = exit_message
+            digest_context["ok"] = True
+        except MastodonError as e:
+            digest_context["ok"] = False
+            self.error = e.args[-1:][0]
         except Exception as e:
-            self.message = str(e)
+            digest_context["ok"] = False
+            self.error = str(e)
+
+        digest_context["error"] = self.error
 
         return digest_context
 
@@ -99,9 +108,9 @@ class TimelineView(UnicornView):
     mastodon_base_url: str = ""
     mastodon_username: str = ""
     mastodon_token: str = ""
-    message: str = ""
+    error: str = ""
 
-    digester: Digester = None
+    # digester: Digester = None
     has_results: bool = False
     posts: list[dict] = []
     boosts: list[dict] = []
@@ -111,8 +120,31 @@ class TimelineView(UnicornView):
         self.mastodon_username = getenv("MASTODON_USERNAME", "")
         self.mastodon_token = getenv("MASTODON_TOKEN", "")
 
-    def hydrate(self):
-        self.digester = Digester(
+    def get_results(self):
+        self.errors = {}
+
+        if not self.mastodon_username:
+            raise ValidationError(
+                {"mastodon_username": "Missing username"}, code="required"
+            )
+        elif not self.mastodon_username.startswith("@"):
+            raise ValidationError(
+                {"mastodon_username": "Username must start with @"}, code="invalid"
+            )
+
+        if not self.mastodon_base_url:
+            raise ValidationError(
+                {"mastodon_base_url": "Missing base URL"}, code="required"
+            )
+        elif not self.mastodon_base_url.startswith("https://"):
+            raise ValidationError(
+                {"mastodon_base_url": "URL must start with https://"}, code="invalid"
+            )
+
+        if not self.mastodon_token:
+            raise ValidationError({"mastodon_token": "Missing token"}, code="required")
+
+        digester = Digester(
             self.timeline,
             self.scorer,
             self.threshold,
@@ -122,21 +154,25 @@ class TimelineView(UnicornView):
             self.mastodon_token,
         )
 
-    def get_results(self):
-        context = self.digester.make_digest()
+        digest = digester.make_digest()
+        self.error = digest.get("error", "")
 
-        scored_posts = context.get("posts", [])
-        self.posts = format_posts(scored_posts, self.mastodon_base_url)
+        if self.error.startswith("Version check failed"):
+            self.error = f"URL might be invalid: {self.error}"
 
-        scored_boosts = context.get("boosts", [])
-        self.boosts = format_posts(scored_boosts, self.mastodon_base_url)
+        if digest.get("ok", False) is True:
+            scored_posts = digest.get("posts", [])
+            self.posts = format_posts(scored_posts, self.mastodon_base_url)
 
-        self.has_results = True
+            scored_boosts = digest.get("boosts", [])
+            self.boosts = format_posts(scored_boosts, self.mastodon_base_url)
+
+            self.has_results = True
 
     class Meta:
         javascript_exclude = (
             "mastodon_base_url",
             "mastodon_token",
             "mastodon_username",
-            "digester",
+            "error",
         )

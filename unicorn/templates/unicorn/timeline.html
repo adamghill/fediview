@@ -1,6 +1,19 @@
+{% load static unicorn %}
+
 <main>
     <header>
         <h1>fedigest</h1>
+        <h6 style="padding-bottom: 6px;">Aggregate the recent popular posts from your Mastodon timeline</h6>
+
+        <style>
+            [unicorn\:error\:invalid] {
+                border: 1px solid red !important;
+            }
+
+            [unicorn\:error\:required] {
+                border: 1px solid red !important;
+            }
+        </style>
 
         <form>
             <table style="width: 100%;">
@@ -19,10 +32,11 @@
                     <td colspan="2" style="padding-top: 0">
                         <label for="token">Token</label>
                         <input u:model.defer="mastodon_token" id="token"></input>
-                        <div style="font-size: smaller;">Generate a token by going to <em>Edit
-                                profile</em>
-                            -> <em>Development</em> -> <em>New application</em>. Only <strong>read</strong> access is
-                            required.</div>
+                        <div style="font-size: smaller;">
+                            Generate a token by going to <em>Edit profile</em>
+                            -> <em>Development</em> -> <em>New application</em>. Only
+                            <strong>read</strong> access is required.
+                        </div>
                     </td>
                 </tr>
             </table>
@@ -86,12 +100,40 @@
         </div>
         <div u:loading style="padding-top: 10px; text-align: center;">
             <em>Building digest... this might take a few seconds...</em>
+            <div style="padding-top: 100px;">
+                <img src="{% static 'img/ball-triangle.svg' %}" />
+            </div>
         </div>
     </header>
 
-    {% if message %}
-    <div>
-        {{ message }}
+    {% if error or unicorn.errors %}
+    <div style="text-align: center; color: red;" u:loading.remove>
+        {% if error %}
+        {{ error }}
+        {% else %}
+
+        <!-- base URL -->
+        {% for field in unicorn.errors.mastodon_base_url %}
+        {% for error in field.message %}
+        {{ error }}
+        {% endfor %}
+        {% endfor %}
+
+        <!-- token -->
+        {% for field in unicorn.errors.mastodon_token %}
+        {% for error in field.message %}
+        {{ error }}
+        {% endfor %}
+        {% endfor %}
+
+        <!-- username -->
+        {% for field in unicorn.errors.mastodon_username %}
+        {% for error in field.message %}
+        {{ error }}
+        {% endfor %}
+        {% endfor %}
+
+        {% endif %}
     </div>
     {% endif %}
 
