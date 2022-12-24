@@ -28,7 +28,7 @@
         </div>
 
         <div class="footer">
-            <div class="date">
+            <div class="date" title="{{ post.created_at|date:'DATETIME_FORMAT' }} UTC">
                 <a href="{{ post.home_url }}" target="_blank">🔗&nbsp;{{ post.created_at|naturaltime }}</a>
             </div>
 

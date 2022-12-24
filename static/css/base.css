@@ -78,6 +78,7 @@ body {
 
 .status {
     margin-left: 20px;
+    width: 100%;
 }
 
 .user a {
@@ -186,4 +187,12 @@ div.errors {
 
 div.errors li a {
     color: red;
+}
+
+div.date {
+    flex: 1 0 auto;
+}
+
+div.reactions {
+    flex: 1 0 auto; text-align: right;
 }
