@@ -10,10 +10,18 @@
 
     <div class="status">
         <div class="user">
+            {% if post.display_name %}
             <a target="_blank" href="{{ post.account_url }}">
                 <span class="displayname">{{ post.display_name|safe }}</span>
+            </a>
+            <a target="_blank" href="{{ post.account_url }}">
                 <span class="username">@{{ post.username }}</span>
             </a>
+            {% else %}
+            <a target="_blank" href="{{ post.account_url }}" style="margin-top: 10px;">
+                <span class="displayname">@{{ post.username }}</span>
+            </a>
+            {% endif %}
         </div>
 
         <div class="status_content">
