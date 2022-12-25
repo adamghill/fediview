@@ -10,12 +10,29 @@
     <link rel="stylesheet" href="{% static 'css/marx.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
+
     {% unicorn_scripts %}
 </head>
 
 <body>
     {% csrf_token %}
     {% unicorn 'timeline' %}
+
+    <script>
+        window.addEventListener("load", function (event) {
+            var hours = document.getElementById("hours");
+            var hoursValue = document.getElementById("hoursValue");
+
+            // Update the current slider value (each time you drag the slider handle)
+            hours.oninput = function () {
+                var val = this.value;
+
+                hoursValue.innerHTML = val;
+            }
+        });
+    </script>
 </body>
 
 </html>

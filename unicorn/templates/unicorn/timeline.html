@@ -82,18 +82,6 @@
             </table>
         </form>
 
-        <script>
-            var hours = document.getElementById("hours");
-            var hoursValue = document.getElementById("hoursValue");
-
-            // Update the current slider value (each time you drag the slider handle)
-            hours.oninput = function () {
-                var val = this.value;
-
-                hoursValue.innerHTML = val;
-            }
-        </script>
-
         <div u:loading.remove style="padding-top: 10px; text-align: center;">
             <button u:click="get_results">Get Popular Toots</button>
         </div>
@@ -172,6 +160,10 @@
             {% endif %}
         </section>
     </div>
+
+    <script>
+        const lightbox = GLightbox({});
+    </script>
     {% endif %}
 
     <footer>

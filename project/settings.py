@@ -107,6 +107,10 @@ APPEND_SLASH = False
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+UNICORN = {
+    "RELOAD_SCRIPT_ELEMENTS": True,
+}
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -142,7 +146,7 @@ LOGGING = {
     "loggers": {
         "": {"handlers": ["console"], "level": "INFO", "propagate": False},
         "PytzUsageWarning": {"handlers": ["null"]},
-        "django.server": {"handlers": ["console"], "level": "WARNING"},
+        # "django.server": {"handlers": ["console"], "level": "WARNING"},
         "django.server": {"handlers": ["django_rich_logging"], "level": "INFO"},
         "django.request": {"level": "CRITICAL"},
     },
