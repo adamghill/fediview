@@ -33,16 +33,16 @@
                     <td colspan="2" style="padding-top: 0">
                         <label for="token">Token</label>
                         <input u:model.defer="mastodon_token" u:keydown.enter="get_results" id="token"></input>
-                        <div style="font-size: smaller;">
+                        <p class="help">
                             Generate a token by going to <em>Edit profile</em>
                             -> <em>Development</em> -> <em>New application</em>. Only
                             <strong>read</strong> access is required.
-                        </div>
+                        </p>
                     </td>
                 </tr>
             </table>
 
-            <table style="width: 100%; border-top: 0;">
+            <table class="config">
                 <tr>
                     <td>
                         <label for="timeline">Timeline</label>
@@ -72,12 +72,10 @@
                 </tr>
                 <tr>
                     <td></td>
-                    <td style="padding-top: 0; width: 300px;">
-                        <label for="hours"
-                            style="padding-left: 2px; padding-right: 10px; top: -5px; position: relative;">Hours</label>
-                        <input type="range" min="1" max="24" u:model.defer="hours" id="hours" style="margin-top: 0px;">
-                        <span id="hoursValue"
-                            style="padding-left: 6px; top: -5px; position: relative;">{{ hours }}</span>
+                    <td class="hours">
+                        <label for="hours" id="hoursLabel">Hours</label>
+                        <input type="range" min="1" max="24" u:model.defer="hours" id="hours">
+                        <span id="hoursValue">{{ hours }}</span>
                     </td>
                     <td></td>
                 </tr>
@@ -149,51 +147,55 @@
     {% endif %}
 
     {% if has_results %}
-    <section class=" posts" u:loading.remove style="padding-top: 30px;">
-        <h2>Popular Posts</h2>
+    <div class="results">
+        <section class="posts" u:loading.remove style="">
+            <h2>Popular Posts</h2>
 
-        {% if posts %}
-        {% with posts=posts %}
-        {% include "www/posts.html" %}
-        {% endwith %}
-        {% else %}
-        No posts available.
-        {% endif %}
-    </section>
+            {% if posts %}
+            {% with posts=posts %}
+            {% include "www/posts.html" %}
+            {% endwith %}
+            {% else %}
+            No posts available.
+            {% endif %}
+        </section>
 
-    <section class="posts" u:loading.remove style="padding-top: 20px;">
-        <h2>Popular Boosts</h2>
+        <section class="boosts" u:loading.remove style="">
+            <h2>Popular Boosts</h2>
 
-        {% if boosts %}
-        {% with posts=boosts %}
-        {% include "www/posts.html" %}
-        {% endwith %}
-        {% else %}
-        No boosts available.
-        {% endif %}
-    </section>
+            {% if boosts %}
+            {% with posts=boosts %}
+            {% include "www/posts.html" %}
+            {% endwith %}
+            {% else %}
+            No boosts available.
+            {% endif %}
+        </section>
+    </div>
     {% endif %}
 
-    <footer style="margin-top: 200px; border-top: black 1px dashed;">
-        <table style="border-top: 0;">
+    <footer>
+        <table>
             <tr>
-                <td style="width: 50%; text-align: left;">
+                <td>
+                    <p class="footer-header">Code repos</p>
                     <ul>
                         <li>
-                            <a href="https://github.com/hodgesmr/mastodon_digest">Original script
-                                repo</a> by <a href="https://github.com/hodgesmr">hodgesmr</a>
+                            <a href="https://github.com/adamghill/fedigest">Fedigest</a>
+                            by <a href="https://github.com/adamghill">adamghill</a>
                         </li>
                         <li>
-                            <a href="https://github.com/mauforonda/mastodon_digest/">Fork without
-                                iframes</a> by <a href="https://github.com/mauforonda">mauforonda</a>
+                            <a href="https://github.com/hodgesmr/mastodon_digest">Original script</a>
+                            by <a href="https://github.com/hodgesmr">hodgesmr</a>
                         </li>
                         <li>
-                            <a href="https://github.com/adamghill/fedigest">Fedigest repo</a> by <a
-                                href="https://github.com/adamghill">adamghill</a>
+                            <a href="https://github.com/mauforonda/mastodon_digest/">Fork of original script</a>
+                            by <a href="https://github.com/mauforonda">mauforonda</a>
                         </li>
                     </ul>
                 </td>
-                <td style="vertical-align: top; text-align: left;">
+                <td>
+                    <p class="footer-header">Built with</p>
                     <ul>
                         <li>
                             <a href="https://www.djangoproject.com">Django</a>
@@ -208,26 +210,5 @@
                 </td>
             </tr>
         </table>
-
-        {% comment %} <ul style="width: 100%;">
-            <li>
-                <a href="https://github.com/hodgesmr/mastodon_digest">Original, offline repo</a> by <a
-                    href="https://github.com/hodgesmr">hodgesmr</a>
-            </li>
-            <li>
-                <a href="https://github.com/mauforonda/mastodon_digest/">Fork without iframes</a> by <a
-                    href="https://github.com/mauforonda">mauforonda</a>
-            </li>
-            <li>
-                <a href="https://github.com/adamghill/fedigest">Fedigest repo</li> by <a
-                href="https://github.com/adamghill">adamghill</a>
-            </li>
-            <li>
-                <a href="https://www.django-unicorn.com">django-unicorn</a>
-            </li>
-            <li>
-                <a href="https://mblode.github.io/marx/">Marx CSS</a>
-            </li>
-        </ul> {% endcomment %}
     </footer>
 </main>
