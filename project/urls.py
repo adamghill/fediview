@@ -9,4 +9,5 @@ urlpatterns = [
     re_path(r"apple-touch-icon(-precomposed)?\.png", favicon_emoji, {"emoji": "🐘"}),
     path("robots.txt", favicon_file, {"file_path": "www/robots.txt"}),
     path("", include(www_urls)),
+    path("", include("coltrane.urls")),
 ]

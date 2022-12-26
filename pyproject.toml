@@ -21,6 +21,7 @@ gunicorn = "^20.1.0"
 redis = "^4.4.0"
 hiredis = "^2.1.0"
 whitenoise = "^6.2.0"
+coltrane = { version = "^0.22.0", extras = ["mistune"]}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6"
@@ -31,7 +32,7 @@ isort = "^5"
 ruff = "^0"
 pywatchman = "^1"
 mypy = "^0.930"
-coverage = {extras = ["toml"], version = "^6.2"}
+coverage = {version = "^6.2", extras = ["toml"]}
 pytest-cov = "^3.0.0"
 
 [tool.black]

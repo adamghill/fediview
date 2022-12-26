@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "coltrane",
     "django_unicorn",
     "unicorn",
     "www",
@@ -151,6 +152,8 @@ LOGGING = {
         "django.request": {"level": "CRITICAL"},
     },
 }
+COLTRANE = {"MARKDOWN_RENDERER": "mistune"}
+
 
 
 if ENVIRONMENT == "live":
