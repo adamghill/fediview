@@ -41,9 +41,11 @@
             </div>
 
             <div class="reactions">
-                <span title="Replies">⥄ {{ post.replies_count }}</span>
-                <span title="Boosts" style="margin-left: 5px;">↻ {{ post.reblogs_count }}</span>
-                <span title="Favourites" style="margin-left: 5px;">★ {{ post.favourites_count }}</span>
+                <span title="{{ post.replies_count }} replies">⥄ {{ post.replies_count }}</span>
+                <span title="{{ post.reblogs_count }} boosts" style="margin-left: 5px;">↻
+                    {{ post.reblogs_count }}</span>
+                <span title="{{ post.favourites_count }} favourites" style="margin-left: 5px;">★
+                    {{ post.favourites_count }}</span>
             </div>
         </div>
     </div>

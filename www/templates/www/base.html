@@ -1,0 +1,106 @@
+{% load cache static unicorn %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta chartset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>fedigest</title>
+    <link rel="stylesheet" href="{% static 'css/marx.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    {% block css %}
+    {% endblock css %}
+
+    {% block js %}
+    {% endblock js %}
+</head>
+
+<body>
+    {% csrf_token %}
+
+    <main>
+        <header style="border-bottom: dashed 1px; margin-bottom: 3em;">
+            <h1><a href="/" style="color: #4a4a4a">fedigest</a></h1>
+            <h6 style="padding-bottom: 6px;">Aggregate the recent popular posts from your Mastodon timeline</h6>
+            <div style="padding-top: 1em; padding-bottom: 2em; text-align: center;">
+                {% if request.path == '/' %}
+                Home
+                {% else %}
+                <a href="/">Home</a>
+                {% endif %} |
+
+                {% if request.path == '/faq' %}
+                FAQ
+                {% else %}
+                <a href="{% url 'coltrane:content' 'faq' %}">FAQ</a>
+                {% endif %} |
+
+                <a href="https://github.com/adamghill/fedigest" target="_blank">Code repo</a>
+                <span style="color: grey;">⧉</span>
+            </div>
+        </header>
+
+        {% block content %}
+        {{ content }}
+        {% endblock content %}
+
+        <footer>
+            <table>
+                <tr>
+                    <td>
+                        <p class="footer-header">Code repos</p>
+                        <ul>
+                            <li>
+                                <a href="https://github.com/adamghill/fedigest">Fedigest</a>
+                                by <a href="https://github.com/adamghill">adamghill</a>
+                            </li>
+                            <li>
+                                <a href="https://github.com/hodgesmr/mastodon_digest">Original script</a>
+                                by <a href="https://github.com/hodgesmr">hodgesmr</a>
+                            </li>
+                            <li>
+                                <a href="https://github.com/mauforonda/mastodon_digest/">Fork of original script</a>
+                                by <a href="https://github.com/mauforonda">mauforonda</a>
+                            </li>
+                        </ul>
+                    </td>
+                    <td>
+                        <p class="footer-header">My other sites</p>
+                        <ul>
+                            <li>
+                                <a href="https://devmarks.io">devmarks.io</a>
+                            </li>
+                            <li>
+                                <a href="https://python-utils.com">python-utils.com</a>
+                            </li>
+                            <li>
+                                <a href="https://unsuckjs.com">unsuckjs.com</a>
+                            </li>
+                        </ul>
+                    </td>
+                    <td>
+                        <p class="footer-header">Built with</p>
+                        <ul>
+                            <li>
+                                <a href="https://www.djangoproject.com">Django</a>
+                            </li>
+                            <li>
+                                <a href="https://www.django-unicorn.com">django-unicorn</a>
+                            </li>
+                            <li>
+                                <a href="https://coltrane.readthedocs.io">coltrane</a>
+                            </li>
+                            <li>
+                                <a href="https://mblode.github.io/marx/">Marx CSS</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+        </footer>
+    </main>
+</body>
+
+</html>

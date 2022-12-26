@@ -1,97 +1,80 @@
 {% load humanize static unicorn %}
 
-<main>
-    <header>
-        <h1>fedigest</h1>
-        <h6 style="padding-bottom: 6px;">Aggregate the recent popular posts from your Mastodon timeline</h6>
+<div>
+    <table style="width: 100%; border-top: 0;">
+        <tr>
+            <td style="padding-bottom: 10px;">
+                <label for="username">Username</label>
+                <input u:model.defer="mastodon_username" u:keydown.enter="get_results" id="username"
+                    placeholder="@username"></input>
+            </td>
+            <td style="padding-bottom: 10px;">
+                <label for="base_url">Base URL</label>
+                <input u:model.defer="mastodon_base_url" u:keydown.enter="get_results" id="base_url"
+                    placeholder="https://mastodon.social"></input>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="padding-top: 0">
+                <label for="token">Token</label>
+                <input u:model.defer="mastodon_token" u:keydown.enter="get_results" id="token"></input>
+                <p class="help">
+                    Generate a token by going to <em>Edit profile</em>
+                    -> <em>Development</em> -> <em>New application</em>. Only
+                    <strong>read</strong> access is required.
+                </p>
+            </td>
+        </tr>
+    </table>
 
-        <style>
-            [unicorn\:error\:invalid] {
-                border: 1px solid red !important;
-            }
+    <table class="config">
+        <tr>
+            <td>
+                <label for="timeline">Timeline</label>
+                <select u:model.defer="timeline" id="timeline">
+                    <option value="home">Home</option>
+                    <option value="local">Local</option>
+                    <option value="federated">Federated</option>
+                </select>
+            </td>
+            <td>
+                <label for="scorer">Algorithm</label>
+                <select u:model.defer="scorer" id="scorer">
+                    <option value="Simple">Simple</option>
+                    <option value="SimpleWeighted">Simple Weighted</option>
+                    <option value="ExtendedSimple">Extended Simple</option>
+                    <option value="ExtendedSimpleWeighted">Extended Simple Weighted</option>
+                </select>
+            </td>
+            <td>
+                <label for="threshold">Threshold</label>
+                <select u:model.defer="threshold" id="threshold">
+                    <option value="lax">Lax (90)</option>
+                    <option value="normal">Normal (95)</option>
+                    <option value="strict">Strict (98)</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="hours">
+                <label for="hours" id="hoursLabel">Hours</label>
+                <input type="range" min="1" max="24" u:model.defer="hours" id="hours">
+                <span id="hoursValue">{{ hours }}</span>
+            </td>
+            <td></td>
+        </tr>
+    </table>
 
-            [unicorn\:error\:required] {
-                border: 1px solid red !important;
-            }
-        </style>
-
-        <form>
-            <table style="width: 100%;">
-                <tr>
-                    <td style="padding-bottom: 10px;">
-                        <label for="username">Username</label>
-                        <input u:model.defer="mastodon_username" u:keydown.enter="get_results" id="username"
-                            placeholder="@username"></input>
-                    </td>
-                    <td style="padding-bottom: 10px;">
-                        <label for="base_url">Base URL</label>
-                        <input u:model.defer="mastodon_base_url" u:keydown.enter="get_results" id="base_url"
-                            placeholder="https://mastodon.social"></input>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" style="padding-top: 0">
-                        <label for="token">Token</label>
-                        <input u:model.defer="mastodon_token" u:keydown.enter="get_results" id="token"></input>
-                        <p class="help">
-                            Generate a token by going to <em>Edit profile</em>
-                            -> <em>Development</em> -> <em>New application</em>. Only
-                            <strong>read</strong> access is required.
-                        </p>
-                    </td>
-                </tr>
-            </table>
-
-            <table class="config">
-                <tr>
-                    <td>
-                        <label for="timeline">Timeline</label>
-                        <select u:model.defer="timeline" id="timeline">
-                            <option value="home">Home</option>
-                            <option value="local">Local</option>
-                            <option value="federated">Federated</option>
-                        </select>
-                    </td>
-                    <td>
-                        <label for="scorer">Algorithm</label>
-                        <select u:model.defer="scorer" id="scorer">
-                            <option value="Simple">Simple</option>
-                            <option value="SimpleWeighted">Simple Weighted</option>
-                            <option value="ExtendedSimple">Extended Simple</option>
-                            <option value="ExtendedSimpleWeighted">Extended Simple Weighted</option>
-                        </select>
-                    </td>
-                    <td>
-                        <label for="threshold">Threshold</label>
-                        <select u:model.defer="threshold" id="threshold">
-                            <option value="lax">Lax (90)</option>
-                            <option value="normal">Normal (95)</option>
-                            <option value="strict">Strict (98)</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td class="hours">
-                        <label for="hours" id="hoursLabel">Hours</label>
-                        <input type="range" min="1" max="24" u:model.defer="hours" id="hours">
-                        <span id="hoursValue">{{ hours }}</span>
-                    </td>
-                    <td></td>
-                </tr>
-            </table>
-        </form>
-
-        <div u:loading.remove style="padding-top: 10px; text-align: center;">
-            <button u:click="get_results">Get Popular Toots</button>
+    <div u:loading.remove style="padding-top: 10px; text-align: center;">
+        <button u:click="get_results">Get Popular Toots</button>
+    </div>
+    <div u:loading style="padding-top: 10px; text-align: center;">
+        <em>Building digest... this might take a few seconds...</em>
+        <div style="padding-top: 100px;">
+            <img src="{% static 'img/ball-triangle.svg' %}" />
         </div>
-        <div u:loading style="padding-top: 10px; text-align: center;">
-            <em>Building digest... this might take a few seconds...</em>
-            <div style="padding-top: 100px;">
-                <img src="{% static 'img/ball-triangle.svg' %}" />
-            </div>
-        </div>
-    </header>
+    </div>
 
     {% if error or unicorn.errors %}
     <div class="errors" u:loading.remove>
@@ -161,46 +144,9 @@
         </section>
     </div>
 
+    {% comment %}Re-init GLightbox so that it picks up any new images that get loaded{% endcomment %}
     <script>
         const lightbox = GLightbox({});
     </script>
     {% endif %}
-
-    <footer>
-        <table>
-            <tr>
-                <td>
-                    <p class="footer-header">Code repos</p>
-                    <ul>
-                        <li>
-                            <a href="https://github.com/adamghill/fedigest">Fedigest</a>
-                            by <a href="https://github.com/adamghill">adamghill</a>
-                        </li>
-                        <li>
-                            <a href="https://github.com/hodgesmr/mastodon_digest">Original script</a>
-                            by <a href="https://github.com/hodgesmr">hodgesmr</a>
-                        </li>
-                        <li>
-                            <a href="https://github.com/mauforonda/mastodon_digest/">Fork of original script</a>
-                            by <a href="https://github.com/mauforonda">mauforonda</a>
-                        </li>
-                    </ul>
-                </td>
-                <td>
-                    <p class="footer-header">Built with</p>
-                    <ul>
-                        <li>
-                            <a href="https://www.djangoproject.com">Django</a>
-                        </li>
-                        <li>
-                            <a href="https://www.django-unicorn.com">django-unicorn</a>
-                        </li>
-                        <li>
-                            <a href="https://mblode.github.io/marx/">Marx CSS</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        </table>
-    </footer>
-</main>
+</div>

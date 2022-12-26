@@ -1,38 +1,41 @@
+{% extends 'www/base.html' %}
 {% load cache static unicorn %}
 
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta chartset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>fedigest</title>
-    <link rel="stylesheet" href="{% static 'css/marx.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+{% block css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
-    <script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
+<style>
+    [unicorn\:error\:invalid] {
+        border: 1px solid red !important;
+    }
 
-    {% unicorn_scripts %}
-</head>
+    [unicorn\:error\:required] {
+        border: 1px solid red !important;
+    }
+</style>
+{% endblock css %}
 
-<body>
-    {% csrf_token %}
-    {% unicorn 'timeline' %}
+{% block js %}
+{% unicorn_scripts %}
 
-    <script>
-        window.addEventListener("load", function (event) {
-            var hours = document.getElementById("hours");
-            var hoursValue = document.getElementById("hoursValue");
+<script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
+{% endblock js %}
 
-            // Update the current slider value (each time you drag the slider handle)
-            hours.oninput = function () {
-                var val = this.value;
+{% block content %}
+{% unicorn 'timeline' %}
 
-                hoursValue.innerHTML = val;
-            }
-        });
-    </script>
-</body>
+<script>
+    window.addEventListener("load", function (event) {
+        var hours = document.getElementById("hours");
+        var hoursValue = document.getElementById("hoursValue");
 
-</html>
+        // Update the current slider value (each time you drag the slider handle)
+        hours.oninput = function () {
+            var val = this.value;
+
+            hoursValue.innerHTML = val;
+        }
+    });
+</script>
+{% endblock content %}
