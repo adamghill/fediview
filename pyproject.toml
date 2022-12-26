@@ -1,8 +1,15 @@
 [tool.poetry]
-name = "fedigest"
+name = "fediview"
 version = "0.1.0"
-description = "fedigest"
+description = "fGet a digest of popular posts and boosts from your Mastodon (fediverse) timeline."
 authors = ["Adam Hill <hello@adamghill.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/adamghill/fediview"
+homepage = "https://fediview.com"
+
+[tool.poetry.urls]
+"Funding" = "https://github.com/sponsors/adamghill"
 
 [tool.poetry.dependencies]
 python = "^3.9"

@@ -1,4 +1,4 @@
-# fedigest
+# fediview
 
 Get a digest of popular posts and boosts from your Mastodon (fediverse) timeline.
 

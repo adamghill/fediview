@@ -6,7 +6,7 @@
 <head>
     <meta chartset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>fedigest</title>
+    <title>fediview</title>
     <link rel="stylesheet" href="{% static 'css/marx.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
 
@@ -22,7 +22,7 @@
 
     <main>
         <header style="border-bottom: dashed 1px; margin-bottom: 3em;">
-            <h1><a href="/" style="color: #4a4a4a">fedigest</a></h1>
+            <h1><a href="/" style="color: #4a4a4a">fediview</a></h1>
             <h6 style="padding-bottom: 6px;">Aggregate the recent popular posts from your Mastodon timeline</h6>
             <div style="padding-top: 1em; padding-bottom: 2em; text-align: center;">
                 {% if request.path == '/' %}
@@ -37,7 +37,7 @@
                 <a href="{% url 'coltrane:content' 'faq' %}">FAQ</a>
                 {% endif %} |
 
-                <a href="https://github.com/adamghill/fedigest" target="_blank">Code repo</a>
+                <a href="https://github.com/adamghill/fediview" target="_blank">Code repo</a>
                 <span style="color: grey;">⧉</span>
             </div>
         </header>
@@ -53,7 +53,7 @@
                         <p class="footer-header">Code repos</p>
                         <ul>
                             <li>
-                                <a href="https://github.com/adamghill/fedigest">Fedigest</a>
+                                <a href="https://github.com/adamghill/fediview">fediview</a>
                                 by <a href="https://github.com/adamghill">adamghill</a>
                             </li>
                             <li>
