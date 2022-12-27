@@ -1,8 +1,27 @@
-# From https://github.com/mauforonda/mastodon_digest/blob/main/formatters.py
+# Forked from https://github.com/mauforonda/mastodon_digest/blob/main/formatters.py
+from dataclasses import dataclass
+from datetime import datetime
 
 
-def format_post(post, mastodon_base_url) -> dict:
-    def format_media(media):
+@dataclass
+class FormattedPost:
+    account_avatar: str
+    account_url: str
+    display_name: str
+    username: str
+    content: str
+    media: str
+    created_at: datetime
+    home_link: str
+    home_url: str
+    original_link: str
+    replies_count: int
+    reblogs_count: int
+    favourites_count: int
+
+
+def _format_post(post, mastodon_base_url) -> dict:
+    def _format_media(media):
         url = media["url"]
         description = media["description"] if media["description"] is not None else ""
 
@@ -11,12 +30,13 @@ def format_post(post, mastodon_base_url) -> dict:
             "video": f'<div class="media"><video src="{url}" controls width="100%"></video></div>',
             "gifv": f'<div class="media"><video src="{url}" autoplay loop muted playsinline width="100%"></video></div>',
         }
+
         if formats.__contains__(media.type):
             return formats[media.type]
         else:
             return ""
 
-    def format_displayname(display_name, emojis):
+    def _format_displayname(display_name, emojis):
         for emoji in emojis:
             display_name = display_name.replace(
                 f':{emoji["shortcode"]}:',
@@ -26,12 +46,12 @@ def format_post(post, mastodon_base_url) -> dict:
 
     account_avatar = post.data["account"]["avatar"]
     account_url = post.data["account"]["url"]
-    display_name = format_displayname(
+    display_name = _format_displayname(
         post.data["account"]["display_name"], post.data["account"]["emojis"]
     )
     username = post.data["account"]["username"]
     content = post.data["content"]
-    media = "\n".join([format_media(media) for media in post.data.media_attachments])
+    media = "\n".join([_format_media(media) for media in post.data.media_attachments])
     created_at = post.data["created_at"]
     home_url = post.get_home_url(mastodon_base_url)
     home_link = f'<a href="{home_url}" target="_blank">🔗</a>'
@@ -40,7 +60,7 @@ def format_post(post, mastodon_base_url) -> dict:
     reblogs_count = post.data["reblogs_count"]
     favourites_count = post.data["favourites_count"]
 
-    return dict(
+    return FormattedPost(
         account_avatar=account_avatar,
         account_url=account_url,
         display_name=display_name,
@@ -57,5 +77,5 @@ def format_post(post, mastodon_base_url) -> dict:
     )
 
 
-def format_posts(posts, mastodon_base_url):
-    return [format_post(post, mastodon_base_url) for post in posts]
+def format_posts(posts, mastodon_base_url) -> list[FormattedPost]:
+    return [_format_post(post, mastodon_base_url) for post in posts]

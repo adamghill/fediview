@@ -1,13 +1,11 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import TYPE_CHECKING
 
 from scipy import stats
 
-if TYPE_CHECKING:
-    from mastodon_digest.models import ScoredPost
-    from mastodon_digest.scorers import Scorer
+from digest.models import ScoredPost
+from digest.scorers import Scorer
 
 
 class Threshold(Enum):

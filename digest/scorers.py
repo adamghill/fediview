@@ -4,12 +4,10 @@ import importlib
 import inspect
 from abc import ABC, abstractmethod
 from math import sqrt
-from typing import TYPE_CHECKING
 
 from scipy import stats
 
-if TYPE_CHECKING:
-    from mastodon_digest.models import ScoredPost
+from digest.models import ScoredPost
 
 
 class Weight(ABC):

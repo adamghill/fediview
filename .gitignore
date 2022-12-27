@@ -2,3 +2,4 @@
 .env
 deploykey
 deploykey.pub
+.devbox

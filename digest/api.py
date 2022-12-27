@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from typing import TYPE_CHECKING
 
-from mastodon_digest.models import ScoredPost
+from digest.models import ScoredPost
 
 if TYPE_CHECKING:
     from mastodon import Mastodon
