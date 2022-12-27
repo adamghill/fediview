@@ -36,6 +36,9 @@ RUN poetry install --only main
 # in only our runtime deps that were installed in the 'builder-base'
 FROM python-base as production
 
+ARG CAPROVER_GIT_COMMIT_SHA=${CAPROVER_GIT_COMMIT_SHA}
+ENV CAPROVER_GIT_COMMIT_SHA=${CAPROVER_GIT_COMMIT_SHA}
+
 COPY --from=builder-base $VENV_PATH $VENV_PATH
 COPY . /app
 WORKDIR /app
