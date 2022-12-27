@@ -8,7 +8,7 @@
     --mastodon-links: #e9e9f5
 }
 
-@media (prefers-color-scheme:dark) {
+/* @media (prefers-color-scheme:dark) {
     :root {
         --background: #1c1c1c;
         --text: #ffffff;
@@ -19,6 +19,10 @@
         --mastodon-links: #1b1f3d;
     }
 }
+
+input {
+    color: #000 !important;
+} */
 
 body {
     background-color: var(--background);
