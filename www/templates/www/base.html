@@ -1,4 +1,4 @@
-{% load cache static unicorn %}
+{% load cache git static unicorn %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -99,6 +99,13 @@
                     </td>
                 </tr>
             </table>
+
+            {% git_version as git_version %}
+
+            <p>
+                Version:
+                <a href="https://github.com/adamghill/fediview/commit/{{ git_version }}">{{ git_version }}</a>
+            </p>
         </footer>
     </main>
 </body>
