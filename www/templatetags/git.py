@@ -6,4 +6,7 @@ register = template.Library()
 
 @register.simple_tag
 def git_version():
-    return settings.GIT_VERSION
+    sha = settings.GIT_VERSION
+
+    if sha:
+        return sha[:8]
