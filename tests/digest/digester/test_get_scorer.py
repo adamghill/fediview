@@ -1,10 +1,11 @@
 import pytest
+
 from digest.digester import _get_scorer
 from digest.scorers import (
-    SimpleScorer,
-    SimpleWeightedScorer,
     ExtendedSimpleScorer,
     ExtendedSimpleWeightedScorer,
+    SimpleScorer,
+    SimpleWeightedScorer,
 )
 
 

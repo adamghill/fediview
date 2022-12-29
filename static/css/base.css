@@ -272,3 +272,23 @@ td.hours {
     padding-left: 1em;
     font-variant-caps: all-small-caps;
 }
+
+code {
+    word-break: break-word;
+}
+
+/* .post.additional .avatar {
+    display: none;
+}
+
+.post.additional .user {
+    display: none;
+}
+
+.post.additional .medias {
+    display: none;
+}
+
+.post.additional {
+    margin-top: 0;
+} */

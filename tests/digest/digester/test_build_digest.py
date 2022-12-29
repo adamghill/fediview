@@ -1,16 +1,16 @@
 from unittest.mock import patch
 
-from digest.digester import build_digest
 from mastodon import MastodonError
+
+from digest.digester import build_digest
 
 INIT_KWARGS = {
     "hours": "1",
     "scorer_name": "Simple",
     "threshold_name": "lax",
-    "mastodon_token": "fake-token",
-    "mastodon_base_url": "https://fake-url.social",
-    "mastodon_username": "@fake-username",
     "timeline": "home",
+    "profile": "https://fake-url.social/@fake-username",
+    "token": "fake-token",
 }
 
 

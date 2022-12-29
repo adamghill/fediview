@@ -1,20 +1,18 @@
-from __future__ import annotations
-
 from datetime import datetime, timedelta, timezone
-from typing import TYPE_CHECKING
 
-from digest.models import ScoredPost
+from mastodon import Mastodon
 
-if TYPE_CHECKING:
-    from mastodon import Mastodon
+from digest.models import Post
 
 
 def fetch_posts_and_boosts(
-    hours: int, mastodon_client: Mastodon, mastodon_username: str, timeline: str
-) -> tuple[list[ScoredPost], list[ScoredPost]]:
-    """Fetches posts from the home timeline that the account hasn't interacted with"""
-
-    TIMELINE_LIMIT = 1000  # Should this be documented? Configurable?
+    hours: int,
+    mastodon_client: Mastodon,
+    mastodon_username: str,
+    timeline: str,
+    limit: int = 1000,
+) -> tuple[list[Post], list[Post]]:
+    """Fetches posts from the home timeline that the account hasn't interacted with."""
 
     # First, get our filters
     filters = mastodon_client.filters()
@@ -27,10 +25,11 @@ def fetch_posts_and_boosts(
     seen_post_urls = set()
     total_posts_seen = 0
 
-    # If timeline name is specified as hashtag:tagName or list:list-name, look-up with those names,
-    # else accept 'federated' and 'local' to process from the server public and local timelines.
+    # If timeline name is specified as hashtag:tagName or list:list-name, look-up with
+    # those names, else accept 'federated' and 'local' to process from the server public
+    # and local timelines.
     #
-    # We default to 'home' if the name is unrecognized
+    # Default to 'home' if the name is unrecognized.
     if ":" in timeline:
         timelineType, timelineId = timeline.lower().split(":", 1)
     else:
@@ -41,7 +40,7 @@ def fetch_posts_and_boosts(
     elif timelineType == "list":
         if not timelineId.isnumeric():
             raise TypeError(
-                "Cannot load list timeline: ID must be numeric, e.g.: https://example.social/lists/4 would be list:4"
+                "Cannot load list timeline: ID must be numeric, e.g. https://example.social/lists/4 would be list:4"
             )
 
         response = mastodon_client.timeline_list(timelineId, min_id=start)
@@ -53,43 +52,42 @@ def fetch_posts_and_boosts(
         response = mastodon_client.timeline(min_id=start)
 
     # Iterate over our timeline until we run out of posts or we hit the limit
-    while response and total_posts_seen < TIMELINE_LIMIT:
-
+    while response and total_posts_seen < limit:
         # Apply our server-side filters
         if filters:
-            filtered_response = mastodon_client.filters_apply(response, filters, "home")
+            filtered_posts = mastodon_client.filters_apply(response, filters, "home")
         else:
-            filtered_response = response
+            filtered_posts = response
 
-        for post in filtered_response:
+        for post in filtered_posts:
             total_posts_seen += 1
+            is_boosted = False
 
-            boost = False
             if post["reblog"] is not None:
                 post = post["reblog"]  # look at the boosted post
-                boost = True
+                is_boosted = True
 
-            scored_post = ScoredPost(post)  # wrap the post data as a ScoredPost
+            post = Post(post)  # wrap the post data as a Post
 
-            if scored_post.url not in seen_post_urls:
+            if post.url not in seen_post_urls:
                 # Apply our local filters
                 # Basically ignore my posts or posts I've interacted with
                 if (
-                    not scored_post.info["reblogged"]
-                    and not scored_post.info["favourited"]
-                    and not scored_post.info["bookmarked"]
-                    and scored_post.info["account"]["acct"].strip().lower()
+                    not post.reblogged
+                    and not post.favourited
+                    and not post.bookmarked
+                    and post.account.acct.strip().lower()
                     != mastodon_username.strip().lower()
                 ):
                     # Append to either the boosts list or the posts lists
-                    if boost:
-                        boosts.append(scored_post)
+                    if is_boosted:
+                        boosts.append(post)
                     else:
-                        posts.append(scored_post)
-                    seen_post_urls.add(scored_post.url)
+                        posts.append(post)
 
-        response = mastodon_client.fetch_previous(
-            response
-        )  # fetch the previous (because of reverse chron) page of results
+                    seen_post_urls.add(post.url)
 
-    return posts, boosts
+        # fetch the previous (because of reverse chronological) page of results
+        response = mastodon_client.fetch_previous(response)
+
+    return (posts, boosts)

@@ -3,23 +3,20 @@
 <div>
     <table style="width: 100%; border-top: 0;">
         <tr>
-            <td style="padding-bottom: 10px;">
-                <label for="username">Username</label>
-                <input u:model.defer="mastodon_username" u:keydown.enter="get_results" id="username"
-                    placeholder="@username"></input>
+            <td style="padding-bottom: 10px; vertical-align: top; padding-top: 0; width: 50%;">
+                <label for="profile">Profile</label>
+                <input u:model.defer="mastodon_profile" u:keydown.enter="get_results" id="profile"
+                    placeholder="https://mastodon-instance.social/@username"></input>
+                <p class="help">
+                    e.g. https://mastodon-instance.social/@username <em>or</em>
+                    @username@mastodon-instance.social
+                </p>
             </td>
-            <td style="padding-bottom: 10px;">
-                <label for="base_url">Base URL</label>
-                <input u:model.defer="mastodon_base_url" u:keydown.enter="get_results" id="base_url"
-                    placeholder="https://mastodon.social"></input>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" style="padding-top: 0">
+            <td style="padding-top: 0">
                 <label for="token">Token</label>
                 <input u:model.defer="mastodon_token" u:keydown.enter="get_results" id="token"></input>
                 <p class="help">
-                    Generate a token by going to <em>Edit profile</em>
+                    <a href="/faq#how-do-i-generate-a-token">Generate a token</a>: <em>Edit profile</em>
                     -> <em>Development</em> -> <em>New application</em>. Only
                     <strong>read</strong> access is required.
                 </p>
@@ -85,11 +82,11 @@
             </li>
             {% else %}
 
-            <!-- base URL -->
-            {% for field in unicorn.errors.mastodon_base_url %}
+            <!-- profile -->
+            {% for field in unicorn.errors.mastodon_profile %}
             {% for error in field.message %}
             <li>
-                <a href="#base_url" onclick="document.getElementById('base_url').focus();">{{ error }}</a>
+                <a href="#profile" onclick="document.getElementById('profile').focus();">{{ error }}</a>
             </li>
             {% endfor %}
             {% endfor %}
@@ -99,15 +96,6 @@
             {% for error in field.message %}
             <li>
                 <a href="#token" onclick="document.getElementById('token').focus();">{{ error }}</a>
-            </li>
-            {% endfor %}
-            {% endfor %}
-
-            <!-- username -->
-            {% for field in unicorn.errors.mastodon_username %}
-            {% for error in field.message %}
-            <li>
-                <a href=" #username" onclick="document.getElementById('username').focus();">{{ error }}</a>
             </li>
             {% endfor %}
             {% endfor %}
@@ -123,9 +111,15 @@
             <h2>Popular Posts</h2>
 
             {% if posts %}
-            {% with posts=posts %}
-            {% include "www/posts.html" %}
+            {% for post in posts %}
+            {% include "www/post.html" %}
+
+            {% comment %} {% for post in post.account.additional_posts %}
+            {% with additional_post=True %}
+            {% include "www/post.html" %}
             {% endwith %}
+            {% endfor %}
+            {% endfor %} {% endcomment %}
             {% else %}
             No posts available.
             {% endif %}
@@ -135,9 +129,9 @@
             <h2>Popular Boosts</h2>
 
             {% if boosts %}
-            {% with posts=boosts %}
-            {% include "www/posts.html" %}
-            {% endwith %}
+            {% for post in boosts %}
+            {% include "www/post.html" %}
+            {% endfor %}
             {% else %}
             No boosts available.
             {% endif %}

@@ -3,7 +3,7 @@ from os import getenv
 from django.forms import ValidationError
 from django_unicorn.components import UnicornView
 
-from digest.digester import build_digest
+from digest.digester import Digest, ProfileParseError, build_digest
 
 
 class TimelineView(UnicornView):
@@ -11,8 +11,7 @@ class TimelineView(UnicornView):
     scorer: str = "Simple"
     threshold: str = "normal"
     timeline: str = "home"  # TODO: Support hashtag:tagName, list:list-name
-    mastodon_base_url: str = ""
-    mastodon_username: str = ""
+    mastodon_profile: str = ""
     mastodon_token: str = ""
     error: str = ""
 
@@ -21,42 +20,38 @@ class TimelineView(UnicornView):
     boosts: list[dict] = []
 
     def mount(self):
-        self.mastodon_base_url = getenv("MASTODON_BASE_URL", "")
-        self.mastodon_username = getenv("MASTODON_USERNAME", "")
+        self.mastodon_profile = getenv("MASTODON_PROFILE", "")
         self.mastodon_token = getenv("MASTODON_TOKEN", "")
 
     def clean(self) -> None:
         validation_errors = {}
 
-        if not self.mastodon_username:
-            validation_errors["mastodon_username"] = "Missing username"
-        elif not self.mastodon_username.startswith("@"):
-            validation_errors["mastodon_username"] = "Username must start with @"
-
-        if not self.mastodon_base_url:
-            validation_errors["mastodon_base_url"] = "Missing base URL"
-        elif not self.mastodon_base_url.startswith("https://"):
-            validation_errors["mastodon_base_url"] = "URL must start with https://"
+        if not self.mastodon_profile:
+            validation_errors["mastodon_profile"] = "Missing profile"
 
         if not self.mastodon_token:
             validation_errors["mastodon_token"] = "Missing token"
 
         if validation_errors:
-            raise ValidationError(validation_errors, code="invalid")
+            raise ValidationError(validation_errors, code="required")
 
     def get_results(self):
         self.errors = {}
         self.clean()
 
-        digest = build_digest(
-            self.hours,
-            self.scorer,
-            self.threshold,
-            self.mastodon_token,
-            self.mastodon_base_url,
-            self.mastodon_username,
-            self.timeline,
-        )
+        digest = Digest()
+
+        try:
+            digest = build_digest(
+                self.hours,
+                self.scorer,
+                self.threshold,
+                self.timeline,
+                self.mastodon_profile,
+                self.mastodon_token,
+            )
+        except ProfileParseError as e:
+            raise ValidationError({"mastodon_profile": str(e)}, code="invalid")
 
         self.error = digest.error
 
@@ -69,8 +64,10 @@ class TimelineView(UnicornView):
 
     class Meta:
         javascript_exclude = (
-            "mastodon_base_url",
             "mastodon_token",
-            "mastodon_username",
+            "mastodon_profile",
+            "posts",
+            "boosts",
+            "has_results",
             "error",
         )

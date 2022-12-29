@@ -6,7 +6,7 @@ from mastodon import Mastodon
 from mastodon.errors import MastodonError
 
 from digest.api import fetch_posts_and_boosts
-from digest.formatters import FormattedPost, format_posts
+from digest.models import Post
 from digest.scorers import (
     ExtendedSimpleScorer,
     ExtendedSimpleWeightedScorer,
@@ -23,15 +23,13 @@ logger = logging.getLogger(__name__)
 class Digest:
     ok: bool = False
     error: str = ""
-    posts: list[FormattedPost] = field(default_factory=list)
-    boosts: list[FormattedPost] = field(default_factory=list)
+    posts: list[Post] = field(default_factory=list)
+    boosts: list[Post] = field(default_factory=list)
     rendered_at: datetime = None
 
 
-def _format_base_url(mastodon_base_url: str) -> str:
-    """Format base url."""
-
-    return mastodon_base_url.strip().rstrip("/")
+class ProfileParseError(Exception):
+    pass
 
 
 def _get_scorer(scorer_name: str) -> Scorer:
@@ -49,31 +47,69 @@ def _get_scorer(scorer_name: str) -> Scorer:
     raise Exception("Unknown scorer")
 
 
+def _parse_profile(profile: str) -> tuple[str, str]:
+    """Parse the profile into base url and username."""
+
+    base_url = ""
+    username = ""
+    profile = profile.strip()
+
+    if profile.startswith("@") and len(profile.split("@")) == 3:
+        # Handle @username@mastodon.social
+        (
+            _,
+            username,
+            base_url,
+        ) = profile.split("@")
+
+        username = f"@{username}"
+        base_url = f"https://{base_url}"
+    elif profile.startswith("https://") and len(profile.split("/@")) == 2:
+        # Handle https://mastodon.social/@username
+        (
+            base_url,
+            username,
+        ) = profile.split("/@")
+
+        if username and not username.startswith("@"):
+            username = f"@{username}"
+    else:
+        raise ProfileParseError("Profile could not be parsed")
+
+    if not base_url.startswith("https://"):
+        raise ProfileParseError("URL must start with https://")
+
+    if "." not in base_url:
+        raise ProfileParseError("URL is invalid")
+
+    return (base_url, username)
+
+
 def build_digest(
     hours: str,
     scorer_name: str,
     threshold_name: str,
-    mastodon_token: str,
-    mastodon_base_url: str,
-    mastodon_username: str,
     timeline: str,
-) -> dict:
+    profile: str,
+    token: str,
+) -> Digest:
     """Creates a digest of popular posts and boosts the user has not interacted with."""
+
+    (base_url, username) = _parse_profile(profile)
 
     hours = int(hours)
     scorer = _get_scorer(scorer_name)
     threshold = Threshold[threshold_name.upper()]
-    mastodon_base_url = _format_base_url(mastodon_base_url)
 
-    logger.debug(f"Building digest from the past {hours} hours for {mastodon_username}")
+    logger.debug(f"Building digest from the past {hours} hours for {username}")
 
     digest = Digest()
 
     # 1. Get a Mastodon API instance
     try:
         mastodon = Mastodon(
-            access_token=mastodon_token,
-            api_base_url=mastodon_base_url,
+            access_token=token,
+            api_base_url=base_url,
         )
 
         digest.ok = True
@@ -89,9 +125,7 @@ def build_digest(
     logger.debug("Mastodon API initialized")
 
     # 2. Fetch all the posts and boosts from our home timeline
-    (posts, boosts) = fetch_posts_and_boosts(
-        hours, mastodon, mastodon_username, timeline
-    )
+    (posts, boosts) = fetch_posts_and_boosts(hours, mastodon, username, timeline)
 
     logger.debug("Posts and boosts fetched")
 
@@ -99,17 +133,32 @@ def build_digest(
     threshold_posts = threshold.posts_meeting_criteria(posts, scorer)
     threshold_boosts = threshold.posts_meeting_criteria(boosts, scorer)
 
+    for post in threshold_posts + threshold_boosts:
+        post.set_base_url(base_url)
+
     logger.debug("Posts and boosts scored")
 
-    # 4. Format posts and boosts
-    formatted_posts = format_posts(threshold_posts, mastodon_base_url)
-    formatted_boosts = format_posts(threshold_boosts, mastodon_base_url)
+    # 4. Get unique posts from unique accounts
+    # unique_account_posts = []
+    # sorted_posts = sorted(threshold_posts, key=lambda p: p.score, reverse=True)
 
-    logger.debug("Posts and boosts formatted")
+    # users_hash: dict[int, Post] = {}
+
+    # for post in sorted_posts:
+    #     if post.account.id in users_hash:
+    #         users_hash[post.account.id].account.add_additional_post(post)
+    #     else:
+    #         users_hash[post.account.id] = post
+
+    # for post in users_hash.values():
+    #     unique_account_posts.append(post)
+
+    sorted_posts = sorted(threshold_posts, key=lambda p: p.score, reverse=True)
+    sorted_boosts = sorted(threshold_boosts, key=lambda p: p.score, reverse=True)
 
     # 5. Build the digest
-    digest.posts = formatted_posts
-    digest.boosts = formatted_boosts
+    digest.posts = sorted_posts
+    digest.boosts = sorted_boosts
     digest.rendered_at = datetime.utcnow()
 
     return digest

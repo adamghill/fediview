@@ -1,25 +1,24 @@
 {% load humanize %}
 
-{% for post in posts %}
-<div class="post">
+<div class="post {% if additional_post %}additional{% endif %}">
     <div class="avatar">
-        <a target="_blank" href="{{ post.account_url }}">
-            <img src="{{ post.account_avatar }}">
+        <a target="_blank" href="{{ post.account.url }}">
+            <img src="{{ post.account.avatar }}">
         </a>
     </div>
 
     <div class="status">
         <div class="user">
-            {% if post.display_name %}
-            <a target="_blank" href="{{ post.account_url }}">
-                <span class="displayname">{{ post.display_name|safe }}</span>
+            {% if post.account.display_name %}
+            <a target="_blank" href="{{ post.account.url }}">
+                <span class="displayname">{{ post.account.display_name|safe }}</span>
             </a>
-            <a target="_blank" href="{{ post.account_url }}">
-                <span class="username">@{{ post.username }}</span>
+            <a target="_blank" href="{{ post.account.url }}">
+                <span class="username">@{{ post.account.username }}</span>
             </a>
             {% else %}
-            <a target="_blank" href="{{ post.account_url }}" style="margin-top: 10px;">
-                <span class="displayname">@{{ post.username }}</span>
+            <a target="_blank" href="{{ post.account.url }}" style="margin-top: 10px;">
+                <span class="displayname">@{{ post.account.username }}</span>
             </a>
             {% endif %}
         </div>
@@ -50,4 +49,3 @@
         </div>
     </div>
 </div>
-{% endfor %}
