@@ -34,14 +34,13 @@ My only hope is to provide more ways to find content on Mastodon -- not to sell 
 
 ## What data do you store?
 
-- Your profile (Mastodon instance URL and username) and token are not persisted by `fediview`
-- No data from your timeline is persisted by `fediview`
+No data is currently persisted to a database or disk.
 
 ## Why can I trust you?
 
-The [code for this website is open-source](https://github.com/adamghill/fediview) and you can inspect it to make sure I am not doing anything shady. I include the currently version of the deployed site at the bottom of the footer which links to the specific Git commit that is currently live.
+The [code for this website is open-source](https://github.com/adamghill/fediview) and you can inspect it to make sure I am not doing anything shady. I include the currently deployed version of the site in the footer.
 
-You can run this website for your personal use or use the [original offline-only script](https://github.com/hodgesmr/mastodon_digest).
+You can also run this website for your personal use or use the [original offline-only script](https://github.com/hodgesmr/mastodon_digest), although I will continue to make additional enhancements to the original script.
 
 ## Where can I ask for a feature, report a bug, or send accolades?
 
