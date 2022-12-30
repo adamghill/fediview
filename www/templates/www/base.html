@@ -105,12 +105,14 @@
 
             {% git_version as git_version %}
 
+            {% if git_version %}
             <p>
                 Version:
                 <a href="https://github.com/adamghill/fediview/commit/{{ git_version }}">
                     {{ git_version }}
                 </a>
             </p>
+            {% endif %}
         </footer>
     </main>
 </body>
