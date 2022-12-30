@@ -63,8 +63,8 @@
     </table>
 
     <div u:loading.remove style="padding-top: 10px; text-align: center;">
-        <input type="checkbox" id="saveInput" name="saveInput" checked>
-        <label for="saveInput">Save my Instance and Token in my browser</label>
+        <input type="checkbox" id="saveInputs" name="saveInputs">
+        <label for="saveInputs">Save my Instance and Token in my browser</label>
     </div>
     <div u:loading.remove style="padding-top: 10px; text-align: center;">
         <button u:click="get_results" id="getPopularToots">Get Popular Toots</button>
@@ -148,31 +148,41 @@
     {% endif %}
 </div>
 <script>
+    const urlID = 'url';
+    const tokenID = 'token';
+    const saveInputsID = 'saveInputs';
+
     let loadInputs = function() {
-        const url = localStorage.getItem('url');
+        const url = localStorage.getItem(urlID);
         if (url) {
-            document.getElementById('url').value = url;
+            document.getElementById(urlID).value = url;
         }
 
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem(tokenID);
         if (token) {
-            document.getElementById('token').value = token;
+            document.getElementById(tokenID).value = token;
+        }
+
+        const saveInput = localStorage.getItem(saveInputsID);
+        if (saveInput) {
+            document.getElementById(saveInputsID).checked = JSON.parse(saveInput);
         }
     };
 
     let saveInputs = function() {
-        const checked = document.getElementById('saveInput').checked;
+        const checked = document.getElementById(saveInputsID).checked;
         if (checked) {
-            localStorage.setItem('url', document.getElementById('url').value);
-            localStorage.setItem('token', document.getElementById('token').value);
+            localStorage.setItem(urlID, document.getElementById(urlID).value);
+            localStorage.setItem(tokenID, document.getElementById(tokenID).value);
         } else {
-            localStorage.removeItem('url');
-            localStorage.removeItem('token');
+            localStorage.removeItem(urlID);
+            localStorage.removeItem(tokenID);
         }
+        localStorage.setItem(saveInputsID, JSON.stringify(checked));
     };
     window.addEventListener('load', function (event) {
         loadInputs();
-        document.getElementById('saveInput').addEventListener('change', saveInputs);
+        document.getElementById(saveInputsID).addEventListener('change', saveInputs);
         document.getElementById('getPopularToots').addEventListener('click', saveInputs);
     });
 </script>
