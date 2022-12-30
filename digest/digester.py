@@ -128,7 +128,7 @@ def build_digest(
     threshold_boosts = threshold.posts_meeting_criteria(boosts, scorer)
 
     for post in threshold_posts + threshold_boosts:
-        post.set_base_url(url)
+        post.set_base_url(mastodon.api_base_url)
 
     logger.debug("Posts and boosts scored")
 
