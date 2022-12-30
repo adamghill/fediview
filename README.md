@@ -12,6 +12,9 @@ Get a digest of popular posts and boosts from your Mastodon (fediverse) timeline
 ## Acknowledgements
 
 - Uses a fork of https://github.com/hodgesmr/mastodon_digest for the actual algorithm
+- Uses some code from https://github.com/mauforonda/mastodon_digest for HTML/CSS styling of posts
+- [mastodon.py](https://mastodonpy.readthedocs.io/) to interact with mastodon
 - [Marx](https://mblode.github.io/marx/) for classless CSS
 - [Unicorn](https://www.django-unicorn.com) for the SPA feelings
+- [coltrane](https://coltrane.readthedocs.io) render markdown easily
 - [Django](https://www.djangoproject.com/) for everything else
