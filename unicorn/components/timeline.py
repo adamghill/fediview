@@ -3,7 +3,7 @@ from os import getenv
 from django.forms import ValidationError
 from django_unicorn.components import UnicornView
 
-from digest.digester import Digest, ProfileParseError, build_digest
+from digest.digester import Digest, InvalidURLError, UnauthorizedError, build_digest
 
 
 class TimelineView(UnicornView):
@@ -11,8 +11,8 @@ class TimelineView(UnicornView):
     scorer: str = "Simple"
     threshold: str = "normal"
     timeline: str = "home"  # TODO: Support hashtag:tagName, list:list-name
-    mastodon_profile: str = ""
-    mastodon_token: str = ""
+    url: str = ""
+    token: str = ""
     error: str = ""
 
     has_results: bool = False
@@ -20,17 +20,23 @@ class TimelineView(UnicornView):
     boosts: list[dict] = []
 
     def mount(self):
-        self.mastodon_profile = getenv("MASTODON_PROFILE", "")
-        self.mastodon_token = getenv("MASTODON_TOKEN", "")
+        self.url = getenv("MASTODON_INSTANCE_URL", "")
+        self.token = getenv("MASTODON_TOKEN", "")
+
+    def hydrate(self):
+        self.errors = {}
+        self.posts = []
+        self.boosts = []
+        self.has_results = False
 
     def clean(self) -> None:
         validation_errors = {}
 
-        if not self.mastodon_profile:
-            validation_errors["mastodon_profile"] = "Missing profile"
+        if not self.url:
+            validation_errors["url"] = "Missing URL"
 
-        if not self.mastodon_token:
-            validation_errors["mastodon_token"] = "Missing token"
+        if not self.token:
+            validation_errors["token"] = "Missing token"
 
         if validation_errors:
             raise ValidationError(validation_errors, code="required")
@@ -47,16 +53,19 @@ class TimelineView(UnicornView):
                 self.scorer,
                 self.threshold,
                 self.timeline,
-                self.mastodon_profile,
-                self.mastodon_token,
+                self.url,
+                self.token,
             )
-        except ProfileParseError as e:
-            raise ValidationError({"mastodon_profile": str(e)}, code="invalid")
+        except UnauthorizedError as e:
+            raise ValidationError({"token": str(e)}, code="invalid") from e
+        except InvalidURLError as e:
+            raise ValidationError({"url": str(e)}, code="invalid") from e
 
-        self.error = digest.error
+        if digest.error:
+            self.error = digest.error
 
-        if self.error.startswith("Version check failed"):
-            self.error = f"URL might be invalid: {self.error}"
+            if self.error.startswith("Version check failed"):
+                self.error = f"URL might be invalid: {self.error}"
 
         self.posts = digest.posts
         self.boosts = digest.boosts
@@ -64,8 +73,8 @@ class TimelineView(UnicornView):
 
     class Meta:
         javascript_exclude = (
-            "mastodon_token",
-            "mastodon_profile",
+            "token",
+            "url",
             "posts",
             "boosts",
             "has_results",

@@ -2,10 +2,6 @@
 template: www/base.html
 ---
 
-## What do I put in the profile textbox?
-
-`Profile` includes the Mastodon base URL with your username. So, if you login to an instance at `https://mastodon.social` and your username is `@username` your profile would be `https://mastodon.social/@username`. You could also use `@username@mastodon.social`. Both approaches are supported.
-
 ## How do I generate a token?
 
 To authorize `fediview` to look at your timeline and build the digest it requires an API token. You can remove this token at any time.

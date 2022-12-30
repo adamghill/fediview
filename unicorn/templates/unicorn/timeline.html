@@ -4,21 +4,20 @@
     <table style="width: 100%; border-top: 0;">
         <tr>
             <td style="padding-bottom: 10px; vertical-align: top; padding-top: 0; width: 50%;">
-                <label for="profile">Profile</label>
-                <input u:model.defer="mastodon_profile" u:keydown.enter="get_results" id="profile"
-                    placeholder="https://mastodon-instance.social/@username"></input>
+                <label for="url">Instance URL</label>
+                <input u:model.defer="url" u:keydown.enter="get_results" id="url"
+                    placeholder="https://mastodon-instance.social"></input>
                 <p class="help">
-                    e.g. https://mastodon-instance.social/@username <em>or</em>
-                    @username@mastodon-instance.social
+                    The URL of your Mastodon instance
                 </p>
             </td>
             <td style="padding-top: 0">
                 <label for="token">Token</label>
-                <input u:model.defer="mastodon_token" u:keydown.enter="get_results" id="token"></input>
+                <input u:model.defer="token" u:keydown.enter="get_results" id="token"></input>
                 <p class="help">
                     <a href="/faq#how-do-i-generate-a-token">Generate a token</a>: <em>Edit profile</em>
-                    -> <em>Development</em> -> <em>New application</em>. Only
-                    <strong>read</strong> access is required.
+                    -> <em>Development</em> -> <em>New application</em>; only
+                    <strong>read</strong> access is required
                 </p>
             </td>
         </tr>
@@ -83,16 +82,16 @@
             {% else %}
 
             <!-- profile -->
-            {% for field in unicorn.errors.mastodon_profile %}
+            {% for field in unicorn.errors.url %}
             {% for error in field.message %}
             <li>
-                <a href="#profile" onclick="document.getElementById('profile').focus();">{{ error }}</a>
+                <a href="#url" onclick="document.getElementById('url').focus();">{{ error }}</a>
             </li>
             {% endfor %}
             {% endfor %}
 
             <!-- token -->
-            {% for field in unicorn.errors.mastodon_token %}
+            {% for field in unicorn.errors.token %}
             {% for error in field.message %}
             <li>
                 <a href="#token" onclick="document.getElementById('token').focus();">{{ error }}</a>

@@ -9,7 +9,7 @@ INIT_KWARGS = {
     "scorer_name": "Simple",
     "threshold_name": "lax",
     "timeline": "home",
-    "profile": "https://fake-url.social/@fake-username",
+    "url": "https://fake-url.social",
     "token": "fake-token",
 }
 

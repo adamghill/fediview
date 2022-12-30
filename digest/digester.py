@@ -1,9 +1,16 @@
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
+from urllib.parse import urlparse
 
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from mastodon import Mastodon
-from mastodon.errors import MastodonError
+from mastodon.errors import (
+    MastodonError,
+    MastodonNetworkError,
+    MastodonUnauthorizedError,
+)
 
 from digest.api import fetch_posts_and_boosts
 from digest.models import Post
@@ -19,6 +26,14 @@ from digest.thresholds import Threshold
 logger = logging.getLogger(__name__)
 
 
+class UnauthorizedError(Exception):
+    pass
+
+
+class InvalidURLError(Exception):
+    pass
+
+
 @dataclass
 class Digest:
     ok: bool = False
@@ -26,10 +41,6 @@ class Digest:
     posts: list[Post] = field(default_factory=list)
     boosts: list[Post] = field(default_factory=list)
     rendered_at: datetime = None
-
-
-class ProfileParseError(Exception):
-    pass
 
 
 def _get_scorer(scorer_name: str) -> Scorer:
@@ -47,42 +58,20 @@ def _get_scorer(scorer_name: str) -> Scorer:
     raise Exception("Unknown scorer")
 
 
-def _parse_profile(profile: str) -> tuple[str, str]:
-    """Parse the profile into base url and username."""
+def _clean_url(url: str) -> str:
+    """Cleans the url to make sure it is usable as a base URL for the mastodon.py."""
 
-    base_url = ""
-    username = ""
-    profile = profile.strip()
+    if not url.startswith("http://") and not url.startswith("https://"):
+        url = f"https://{url}"
 
-    if profile.startswith("@") and len(profile.split("@")) == 3:
-        # Handle @username@mastodon.social
-        (
-            _,
-            username,
-            base_url,
-        ) = profile.split("@")
+    try:
+        URLValidator(schemes=["http", "https"])(url)
+    except ValidationError as e:
+        raise InvalidURLError("Invalid URL") from e
 
-        username = f"@{username}"
-        base_url = f"https://{base_url}"
-    elif profile.startswith("https://") and len(profile.split("/@")) == 2:
-        # Handle https://mastodon.social/@username
-        (
-            base_url,
-            username,
-        ) = profile.split("/@")
+    url = urlparse(url).hostname
 
-        if username and not username.startswith("@"):
-            username = f"@{username}"
-    else:
-        raise ProfileParseError("Profile could not be parsed")
-
-    if not base_url.startswith("https://"):
-        raise ProfileParseError("URL must start with https://")
-
-    if "." not in base_url:
-        raise ProfileParseError("URL is invalid")
-
-    return (base_url, username)
+    return url
 
 
 def build_digest(
@@ -90,18 +79,17 @@ def build_digest(
     scorer_name: str,
     threshold_name: str,
     timeline: str,
-    profile: str,
+    url: str,
     token: str,
 ) -> Digest:
     """Creates a digest of popular posts and boosts the user has not interacted with."""
 
-    (base_url, username) = _parse_profile(profile)
-
     hours = int(hours)
     scorer = _get_scorer(scorer_name)
     threshold = Threshold[threshold_name.upper()]
+    url = _clean_url(url)
 
-    logger.debug(f"Building digest from the past {hours} hours for {username}")
+    logger.debug(f"Building digest for the past {hours} hours")
 
     digest = Digest()
 
@@ -109,12 +97,25 @@ def build_digest(
     try:
         mastodon = Mastodon(
             access_token=token,
-            api_base_url=base_url,
+            api_base_url=url,
         )
 
+        logger.debug("Mastodon API initialized")
+
+        # 2. Fetch all the posts and boosts from our home timeline
+        (posts, boosts) = fetch_posts_and_boosts(mastodon, timeline, hours)
+
+        logger.debug("Posts and boosts fetched")
+
         digest.ok = True
+    except MastodonUnauthorizedError as e:
+        # `MastodonError` has multiple args so grab the last one
+        raise UnauthorizedError(e.args[-1:][0]) from e
+    except MastodonNetworkError as e:
+        # `MastodonError` has multiple args so grab the last one
+        raise InvalidURLError("Invalid URL") from e
     except MastodonError as e:
-        # MastodonError has multiple args so grab the last one
+        # `MastodonError` has multiple args so grab the last one
         digest.error = e.args[-1:][0]
     except Exception as e:
         digest.error = str(e)
@@ -122,19 +123,12 @@ def build_digest(
     if digest.ok is False:
         return digest
 
-    logger.debug("Mastodon API initialized")
-
-    # 2. Fetch all the posts and boosts from our home timeline
-    (posts, boosts) = fetch_posts_and_boosts(hours, mastodon, username, timeline)
-
-    logger.debug("Posts and boosts fetched")
-
     # 3. Score them and return those that meet our threshold
     threshold_posts = threshold.posts_meeting_criteria(posts, scorer)
     threshold_boosts = threshold.posts_meeting_criteria(boosts, scorer)
 
     for post in threshold_posts + threshold_boosts:
-        post.set_base_url(base_url)
+        post.set_base_url(url)
 
     logger.debug("Posts and boosts scored")
 
