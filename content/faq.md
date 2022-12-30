@@ -4,9 +4,9 @@ template: www/base.html
 
 ## How do I generate a token?
 
-To authorize `fediview` to look at your timeline and build the digest it requires an API token. You can remove this token at any time.
+To authorize `fediview` to look at your timeline and build the digest it requires an `Application Token`. You can remove this token at any time.
 
-To generate a token: 
+To generate a token:
 1. Login to your Mastodon instance
 1. Click on the *Edit profile* link
 1. Click on *Development* in the sidebar navigation
@@ -36,7 +36,7 @@ No data is currently persisted to a database or disk.
 
 The [code for this website is open-source](https://github.com/adamghill/fediview) and you can inspect it to make sure I am not doing anything shady. I include the currently deployed version of the site in the footer.
 
-You can also run this website for your personal use or use the [original offline-only script](https://github.com/hodgesmr/mastodon_digest), although I will continue to make additional enhancements to the original script.
+You can also run this website for your personal use or use the [original offline-only script](https://github.com/hodgesmr/mastodon_digest), although I am planning on adding some enhancements to the original script.
 
 ## Where can I ask for a feature, report a bug, or send accolades?
 
