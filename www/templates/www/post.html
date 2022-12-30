@@ -9,18 +9,27 @@
 
     <div class="status">
         <div class="user">
-            {% if post.account.display_name %}
-            <a target="_blank" href="{{ post.account.url }}">
-                <span class="displayname">{{ post.account.display_name|safe }}</span>
-            </a>
-            <a target="_blank" href="{{ post.account.url }}">
-                <span class="username">@{{ post.account.username }}</span>
-            </a>
-            {% else %}
-            <a target="_blank" href="{{ post.account.url }}" style="margin-top: 10px;">
-                <span class="displayname">@{{ post.account.username }}</span>
-            </a>
-            {% endif %}
+            <div class="name">
+                {% if post.account.display_name %}
+                <a target="_blank" href="{{ post.account.url }}">
+                    <span class="displayname">{{ post.account.display_name|safe }}</span>
+                </a>
+                <a target="_blank" href="{{ post.account.url }}">
+                    <span class="username">@{{ post.account.username }}</span>
+                </a>
+                {% else %}
+                <a target="_blank" href="{{ post.account.url }}" style="margin-top: 10px;">
+                    <span class="displayname">@{{ post.account.username }}</span>
+                </a>
+                {% endif %}
+            </div>
+            <div>
+                {% if not post.account.is_following %}
+                <a href="{{ url }}/@{{ post.account.acct }}" target="_blank">
+                    <button>Follow</button>
+                </a>
+                {% endif %}
+            </div>
         </div>
 
         <div class="status_content">

@@ -96,10 +96,18 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
 }
 
+.user {
+    display: flex;
+}
+
 .user a {
     display: flex;
     flex-wrap: wrap;
     flex-direction: column
+}
+
+.user .name {
+    flex: 1 0 auto;
 }
 
 .username {
@@ -185,10 +193,6 @@ a.mention,
     flex-direction: row;
     font-size: .8em;
     opacity: .7;
-}
-
-.post .footer div {
-    padding-right: 1em;
 }
 
 footer {

@@ -33,10 +33,21 @@ def _format_display_name(display_name: str, emojis: list) -> str:
 
 class Account:
     additional_posts: list["Post"]
+    follows: list["Account"]
+    _is_following: bool = None
 
     def __init__(self, data: dict):
         self._data = data
         self.additional_posts = []
+        self.follows = []
+
+    @property
+    def is_following(self):
+        return self._is_following
+
+    @is_following.setter
+    def is_following(self, val):
+        self._is_following = val
 
     @property
     def id(self) -> int:
@@ -72,10 +83,16 @@ class Account:
 
     @property
     def url(self) -> str:
-        return self._data["url"]
+        return self._data["url"].lower()
 
     def add_additional_post(self, post: "Post") -> None:
         self.additional_posts.append(post)
+
+    def add_follows(self, accounts: list[dict]) -> None:
+        self.follows = []
+
+        for data in accounts:
+            self.follows.append(Account(data))
 
 
 class Post:
@@ -89,17 +106,17 @@ class Post:
     def set_base_url(self, base_url: str) -> None:
         self.base_url = base_url
 
+    def get_score(self, scorer: "Scorer") -> float:
+        self._score = scorer.score(self)
+
+        return self._score
+
     @property
     def home_url(self) -> str:
         if self.base_url is None:
             raise Exception("Post does not have a base_url")
 
         return f"{self.base_url}/@{self.account.acct}/{self.id}"
-
-    def get_score(self, scorer: "Scorer") -> float:
-        self._score = scorer.score(self)
-
-        return self._score
 
     @property
     def score(self) -> float:

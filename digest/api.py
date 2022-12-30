@@ -7,13 +7,12 @@ from digest.models import Account, Post
 
 def fetch_posts_and_boosts(
     mastodon: Mastodon,
+    logged_in_account: Account,
     timeline: str,
     hours: int,
     limit: int = 1000,
 ) -> tuple[list[Post], list[Post]]:
     """Fetches posts from the home timeline that the account hasn't interacted with."""
-
-    logged_in_account = Account(mastodon.me())
 
     # First, get our filters
     filters = mastodon.filters()
@@ -68,7 +67,7 @@ def fetch_posts_and_boosts(
                 post = post["reblog"]  # look at the boosted post
                 is_boosted = True
 
-            post = Post(post)  # wrap the post data as a Post
+            post = Post(post)  # wrap the post data as a `Post`
 
             if post.url not in seen_post_urls:
                 # Ignore logged-in user's posts or posts they've interacted with
@@ -76,8 +75,7 @@ def fetch_posts_and_boosts(
                     not post.reblogged
                     and not post.favourited
                     and not post.bookmarked
-                    and post.account.acct.strip().lower()
-                    != logged_in_account.acct.strip().lower()
+                    and post.account.url != logged_in_account.url
                 ):
                     # Append to either the boosts list or the posts lists
                     if is_boosted:

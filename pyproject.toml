@@ -95,6 +95,9 @@ show_missing = true
 skip_covered = true
 skip_empty = true
 
+[tool.poe]
+envfile = ".env"
+
 [tool.poe.tasks]
 r = { cmd = "./manage.py runserver 0:8777", help = "Start dev server" }
 mm = { cmd = "./manage.py makemigrations", help = "Make migrations" }

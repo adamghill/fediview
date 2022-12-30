@@ -13,7 +13,7 @@ from mastodon.errors import (
 )
 
 from digest.api import fetch_posts_and_boosts
-from digest.models import Post
+from digest.models import Account, Post
 from digest.scorers import (
     ExtendedSimpleScorer,
     ExtendedSimpleWeightedScorer,
@@ -36,6 +36,8 @@ class InvalidURLError(Exception):
 
 @dataclass
 class Digest:
+    """Includes all the digest information."""
+
     ok: bool = False
     error: str = ""
     posts: list[Post] = field(default_factory=list)
@@ -74,6 +76,17 @@ def _clean_url(url: str) -> str:
     return url
 
 
+def _add_following_to_account(mastodon, account) -> None:
+    """Add accounts that the specified account is following to `Account`."""
+
+    response = mastodon.account_following(account.id, limit=80)
+
+    # This could take a long time if the account is following a lot of accounts
+    following_accounts = mastodon.fetch_remaining(response)
+
+    account.add_follows(following_accounts)
+
+
 def build_digest(
     hours: str,
     scorer_name: str,
@@ -102,8 +115,15 @@ def build_digest(
 
         logger.debug("Mastodon API initialized")
 
+        logged_in_account = Account(mastodon.me())
+        _add_following_to_account(mastodon, logged_in_account)
+
+        logger.debug("User followings retrieved")
+
         # 2. Fetch all the posts and boosts from our home timeline
-        (posts, boosts) = fetch_posts_and_boosts(mastodon, timeline, hours)
+        (posts, boosts) = fetch_posts_and_boosts(
+            mastodon, logged_in_account, timeline, hours
+        )
 
         logger.debug("Posts and boosts fetched")
 
@@ -123,14 +143,20 @@ def build_digest(
     if digest.ok is False:
         return digest
 
-    # 3. Score them and return those that meet our threshold
+    # 3. Score posts and return those that meet our threshold
     threshold_posts = threshold.posts_meeting_criteria(posts, scorer)
     threshold_boosts = threshold.posts_meeting_criteria(boosts, scorer)
+
+    logger.debug("Posts and boosts scored")
 
     for post in threshold_posts + threshold_boosts:
         post.set_base_url(mastodon.api_base_url)
 
-    logger.debug("Posts and boosts scored")
+        post.account.is_following = timeline == "home" or any(
+            post.account.url == a.url for a in logged_in_account.follows
+        )
+
+    logger.debug("Post metadata is updated")
 
     # 4. Get unique posts from unique accounts
     # unique_account_posts = []
