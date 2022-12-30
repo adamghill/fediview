@@ -63,7 +63,11 @@
     </table>
 
     <div u:loading.remove style="padding-top: 10px; text-align: center;">
-        <button u:click="get_results">Get Popular Toots</button>
+        <input type="checkbox" id="saveInput" name="saveInput" checked>
+        <label for="saveInput">Save my Instance and Token in my browser</label>
+    </div>
+    <div u:loading.remove style="padding-top: 10px; text-align: center;">
+        <button u:click="get_results" id="getPopularToots">Get Popular Toots</button>
     </div>
     <div u:loading style="padding-top: 10px; text-align: center;">
         <em>Building digest... this might take a few seconds...</em>
@@ -143,3 +147,32 @@
     </script>
     {% endif %}
 </div>
+<script>
+    let loadInputs = function() {
+        const url = localStorage.getItem('url');
+        if (url) {
+            document.getElementById('url').value = url;
+        }
+
+        const token = localStorage.getItem('token');
+        if (token) {
+            document.getElementById('token').value = token;
+        }
+    };
+
+    let saveInputs = function() {
+        const checked = document.getElementById('saveInput').checked;
+        if (checked) {
+            localStorage.setItem('url', document.getElementById('url').value);
+            localStorage.setItem('token', document.getElementById('token').value);
+        } else {
+            localStorage.removeItem('url');
+            localStorage.removeItem('token');
+        }
+    };
+    window.addEventListener('load', function (event) {
+        loadInputs();
+        document.getElementById('saveInput').addEventListener('change', saveInputs);
+        document.getElementById('getPopularToots').addEventListener('click', saveInputs);
+    });
+</script>
