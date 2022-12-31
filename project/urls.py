@@ -1,4 +1,4 @@
-from django.urls import include, path, re_path
+from django.urls import include, path
 from fbv.views import favicon_emoji, favicon_file
 
 from www import urls as www_urls
