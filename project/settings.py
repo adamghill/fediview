@@ -151,7 +151,7 @@ LOGGING = {
         "PytzUsageWarning": {"handlers": ["null"]},
         # "django.server": {"handlers": ["console"], "level": "WARNING"},
         "django.server": {"handlers": ["django_rich_logging"], "level": "INFO"},
-        "django.request": {"level": "CRITICAL"},
+        "django.request": {"level": "INFO"},
     },
 }
 COLTRANE = {"MARKDOWN_RENDERER": "mistune"}
