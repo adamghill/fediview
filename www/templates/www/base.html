@@ -35,6 +35,12 @@
                 <a href="/">Home</a>
                 {% endif %} |
 
+                {% if request.path == '/changelog' %}
+                Changelog
+                {% else %}
+                <a href="{% url 'coltrane:content' 'changelog' %}">Changelog</a>
+                {% endif %} |
+
                 {% if request.path == '/faq' %}
                 FAQ
                 {% else %}
