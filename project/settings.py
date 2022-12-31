@@ -112,6 +112,8 @@ UNICORN = {
     "RELOAD_SCRIPT_ELEMENTS": True,
 }
 
+ANALYTICS_HTML = getenv("ANALYTICS_HTML")
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

@@ -30,7 +30,7 @@ My only hope is to provide more ways to find content on Mastodon -- not to sell 
 
 ## What data do you store?
 
-No data is currently persisted to a database or disk.
+No data is currently persisted to a database or disk. I do use third-party, privacy-respecting analytics websites to get a sense of traffic patterns.
 
 ## Why can I trust you?
 
