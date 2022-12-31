@@ -63,7 +63,11 @@
     </table>
 
     <div u:loading.remove style="padding-top: 10px; text-align: center;">
-        <button u:click="get_results">Get Popular Toots</button>
+        <input type="checkbox" id="saveInputs" name="saveInputs">
+        <label for="saveInputs">Save URL and Token in this browser</label>
+    </div>
+    <div u:loading.remove style="padding-top: 10px; text-align: center;">
+        <button u:click="get_results" id="getPopularToots">Get Popular Toots</button>
     </div>
     <div u:loading style="padding-top: 10px; text-align: center;">
         <em>Building digest... this might take a few seconds...</em>
@@ -142,4 +146,46 @@
         const lightbox = GLightbox({});
     </script>
     {% endif %}
+
+    <script>
+        const elementIds = ['url', 'token', ];
+        const saveInputsId = 'saveInputs';
+
+        let loadInputs = function () {
+            elementIds.forEach(function (id) {
+                const val = localStorage.getItem(id);
+
+                if (val) {
+                    document.getElementById(id).value = val;
+                }
+            });
+
+            const saveInput = localStorage.getItem(saveInputsId);
+
+            if (saveInput) {
+                document.getElementById(saveInputsId).checked = JSON.parse(saveInput);
+            }
+        };
+
+        let saveInputs = function () {
+            const isChecked = document.getElementById(saveInputsId).checked;
+
+            elementIds.forEach(function (id) {
+                if (isChecked) {
+                    localStorage.setItem(id, document.getElementById(id).value);
+                } else {
+                    localStorage.removeItem(id);
+                }
+            });
+
+            localStorage.setItem(saveInputsId, JSON.stringify(isChecked));
+        };
+
+        window.addEventListener('load', function (event) {
+            loadInputs();
+
+            document.getElementById(saveInputsId).addEventListener('change', saveInputs);
+            document.getElementById('getPopularToots').addEventListener('click', saveInputs);
+        });
+    </script>
 </div>
