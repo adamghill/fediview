@@ -13,7 +13,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
 ]
 
-INSTALLED_APPS = [
+DJANGO_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -21,11 +21,20 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+]
+
+THIRD_PARTY_APPS = [
+    "compressor",
     "coltrane",
     "django_unicorn",
+]
+
+INTERNAL_APPS = [
     "unicorn",
     "www",
 ]
+
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + INTERNAL_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -100,9 +109,21 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "compressor.finders.CompressorFinder",
 )
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATICFILES_DIRS = (BASE_DIR / "static",)
+
+COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = False
+COMPRESS_CACHEABLE_PRECOMPILERS = ("text/javascript",)
+COMPRESS_PRECOMPILERS = ()
+COMPRESS_CSS_HASHING_METHOD = "content"
+COMPRESS_CSS_FILTERS = [
+    "compressor.filters.css_default.CssRelativeFilter",
+    "compressor.filters.cssmin.rCSSMinFilter",
+]
+COMPRESS_STORAGE = "compressor.storage.GzipCompressorFileStorage"
 
 APPEND_SLASH = False
 
@@ -173,6 +194,8 @@ if ENVIRONMENT == "live":
     DEBUG = False
     ALLOWED_HOSTS = getenv("ALLOWED_HOSTS", "").split(",")
     CSRF_TRUSTED_ORIGINS = [f"https://{h}" for h in ALLOWED_HOSTS]
+
+    COMPRESS_OFFLINE = True
 
     CACHES = {
         "default": {

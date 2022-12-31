@@ -1,30 +1,17 @@
 {% extends 'www/base.html' %}
-{% load cache static unicorn %}
+{% load cache compress static unicorn %}
 
 
 {% block css %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
-
-<style>
-    [unicorn\:error\:invalid] {
-        border: 1px solid red !important;
-    }
-
-    [unicorn\:error\:required] {
-        border: 1px solid red !important;
-    }
-</style>
 {% endblock css %}
 
 {% block js %}
 {% unicorn_scripts %}
 
 <script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
-{% endblock js %}
 
-{% block content %}
-{% unicorn 'timeline' %}
-
+{% compress js %}
 <script>
     window.addEventListener("load", function (event) {
         var hours = document.getElementById("hours");
@@ -38,4 +25,51 @@
         }
     });
 </script>
+
+<script>
+    const elementIds = ['url', 'token', ];
+    const saveInputsId = 'saveInputs';
+
+    let loadInputs = function () {
+        elementIds.forEach(function (id) {
+            const val = localStorage.getItem(id);
+
+            if (val) {
+                document.getElementById(id).value = val;
+            }
+        });
+
+        const saveInput = localStorage.getItem(saveInputsId);
+
+        if (saveInput) {
+            document.getElementById(saveInputsId).checked = JSON.parse(saveInput);
+        }
+    };
+
+    let saveInputs = function () {
+        const isChecked = document.getElementById(saveInputsId).checked;
+
+        elementIds.forEach(function (id) {
+            if (isChecked) {
+                localStorage.setItem(id, document.getElementById(id).value);
+            } else {
+                localStorage.removeItem(id);
+            }
+        });
+
+        localStorage.setItem(saveInputsId, JSON.stringify(isChecked));
+    };
+
+    window.addEventListener('load', function (event) {
+        loadInputs();
+
+        document.getElementById(saveInputsId).addEventListener('change', saveInputs);
+        document.getElementById('getPopularToots').addEventListener('click', saveInputs);
+    });
+</script>
+{% endcompress %}
+{% endblock js %}
+
+{% block content %}
+{% unicorn 'timeline' %}
 {% endblock content %}

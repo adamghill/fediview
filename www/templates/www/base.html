@@ -1,4 +1,4 @@
-{% load cache git static unicorn %}
+{% load cache compress git static unicorn %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,8 +7,11 @@
     <meta chartset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>fediview</title>
+
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/marx.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% endcompress %}
 
     {% if not DEBUG %}
     {{ ANALYTICS_HTML|safe }}

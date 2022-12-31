@@ -296,3 +296,11 @@ code {
 .post.additional {
     margin-top: 0;
 } */
+
+[unicorn\:error\:invalid] {
+    border: 1px solid red !important;
+}
+
+[unicorn\:error\:required] {
+    border: 1px solid red !important;
+}
