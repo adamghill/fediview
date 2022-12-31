@@ -31,7 +31,6 @@ coltrane = { version = "^0.22.0", extras = ["mistune"]}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7"
-poethepoet = "^0"
 black = "^22"
 isort = "^5"
 ruff = "^0"
