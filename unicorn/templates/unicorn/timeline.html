@@ -64,7 +64,7 @@
 
     <div u:loading.remove style="padding-top: 10px; text-align: center;">
         <input type="checkbox" id="saveInputs" name="saveInputs">
-        <label for="saveInputs">Save my Instance and Token in my browser</label>
+        <label for="saveInputs">Save URL and Token in this browser</label>
     </div>
     <div u:loading.remove style="padding-top: 10px; text-align: center;">
         <button u:click="get_results" id="getPopularToots">Get Popular Toots</button>
@@ -146,43 +146,46 @@
         const lightbox = GLightbox({});
     </script>
     {% endif %}
+
+    <script>
+        const elementIds = ['url', 'token', ];
+        const saveInputsId = 'saveInputs';
+
+        let loadInputs = function () {
+            elementIds.forEach(function (id) {
+                const val = localStorage.getItem(id);
+
+                if (val) {
+                    document.getElementById(id).value = val;
+                }
+            });
+
+            const saveInput = localStorage.getItem(saveInputsId);
+
+            if (saveInput) {
+                document.getElementById(saveInputsId).checked = JSON.parse(saveInput);
+            }
+        };
+
+        let saveInputs = function () {
+            const isChecked = document.getElementById(saveInputsId).checked;
+
+            elementIds.forEach(function (id) {
+                if (isChecked) {
+                    localStorage.setItem(id, document.getElementById(id).value);
+                } else {
+                    localStorage.removeItem(id);
+                }
+            });
+
+            localStorage.setItem(saveInputsId, JSON.stringify(isChecked));
+        };
+
+        window.addEventListener('load', function (event) {
+            loadInputs();
+
+            document.getElementById(saveInputsId).addEventListener('change', saveInputs);
+            document.getElementById('getPopularToots').addEventListener('click', saveInputs);
+        });
+    </script>
 </div>
-<script>
-    const urlID = 'url';
-    const tokenID = 'token';
-    const saveInputsID = 'saveInputs';
-
-    let loadInputs = function() {
-        const url = localStorage.getItem(urlID);
-        if (url) {
-            document.getElementById(urlID).value = url;
-        }
-
-        const token = localStorage.getItem(tokenID);
-        if (token) {
-            document.getElementById(tokenID).value = token;
-        }
-
-        const saveInput = localStorage.getItem(saveInputsID);
-        if (saveInput) {
-            document.getElementById(saveInputsID).checked = JSON.parse(saveInput);
-        }
-    };
-
-    let saveInputs = function() {
-        const checked = document.getElementById(saveInputsID).checked;
-        if (checked) {
-            localStorage.setItem(urlID, document.getElementById(urlID).value);
-            localStorage.setItem(tokenID, document.getElementById(tokenID).value);
-        } else {
-            localStorage.removeItem(urlID);
-            localStorage.removeItem(tokenID);
-        }
-        localStorage.setItem(saveInputsID, JSON.stringify(checked));
-    };
-    window.addEventListener('load', function (event) {
-        loadInputs();
-        document.getElementById(saveInputsID).addEventListener('change', saveInputs);
-        document.getElementById('getPopularToots').addEventListener('click', saveInputs);
-    });
-</script>
