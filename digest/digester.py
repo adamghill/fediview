@@ -14,14 +14,8 @@ from mastodon.errors import (
 
 from digest.api import fetch_posts_and_boosts
 from digest.models import Account, Post
-from digest.scorers import (
-    ExtendedSimpleScorer,
-    ExtendedSimpleWeightedScorer,
-    Scorer,
-    SimpleScorer,
-    SimpleWeightedScorer,
-)
-from digest.thresholds import Threshold
+from digest.scorers import get_scorer_from_name
+from digest.thresholds import get_threshold_from_name
 
 logger = logging.getLogger(__name__)
 
@@ -43,21 +37,6 @@ class Digest:
     posts: list[Post] = field(default_factory=list)
     boosts: list[Post] = field(default_factory=list)
     rendered_at: datetime = None
-
-
-def _get_scorer(scorer_name: str) -> Scorer:
-    """Converts the name of a scorer into a class."""
-
-    if scorer_name == "Simple":
-        return SimpleScorer
-    elif scorer_name == "SimpleWeighted":
-        return SimpleWeightedScorer
-    elif scorer_name == "ExtendedSimple":
-        return ExtendedSimpleScorer
-    elif scorer_name == "ExtendedSimpleWeighted":
-        return ExtendedSimpleWeightedScorer
-
-    raise Exception("Unknown scorer")
 
 
 def _clean_url(url: str) -> str:
@@ -98,8 +77,8 @@ def build_digest(
     """Creates a digest of popular posts and boosts the user has not interacted with."""
 
     hours = int(hours)
-    scorer = _get_scorer(scorer_name)
-    threshold = Threshold[threshold_name.upper()]
+    scorer = get_scorer_from_name(scorer_name)
+    threshold = get_threshold_from_name(threshold_name)
     url = _clean_url(url)
 
     logger.debug(f"Building digest for the past {hours} hours")

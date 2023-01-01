@@ -28,6 +28,13 @@ On the other hand, this website is completely separate from Mastodon and not pus
 
 My only hope is to provide more ways to find content on Mastodon -- not to sell ads.
 
+## What are the available algorithms?
+
+- **Simple**: Weighted geometric mean of a post's boosts and favorites.
+- **Simple Weighted**: Weighted geometric mean of a post's boosts and favorites where accounts with less followers are prioritized.
+- **Extended Simple**: Weighted geometric mean of a post's boosts, favorites, and replies.
+- **Extended Simple Weighted**: Weighted geometric mean of a post's boosts, favorites, and replies where accounts with less followers are prioritized.
+
 ## What data do you store?
 
 No data is currently persisted to a database or disk. I do use third-party, privacy-respecting analytics websites to get a sense of traffic patterns. *Instance URL* and *Application Token* can optionally be stored in the user's browser by explicitly opting in.

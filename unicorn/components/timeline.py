@@ -8,7 +8,7 @@ from digest.digester import Digest, InvalidURLError, UnauthorizedError, build_di
 
 class TimelineView(UnicornView):
     hours: str = "2"
-    scorer: str = "Simple"
+    scorer: str = "SimpleWeighted"
     threshold: str = "normal"
     timeline: str = "home"  # TODO: Support hashtag:tagName, list:list-name
     url: str = ""
