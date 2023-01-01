@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {% endcompress %}
 
-    {% if not DEBUG %}
+    {% if not debug %}
     {{ ANALYTICS_HTML|safe }}
     {% endif %}
 

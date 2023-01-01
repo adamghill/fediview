@@ -13,6 +13,8 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
 ]
 
+INTERNAL_IPS = ALLOWED_HOSTS
+
 DJANGO_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
