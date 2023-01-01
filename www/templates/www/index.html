@@ -19,9 +19,7 @@
 
         // Update the current slider value (each time you drag the slider handle)
         hours.oninput = function () {
-            var val = this.value;
-
-            hoursValue.innerHTML = val;
+            hoursValue.innerHTML = this.value;
         }
     });
 </script>
@@ -63,8 +61,20 @@
     window.addEventListener('load', function (event) {
         loadInputs();
 
-        document.getElementById(saveInputsId).addEventListener('change', saveInputs);
-        document.getElementById('getPopularToots').addEventListener('click', saveInputs);
+        document.getElementById(saveInputsId).addEventListener('change', function () {
+            if (typeof (panelbear) !== "undefined") {
+                panelbear("track", "save-url-and-token");
+            }
+
+            saveInputs();
+        });
+        document.getElementById('getPopularToots').addEventListener('click', function () {
+            if (typeof (panelbear) !== "undefined") {
+                panelbear("track", "get-popular-toots");
+            }
+
+            saveInputs();
+        });
     });
 </script>
 {% endcompress %}

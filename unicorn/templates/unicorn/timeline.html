@@ -63,11 +63,13 @@
     </table>
 
     <div u:loading.remove style="padding-top: 10px; text-align: center;">
-        <input type="checkbox" id="saveInputs" name="saveInputs">
+        <input type="checkbox" id="saveInputs" name="saveInputs" class="plausible-event-name=save-url-and-token">
         <label for="saveInputs">Save URL and Token in this browser</label>
     </div>
     <div u:loading.remove style="padding-top: 10px; text-align: center;">
-        <button u:click="get_results" id="getPopularToots">Get Popular Toots</button>
+        <button u:click="get_results" id="getPopularToots" class="plausible-event-name=get-popular-toots">
+            Get Popular Toots
+        </button>
     </div>
     <div u:loading style="padding-top: 10px; text-align: center;">
         <em>Building digest... this might take a few seconds...</em>
