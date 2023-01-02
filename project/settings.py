@@ -1,6 +1,7 @@
 from os import getenv
-import dj_database_url
 from pathlib import Path
+
+import dj_database_url
 
 ENVIRONMENT = getenv("ENVIRONMENT", "dev")
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,6 +31,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "compressor",
     "coltrane",
+    "django_rq",
     "django_unicorn",
 ]
 
@@ -100,7 +102,13 @@ CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "LOCATION": "unique-snowflake",
-    }
+    },
+}
+
+RQ = {"WORKER_CLASS": "rq.SimpleWorker"}
+
+RQ_QUEUES = {
+    "default": {"URL": getenv("REDIS_URL"), "ASYNC": True},
 }
 
 STATIC_URL = "static/"
@@ -132,7 +140,13 @@ UNICORN = {
     "RELOAD_SCRIPT_ELEMENTS": True,
 }
 
+COLTRANE = {"MARKDOWN_RENDERER": "mistune"}
+
+GIT_VERSION = getenv("CAPROVER_GIT_COMMIT_SHA")
+
 ANALYTICS_HTML = getenv("ANALYTICS_HTML")
+ADMIN_SITE_BASE_URL = getenv("ADMIN_SITE_BASE_URL", "admin")
+DJANGO_RQ_SITE_BASE_URL = getenv("DJANGO_RQ_SITE_BASE_URL", "django-rq")
 
 LOGGING = {
     "version": 1,
@@ -174,9 +188,6 @@ LOGGING = {
         "django.request": {"level": "INFO"},
     },
 }
-COLTRANE = {"MARKDOWN_RENDERER": "mistune"}
-
-GIT_VERSION = getenv("CAPROVER_GIT_COMMIT_SHA")
 
 
 if ENVIRONMENT == "live":
@@ -202,6 +213,12 @@ if ENVIRONMENT == "live":
             "LOCATION": getenv("REDIS_URL"),
         }
     }
+
+    # Use the typical worker
+    RQ = {"WORKER_CLASS": "rq.Worker"}
+
+    # Make that RQ is async
+    RQ_QUEUES["default"]["ASYNC"] = True
 
     LOGGING = {
         "version": 1,

@@ -480,6 +480,27 @@ rich = ">=11.2.0,<12.0.0"
 docs = ["Sphinx (>=4.3.2,<5.0.0)", "attrs (>=21.4.0,<22.0.0)", "furo (>=2021.11.23,<2022.0.0)", "linkify-it-py (>=1.0.3,<2.0.0)", "myst-parser (>=0.16.1,<0.17.0)", "sphinx-autobuild (>=2021.3.14,<2022.0.0)", "sphinx-copybutton (>=0.4.0,<0.5.0)", "toml"]
 
 [[package]]
+name = "django-rq"
+version = "2.6.0"
+description = "An app that provides django integration for RQ (Redis Queue)"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-rq-2.6.0.tar.gz", hash = "sha256:f03b1eb68afe218175989c14b1266c7b446d5152f629888a078d0022059b255e"},
+    {file = "django_rq-2.6.0-py2.py3-none-any.whl", hash = "sha256:b1964ad656ae103d8b4714f8745e739586917b126f02c844791d9059940b01a0"},
+]
+
+[package.dependencies]
+django = ">=2.0"
+redis = ">=3"
+rq = ">=1.2"
+
+[package.extras]
+sentry = ["raven (>=6.1.0)"]
+testing = ["mock (>=2.0.0)"]
+
+[[package]]
 name = "django-unicorn"
 version = "0.49.2"
 description = "A magical full-stack framework for Django."
@@ -1544,6 +1565,22 @@ files = [
 ]
 
 [[package]]
+name = "rq"
+version = "1.11.1"
+description = "RQ is a simple, lightweight, library for creating background jobs, and processing them."
+category = "main"
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "rq-1.11.1-py2.py3-none-any.whl", hash = "sha256:433882bde50ac462eb489dc1ffa476209c42b284d0031270631da26363923702"},
+    {file = "rq-1.11.1.tar.gz", hash = "sha256:31c07e55255bdc05c804902d4e15779185603b04b9161b43c3e7bcac84b3343b"},
+]
+
+[package.dependencies]
+click = ">=5.0.0"
+redis = ">=3.5.0"
+
+[[package]]
 name = "ruff"
 version = "0.0.205"
 description = "An extremely fast Python linter, written in Rust."
@@ -1829,4 +1866,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "f87976eb7e9dcd3dd2a40b772b294044740209cb39830097086932d178d58297"
+content-hash = "1bb5d4ef14053c9f450b1990ef436ccae6ebaab9ccfa1fdbe23e8dd354a6b2a7"

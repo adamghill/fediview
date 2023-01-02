@@ -12,8 +12,8 @@ python manage.py compress --force
 echo "Collect static files (part 2)..."
 python manage.py collectstatic --noinput
 
-# echo "Migrate database..."
-# python manage.py migrate
+echo "Migrate database..."
+python manage.py migrate
 
 echo "Start gunicorn..."
 gunicorn project.wsgi --config="gunicorn.conf.py"

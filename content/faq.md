@@ -35,19 +35,22 @@ My only hope is to provide more ways to find content on Mastodon -- not to sell 
 - **Extended Simple**: Weighted geometric mean of a post's boosts, favorites, and replies.
 - **Extended Simple Weighted**: Weighted geometric mean of a post's boosts, favorites, and replies where accounts with less followers are prioritized.
 
+## Where can I ask for a feature, report a bug, or send accolades?
+
+Feel free to DM me [@adamghill](https://indieweb.social/@adamghill) or start a [GitHub discussion](https://github.com/adamghill/fediview/discussions).
+
 ## What data do you store?
 
-No data is currently persisted to a database or disk. I do use third-party, privacy-respecting analytics websites to get a sense of traffic patterns. *Instance URL* and *Application Token* can optionally be stored in the user's browser by explicitly opting in.
+- No personalized data is currently persisted to a database.
+- A background worker is used to create personalized timelines so those are cached in `redis`. They get removed after 5 minutes.
+- Third-party, privacy-respecting analytics services are used to get a sense of traffic patterns.
+- *Instance URL* and *Application Token* can optionally be stored in the user's browser by explicitly opting in.
 
 ## Why can I trust you?
 
 The [code for this website is open-source](https://github.com/adamghill/fediview) and you can inspect it to make sure I am not doing anything shady. I include the currently deployed version of the site in the footer.
 
-You can also run this website for your personal use or use the [original offline-only script](https://github.com/hodgesmr/mastodon_digest), although I am planning on adding some enhancements to the original script.
-
-## Where can I ask for a feature, report a bug, or send accolades?
-
-Feel free to DM me [@adamghill](https://indieweb.social/@adamghill) or start a [GitHub discussion](https://github.com/adamghill/fediview/discussions).
+You can also run this website for your personal use or use the [original offline-only script](https://github.com/hodgesmr/mastodon_digest).
 
 ## I really love this tool, how can I help?
 

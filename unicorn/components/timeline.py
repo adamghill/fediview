@@ -1,9 +1,19 @@
+import logging
+from datetime import datetime, timedelta
 from os import getenv
+from time import sleep
 
+import django_rq
 from django.forms import ValidationError
 from django_unicorn.components import UnicornView
+from rq.job import JobStatus
 
 from digest.digester import Digest, InvalidURLError, UnauthorizedError, build_digest
+
+logger = logging.getLogger(__name__)
+
+
+JOB_TIMEOUT = 30
 
 
 class TimelineView(UnicornView):
@@ -48,7 +58,8 @@ class TimelineView(UnicornView):
         digest = Digest()
 
         try:
-            digest = build_digest(
+            job = django_rq.enqueue(
+                build_digest,
                 self.hours,
                 self.scorer,
                 self.threshold,
@@ -56,6 +67,32 @@ class TimelineView(UnicornView):
                 self.url,
                 self.token,
             )
+            logger.info(f"Job enqueued: {job.id}")
+
+            # Job gets put into cancel state when `ASYNC=False` and if
+            # the worker times out
+            JOB_OK_STATES = (
+                JobStatus.FINISHED.value,
+                JobStatus.CANCELED.value,
+            )
+
+            while job.get_status() not in JOB_OK_STATES:
+                sleep(0.5)
+
+                if job.enqueued_at + timedelta(0, JOB_TIMEOUT) < datetime.now():
+                    logger.error(f"Run job manually: {job.id}")
+
+                    # Explicitly run the worker since the job hasn't been picked up, yet
+                    job.perform()
+                    job.cancel()
+
+                    break
+
+            # Job gets put into cancel state when `ASYNC=False` and if
+            # the worker times out, but there should still be a result
+            if job.get_status() in JOB_OK_STATES and job.result:
+                logger.info(f"Job finished: {job.id}")
+                digest = job.result
         except UnauthorizedError as e:
             raise ValidationError({"token": str(e)}, code="invalid") from e
         except InvalidURLError as e:
