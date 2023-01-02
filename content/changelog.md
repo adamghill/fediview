@@ -4,6 +4,10 @@ template: www/base.html
 
 [All commits](https://github.com/adamghill/fediview/commits/main)
 
+## 2023-01-02
+
+Move generating summaries to a background worker.
+
 ## 2022-12-31
 
 - Persist *Instance URL* and *Application Token* to localstorage. [10](https://github.com/adamghill/fediview/pull/10) by [bogosj](https://github.com/bogosj)
