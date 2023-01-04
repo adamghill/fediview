@@ -1,5 +1,6 @@
 ---
 template: www/base.html
+publish_date: 2023-01-02
 ---
 
 # What is Mastodon?
