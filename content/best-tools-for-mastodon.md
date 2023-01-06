@@ -19,6 +19,12 @@ Because `Mastodon` has a robust API anyone can create a different interface for 
 - [Elk](https://elk.zone): A web-only interface for Mastodon that feels very similar to Twitter.
 - [Pinafore](https://pinafore.social): An alternative web client for Mastodon, focused on speed and simplicity.
 - [tooty](https://n1k0.github.io/tooty/): An experimental multi-account Mastodon web client that is all client-side (no server needed!).
+- [Phanpy](https://phanpy.social): A minimalistic opinionated Mastodon web client. Made by [@cheeaun](https://mastodon.social/@cheeaun).
+
+## Desktop clients
+
+- [Whalebird](https://whalebird.social): Slack-like UI for browsing Mastodon.
+- [Sengi](https://nicolasconstant.github.io/sengi/): A multi-account Mastodon desktop client.
 
 ## Misc tools
 
@@ -30,6 +36,8 @@ These social networks bring something unique to your social network by focusing 
 
 - [BookWyrm](https://joinbookwyrm.com): A social network for tracking reading, talking about books, writing reviews, and discovering what to read next. Made by [@tripofmice](https://friend.camp/@tripofmice).
 - [Pixeled](https://pixelfed.org): A network to explore and share beautiful photos and videos.
+
+For a longer list of (more technical) tools for `Mastodon` I have found [this awesome-mastodon fork by hueyy](https://github.com/hueyy/awesome-mastodon) to be the most up-to-date.
 
 <br />
 <center>
