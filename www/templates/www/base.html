@@ -26,45 +26,42 @@
 
 <body>
     {% csrf_token %}
+    <nav>
+        <ul>
+            <li class="brand">
+                🔍 <a href="/" style="color: #4a4a4a;">fediview</a>
+            </li>
+            <li>
+                <a href="{% url 'coltrane:content' 'faq' %}"
+                    class="{% if request.path == '/faq' %}active{% endif %}">FAQ</a>
+            </li>
+            <li>
+                <a href="{% url 'coltrane:content' 'changelog' %}"
+                    class="{% if request.path == '/changelog' %}active{% endif %}">Changelog</a>
+            </li>
+            <li>
+                <a href="https://github.com/adamghill/fediview" target="_blank">Code</a>
+                <span style="color: grey;">⧉</span>
+            </li>
+        </ul>
+    </nav>
 
     <main>
         <header style="border-bottom: dashed 1px; margin-bottom: 3em;">
             <div style="display: flex;">
                 <div style="flex-grow: 1;">
-                    <h1><a href="/" style="color: #4a4a4a">fediview</a></h1>
-                    <h6 style="padding-bottom: 6px;">Aggregate the recent popular<br />posts from your Mastodon timeline
-                    </h6>
+                    <h5>
+                        Aggregate the recent popular<br />
+                        posts from your Mastodon timeline
+                    </h5>
                 </div>
-                <div style="padding-top: 2em;">
+                <div style="padding-top: 1.5em;">
                     <a
                         href="https://www.digitalocean.com/?refcode=617d629f56c0&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img
                             src="https://web-platforms.sfo2.digitaloceanspaces.com/WWW/Badge%203.svg"
                             alt="DigitalOcean Referral Badge" />
                     </a>
                 </div>
-            </div>
-
-            <div style="padding-top: 1em; padding-bottom: 2em; text-align: center;">
-                {% if request.path == '/' %}
-                Home
-                {% else %}
-                <a href="/">Home</a>
-                {% endif %} |
-
-                {% if request.path == '/faq' %}
-                FAQ
-                {% else %}
-                <a href="{% url 'coltrane:content' 'faq' %}">FAQ</a>
-                {% endif %} |
-
-                {% if request.path == '/changelog' %}
-                Changelog
-                {% else %}
-                <a href="{% url 'coltrane:content' 'changelog' %}">Changelog</a>
-                {% endif %} |
-
-                <a href="https://github.com/adamghill/fediview" target="_blank">Code</a>
-                <span style="color: grey;">⧉</span>
             </div>
         </header>
 

@@ -28,13 +28,42 @@ body {
     background-color: var(--background);
     color: var(--text);
     text-align: left;
-    display: flex;
     justify-content: center;
+}
+
+nav {
+    background: #fff;
+    -webkit-box-shadow: 0 1px 2px rgba(99, 114, 130, 0.06),
+        0 3px 6px rgba(27, 39, 51, 0.08);
+    box-shadow: 0 1px 2px rgba(99, 114, 130, 0.06),
+        0 3px 6px rgba(27, 39, 51, 0.08);
+    height: auto;
+    width: 100%;
+}
+
+nav ul {
+    padding-bottom: 8px;
+    padding-top: 8px;
+    margin: 0;
+}
+
+nav li {
+    display: inline;
+    padding: 16px;
+}
+
+nav .brand {
+    font-size: 1.5rem;
+    text-align: center;
+    color: #4a4a4a;
+}
+
+nav a.active {
+    color: #4a4a4a;
 }
 
 label {
     font-variant-caps: all-small-caps;
-    font-size: smaller;
     color: #737373;
 }
 
@@ -208,6 +237,10 @@ footer table tr td {
     width: 33%;
     text-align: left;
     vertical-align: top;
+}
+
+footer table tr td ul {
+    margin-top: .5em;
 }
 
 section.posts  {
