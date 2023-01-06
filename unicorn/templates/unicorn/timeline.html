@@ -13,9 +13,10 @@
             </td>
             <td style="padding-top: 0">
                 <label for="token">Application Token</label>
+                <a href="{% url 'coltrane:content' 'faq' %}#how-do-i-generate-a-token" class="info">ⓘ</a>
                 <input u:model.defer="token" u:keydown.enter="get_results" u:key="token" id="token"></input>
                 <p class="help">
-                    <a href="/faq#how-do-i-generate-a-token">Generate a token</a>: <em>Edit profile</em>
+                    Generate a token: <em>Edit profile</em>
                     -> <em>Development</em> -> <em>New application</em>; only
                     <strong>read</strong> access is required
                 </p>
@@ -35,7 +36,7 @@
             </td>
             <td>
                 <label for="scorer">Algorithm</label>
-                <a href="{% url 'coltrane:content' 'faq' %}#what-are-the-available-algorithms">ⓘ</a>
+                <a href="{% url 'coltrane:content' 'faq' %}#what-are-the-available-algorithms" class="info">ⓘ</a>
                 <select u:model.defer="scorer" id="scorer">
                     <option value="Simple">Simple</option>
                     <option value="SimpleWeighted">Simple Weighted</option>
