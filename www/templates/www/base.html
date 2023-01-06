@@ -51,16 +51,16 @@
                 <a href="/">Home</a>
                 {% endif %} |
 
-                {% if request.path == '/changelog' %}
-                Changelog
-                {% else %}
-                <a href="{% url 'coltrane:content' 'changelog' %}">Changelog</a>
-                {% endif %} |
-
                 {% if request.path == '/faq' %}
                 FAQ
                 {% else %}
                 <a href="{% url 'coltrane:content' 'faq' %}">FAQ</a>
+                {% endif %} |
+
+                {% if request.path == '/changelog' %}
+                Changelog
+                {% else %}
+                <a href="{% url 'coltrane:content' 'changelog' %}">Changelog</a>
                 {% endif %} |
 
                 <a href="https://github.com/adamghill/fediview" target="_blank">Code</a>
