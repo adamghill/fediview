@@ -1,8 +1,11 @@
 import logging
+import re
 from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Optional
 from urllib.parse import urlparse
 
+from dateutil.parser import parse
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from mastodon import Mastodon
@@ -13,7 +16,7 @@ from mastodon.errors import (
 )
 
 from digest.api import fetch_posts_and_boosts
-from digest.models import Account, Post
+from digest.models import Account, Card, Post
 from digest.scorers import get_scorer_from_name
 from digest.thresholds import get_threshold_from_name
 
@@ -29,6 +32,43 @@ class InvalidURLError(Exception):
 
 
 @dataclass
+class Link:
+    url: str
+    posts: list[Post] = field(default_factory=list)
+
+    @property
+    def card(self) -> Optional[Card]:
+        for post in self.posts:
+            if post.card and post.card.url in self.url:
+                return post.card
+
+    @property
+    def title(self) -> str:
+        _card = self.card
+
+        if _card and _card.title:
+            return _card.title
+
+        return self.url
+
+    @property
+    def count(self) -> int:
+        return len(self.posts)
+
+    @property
+    def most_recent_post(self) -> Post:
+        assert self.posts, "There should always be at least one post"
+        return sorted(self.posts, key=lambda p: p.created_at, reverse=True)[0]
+
+    @property
+    def most_recent_created_at(self) -> datetime:
+        if isinstance(self.most_recent_post.created_at, str):
+            return parse(self.most_recent_post.created_at)
+
+        return self.most_recent_post.created_at
+
+
+@dataclass
 class Digest:
     """Includes all the digest information."""
 
@@ -36,6 +76,7 @@ class Digest:
     error: str = ""
     posts: list[Post] = field(default_factory=list)
     boosts: list[Post] = field(default_factory=list)
+    links: list[Link] = field(default_factory=list)
     rendered_at: datetime = None
 
 
@@ -66,6 +107,28 @@ def _add_following_to_account(mastodon, account) -> None:
     account.add_follows(following_accounts)
 
 
+def _catalog_links(posts: list[Post]) -> list[Link]:
+    """Build a list of links that were included posts."""
+
+    links: list[Link] = []
+    all_post_ids = set()
+    link_regex = r'(?<=<a href=")([^\"]*)(?=" rel="nofollow noopener noreferrer")'
+
+    for post in posts:
+        for url in re.findall(link_regex, post.content):
+            link = next(filter(lambda l: l.url == url, links), None)
+
+            if post.id not in all_post_ids:
+                all_post_ids.add(post.id)
+
+                if link:
+                    link.posts.append(post)
+                else:
+                    links.append(Link(url, [post]))
+
+    return links
+
+
 def build_digest(
     hours: str,
     scorer_name: str,
@@ -85,7 +148,7 @@ def build_digest(
 
     digest = Digest()
 
-    # 1. Get a Mastodon API instance
+    # Get a Mastodon API instance
     try:
         mastodon = Mastodon(
             access_token=token,
@@ -99,7 +162,7 @@ def build_digest(
 
         logger.debug("User followings retrieved")
 
-        # 2. Fetch all the posts and boosts from our home timeline
+        # Fetch all the posts and boosts from the timeline
         (posts, boosts) = fetch_posts_and_boosts(
             mastodon, logged_in_account, timeline, hours
         )
@@ -122,14 +185,18 @@ def build_digest(
     if digest.ok is False:
         return digest
 
-    # 3. Score posts and return those that meet our threshold
+    # Score posts and return those that meet our threshold
     threshold_posts = threshold.posts_meeting_criteria(posts, scorer)
     threshold_boosts = threshold.posts_meeting_criteria(boosts, scorer)
 
     logger.debug("Posts and boosts scored")
 
-    for post in threshold_posts + threshold_boosts:
+    # Update metadata
+    for post in posts + boosts:
         post.set_base_url(mastodon.api_base_url)
+
+    for post in threshold_posts + threshold_boosts:
+        # post.set_base_url(mastodon.api_base_url)
 
         post.account.is_following = timeline == "home" or any(
             post.account.url == a.url for a in logged_in_account.follows
@@ -137,27 +204,36 @@ def build_digest(
 
     logger.debug("Post metadata is updated")
 
-    # 4. Get unique posts from unique accounts
-    # unique_account_posts = []
-    # sorted_posts = sorted(threshold_posts, key=lambda p: p.score, reverse=True)
+    """
+    # Get unique posts from unique accounts
+    unique_account_posts = []
+    sorted_posts = sorted(threshold_posts, key=lambda p: p.score, reverse=True)
 
-    # users_hash: dict[int, Post] = {}
+    users_hash: dict[int, Post] = {}
 
-    # for post in sorted_posts:
-    #     if post.account.id in users_hash:
-    #         users_hash[post.account.id].account.add_additional_post(post)
-    #     else:
-    #         users_hash[post.account.id] = post
+    for post in sorted_posts:
+        if post.account.id in users_hash:
+            users_hash[post.account.id].account.add_additional_post(post)
+        else:
+            users_hash[post.account.id] = post
 
-    # for post in users_hash.values():
-    #     unique_account_posts.append(post)
+    for post in users_hash.values():
+        unique_account_posts.append(post)
+    """
 
+    # Sort posts and boosts
     sorted_posts = sorted(threshold_posts, key=lambda p: p.score, reverse=True)
     sorted_boosts = sorted(threshold_boosts, key=lambda p: p.score, reverse=True)
 
-    # 5. Build the digest
+    # Build catalog of links
+    links = _catalog_links(posts + boosts)
+    sorted_links = sorted(links, key=lambda l: l.count, reverse=True)
+    sorted_links = sorted(links, key=lambda l: l.most_recent_created_at, reverse=True)
+
+    # Build the digest
     digest.posts = sorted_posts
     digest.boosts = sorted_boosts
+    digest.links = sorted_links
     digest.rendered_at = datetime.utcnow()
 
     return digest

@@ -108,6 +108,42 @@ h1, h2, h3, h4, h5, h6 {
     text-decoration: none;
 }
 
+.link {
+    background-color: var(--post-background);
+    padding: 18px 20px;
+    border: 1px solid var(--post-border);
+    border-radius: 10px;
+    margin: 1.5em 0px;
+    box-shadow: 0.2px 0.4px 0.8px -10px rgba(0, 0, 0, 0.03), 0.4px 0.9px 2px -10px rgba(0, 0, 0, 0.030), 0.8px 1.8px 3.8px -10px rgba(0, 0, 0, 0.038), 1.3px 3.1px 6.7px -10px rgba(0, 0, 0, 0.045), 2.5px 5.8px 12.5px -10px rgba(0, 0, 0, 0.06), 6px 14px 30px -10px rgba(0, 0, 0, 0.08);
+}
+
+.link a {
+    text-decoration: none;
+}
+
+.link .header {
+    margin-bottom: var(--md-pad);
+}
+
+.link .title {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.link .accounts {
+    margin: 1em 0 0 0;
+    padding: 0;
+}
+
+.link .accounts li {
+    list-style: none;
+}
+
+.link .image {
+    text-align: center;
+}
+
 .avatar {
     max-width: 56px;
     min-width: 56px;
@@ -248,11 +284,19 @@ footer table tr td ul {
 }
 
 section.posts  {
-    padding-top: 4em;
+    padding-top: 1em;
 }
 
 section.boosts  {
-    padding-top: 3em;
+    padding-top: 1em;
+}
+
+.results {
+    margin-top: 7em;
+}
+
+.tabs {
+    text-align: center;
 }
 
 td {
@@ -316,6 +360,80 @@ td.hours {
 
 code {
     word-break: break-word;
+}
+
+button.tab {
+    background-color: var(--background);
+    border: 1px solid #E6E3E1;
+    color: var(--black);
+}
+
+a.active button {
+    border: 1px solid var(--primary);
+}
+
+.tabs a:hover {
+    text-decoration: none;
+}
+
+/* bulma */
+
+.tabs {
+    -webkit-overflow-scrolling: touch;
+    align-items: stretch;
+    display: flex;
+    font-size: 1rem;
+    justify-content: space-between;
+    overflow: hidden;
+      overflow-x: hidden;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.tabs.is-centered ul {
+    justify-content: center;
+}
+
+.tabs ul {
+    align-items: center;
+    border-bottom-color: #dbdbdb;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    display: flex;
+    flex-grow: 1;
+    flex-shrink: 0;
+    /*justify-content: flex-start;*/
+    justify-content: center;
+}
+
+.tabs li {
+    display: block;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.tabs li.active a {
+    border-bottom-color: #485fc7;
+    color: #485fc7;
+}
+
+.tabs a {
+    align-items: center;
+    border-bottom-color: #dbdbdb;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    color: #4a4a4a;
+    display: flex;
+    justify-content: center;
+    margin-bottom: -1px;
+    padding: .5em 1em;
+    vertical-align: top;
+    text-decoration: none;
+}
+
+.tabs a:hover {
+    border-bottom-color: #363636;
+    color: #363636;
 }
 
 /* .post.additional .avatar {

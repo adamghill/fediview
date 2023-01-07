@@ -1,0 +1,48 @@
+{% load humanize %}
+
+<div class="link">
+    <!-- {{ link.card.type }} -->
+    <div class="header">
+        <p class="title">
+            <a href="{{ link.url }}">{{ link.title|truncatechars:50 }}</a>
+        </p>
+
+        {% if link.card.author_url %}
+        <p>
+            <a href="{{ link.card.author_url }}">{{ link.card.author_name }}</a>
+        </p>
+        {% endif %}
+    </div>
+
+    {% if link.card.image %}
+    <div class="image">
+        <img src="{{ link.card.image }}">
+    </div>
+    {% endif %}
+
+    <div class="content">
+        {% if link.card.description and link.card.description != link.card.title %}
+        <p>
+            {{ link.card.description }}
+        </p>
+        {% else %}
+        <p>
+            {{ link.most_recent_post.content|safe }}
+        </p>
+        {% endif %}
+    </div>
+
+    <ul class="accounts">
+        {% for post in link.posts %}
+        <li>
+            <a href="{{ post.home_url }}" target="_blank">
+                {% if post.account.avatar %}
+                <span class="avatar">
+                    <img src="{{ post.account.avatar }}" height="40" width="40" title="{{ post.account.acct }}">
+                </span>
+                {% endif %}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>

@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
@@ -8,6 +9,7 @@ if TYPE_CHECKING:
 def _format_media(media):
     url = media["url"]
     description = media["description"] if media["description"] is not None else ""
+    description = description.replace('"', "'")
 
     formats = {
         "image": f'<div class="media"><a class="glightbox" href="{url}" data-description="{description}" data-desc-position="right"><img src={url} alt="{description}"></img></a></div>',
@@ -31,6 +33,7 @@ def _format_display_name(display_name: str, emojis: list) -> str:
     return display_name
 
 
+@dataclass
 class Account:
     additional_posts: list["Post"]
     follows: list["Account"]
@@ -95,6 +98,69 @@ class Account:
             self.follows.append(Account(data))
 
 
+@dataclass
+class Card:
+    def __init__(self, data: dict):
+        self._data = data
+
+    @property
+    def url(self):
+        return self._data["url"]
+
+    @property
+    def title(self):
+        return self._data["title"]
+
+    @property
+    def description(self):
+        return self._data["description"]
+
+    @property
+    def type(self):
+        return self._data["type"]
+
+    @property
+    def author_name(self):
+        return self._data["author_name"]
+
+    @property
+    def author_url(self):
+        return self._data["author_url"]
+
+    @property
+    def provider_name(self):
+        return self._data["provider_name"]
+
+    @property
+    def provider_url(self):
+        return self._data["provider_url"]
+
+    @property
+    def html(self):
+        return self._data["html"]
+
+    @property
+    def width(self):
+        return self._data["width"]
+
+    @property
+    def height(self):
+        return self._data["height"]
+
+    @property
+    def image(self):
+        return self._data["image"]
+
+    @property
+    def embed_url(self):
+        return self._data["embed_url"]
+
+    @property
+    def blurhash(self):
+        return self._data["blurhash"]
+
+
+@dataclass
 class Post:
     base_url = None
     _score = None
@@ -110,6 +176,21 @@ class Post:
         self._score = scorer.score(self)
 
         return self._score
+
+    def dump(self, data=None) -> dict:
+        if data is None:
+            data = self._data
+
+        for key, value in data.items():
+            if isinstance(value, datetime):
+                data[key] = value.isoformat()
+            elif isinstance(value, dict):
+                data[key] = self.dump(value)
+            elif isinstance(value, list):
+                for idx, val in enumerate(value):
+                    data[key][idx] = self.dump(val)
+
+        return data
 
     @property
     def home_url(self) -> str:
@@ -185,3 +266,8 @@ class Post:
     @property
     def tags(self) -> list[str]:
         return [t.name for t in self._data["tags"]]
+
+    @property
+    def card(self) -> Card:
+        if "card" in self._data and self._data["card"] is not None:
+            return Card(self._data["card"])

@@ -8,7 +8,13 @@ from django.forms import ValidationError
 from django_unicorn.components import UnicornView
 from rq.job import JobStatus
 
-from digest.digester import Digest, InvalidURLError, UnauthorizedError, build_digest
+from digest.digester import (
+    Digest,
+    InvalidURLError,
+    Link,
+    UnauthorizedError,
+    build_digest,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +34,10 @@ class TimelineView(UnicornView):
     has_results: bool = False
     posts: list[dict] = []
     boosts: list[dict] = []
+    links: list[Link] = []
+    are_posts_shown: bool = False
+    are_boosts_shown: bool = False
+    are_links_shown: bool = False
 
     def mount(self):
         self.url = getenv("MASTODON_INSTANCE_URL", "")
@@ -35,9 +45,24 @@ class TimelineView(UnicornView):
 
     def hydrate(self):
         self.errors = {}
-        self.posts = []
-        self.boosts = []
-        self.has_results = False
+
+    def display_posts(self):
+        self.has_results = True
+        self.are_posts_shown = True
+        self.are_boosts_shown = False
+        self.are_links_shown = False
+
+    def display_boosts(self):
+        self.has_results = True
+        self.are_posts_shown = False
+        self.are_boosts_shown = True
+        self.are_links_shown = False
+
+    def display_links(self):
+        self.has_results = True
+        self.are_posts_shown = False
+        self.are_boosts_shown = False
+        self.are_links_shown = True
 
     def clean(self) -> None:
         validation_errors = {}
@@ -54,6 +79,17 @@ class TimelineView(UnicornView):
     def get_results(self):
         self.errors = {}
         self.clean()
+
+        self.has_results = False
+
+        self.are_posts_shown = False
+        self.posts = []
+
+        self.are_boosts_shown = False
+        self.boosts = []
+
+        self.are_links_shown = False
+        self.links = []
 
         digest = Digest()
 
@@ -106,7 +142,10 @@ class TimelineView(UnicornView):
 
         self.posts = digest.posts
         self.boosts = digest.boosts
+        self.links = digest.links
+
         self.has_results = digest.ok is True
+        self.are_posts_shown = self.has_results
 
     class Meta:
         javascript_exclude = (
@@ -114,6 +153,7 @@ class TimelineView(UnicornView):
             "url",
             "posts",
             "boosts",
+            "links",
             "has_results",
             "error",
         )

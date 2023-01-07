@@ -113,10 +113,23 @@
     {% endif %}
 
     {% if has_results %}
-    <div class="results">
-        <section class="posts" u:loading.remove style="">
-            <h2>Popular Posts</h2>
+    <div class="results" u:loading.remove>
+        <div class="tabs" id="tabs">
+            <ul>
+                <li class="{% if are_posts_shown %}active{% endif %}">
+                    <a href="#" u:click.prevent="display_posts">Posts ({{ posts|length }})</a>
+                </li>
+                <li class="{% if are_boosts_shown %}active{% endif %}">
+                    <a href="#" u:click.prevent="display_boosts">Boosts ({{ boosts|length }})</a>
+                </li>
+                <li class="{% if are_links_shown %}active{% endif %}">
+                    <a href="#" u:click.prevent="display_links">Links ({{ links|length }})</a>
+                </li>
+            </ul>
+        </div>
 
+        {% if are_posts_shown %}
+        <section class="posts">
             {% if posts %}
             {% for post in posts %}
             {% include "www/post.html" %}
@@ -131,10 +144,8 @@
             No posts available.
             {% endif %}
         </section>
-
-        <section class="boosts" u:loading.remove style="">
-            <h2>Popular Boosts</h2>
-
+        {% elif are_boosts_shown %}
+        <section class="boosts">
             {% if boosts %}
             {% for post in boosts %}
             {% include "www/post.html" %}
@@ -143,6 +154,17 @@
             No boosts available.
             {% endif %}
         </section>
+        {% elif are_links_shown %}
+        <section class="links">
+            {% if links %}
+            {% for link in links %}
+            {% include "www/link.html" %}
+            {% endfor %}
+            {% else %}
+            No links available.
+            {% endif %}
+        </section>
+        {% endif %}
     </div>
 
     {% comment %}Re-init GLightbox so that it picks up any new images that get loaded{% endcomment %}
