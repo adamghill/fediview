@@ -6,7 +6,7 @@
 <head>
     <meta chartset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>fediview</title>
+    <title>fediview{% if title %}: {{ title }}{% endif %}</title>
 
     {% compress css %}
     <link rel="stylesheet" href="{% static 'css/marx.min.css' %}">
@@ -24,7 +24,7 @@
     {% endblock js %}
 </head>
 
-<body>
+<body class="{{ body_class }}">
     {% csrf_token %}
     <nav>
         <ul>
