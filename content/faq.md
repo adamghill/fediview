@@ -1,6 +1,9 @@
 ---
 template: www/base.html
+title: FAQ
 ---
+
+# FAQ
 
 ## How do I generate a token?
 

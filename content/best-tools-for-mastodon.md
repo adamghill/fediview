@@ -1,11 +1,14 @@
 ---
 template: www/base.html
-publish_date: 2023-01-03
+title: The Best Tools for Mastodon in 2023
+publish_date: 2023-01-13
 ---
 
 # The Best Tools for Mastodon in 2023
 
-Here are the best tools for Mastodon I have found and personally used. These should all be usable by non-technical folks from a web browser.
+*{{ publish_date }}*
+
+Here are the best tools for Mastodon I have found and personally used. I am especially interested in tools focused on less technical users, so they should all be relatively intuitive and usable from a web browser.
 
 ## Move from Twitter to Mastodon
 
@@ -17,18 +20,16 @@ Here are the best tools for Mastodon I have found and personally used. These sho
 Because `Mastodon` has a robust API anyone can create a different interface for browsing your network.
 
 - [Elk](https://elk.zone): A web-only interface for Mastodon that feels very similar to Twitter.
-- [Pinafore](https://pinafore.social): An alternative web client for Mastodon, focused on speed and simplicity.
 - [tooty](https://n1k0.github.io/tooty/): An experimental multi-account Mastodon web client that is all client-side (no server needed!).
-- [Phanpy](https://phanpy.social): A minimalistic opinionated Mastodon web client. Made by [@cheeaun](https://mastodon.social/@cheeaun).
+- [Phanpy](https://phanpy.social): A minimalist, opinionated Mastodon web client. Made by [@cheeaun](https://mastodon.social/@cheeaun).
+- [Cuckoo](https://www.cuckoo.social/): A GooglePlus-Like third-party web client for mastodon.
+- [fediview](https://fediview.com): Aggregate the most popular posts from your timelines to get a personalized view of posts. Made by [@adamghill](https://indieweb.social/@adamghill/).
+- [Pinafore](https://pinafore.social): An alternative web client for Mastodon, focused on speed and simplicity. Made by [@nolan](https://toot.cafe/@nolan), but [unmaintained](https://nolanlawson.com/2023/01/09/retiring-pinafore/).
 
 ## Desktop clients
 
 - [Whalebird](https://whalebird.social): Slack-like UI for browsing Mastodon.
 - [Sengi](https://nicolasconstant.github.io/sengi/): A multi-account Mastodon desktop client.
-
-## Misc tools
-
-- [fediview](https://fediview.com): Aggregate the most popular posts from your timelines to get a personalized view of posts. Made by [@adamghill](https://indieweb.social/@adamghill/).
 
 ## Other networks
 
@@ -36,6 +37,8 @@ These social networks bring something unique to your social network by focusing 
 
 - [BookWyrm](https://joinbookwyrm.com): A social network for tracking reading, talking about books, writing reviews, and discovering what to read next. Made by [@tripofmice](https://friend.camp/@tripofmice).
 - [Pixeled](https://pixelfed.org): A network to explore and share beautiful photos and videos.
+
+## Technical tools
 
 For a longer list of (more technical) tools for `Mastodon` I have found [this awesome-mastodon fork by hueyy](https://github.com/hueyy/awesome-mastodon) to be the most up-to-date.
 
