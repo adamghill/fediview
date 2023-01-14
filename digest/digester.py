@@ -196,11 +196,8 @@ def build_digest(
         post.set_base_url(mastodon.api_base_url)
 
     for post in threshold_posts + threshold_boosts:
-        # post.set_base_url(mastodon.api_base_url)
-
-        post.account.is_following = timeline == "home" or any(
-            post.account.url == a.url for a in logged_in_account.follows
-        )
+        if post.account.is_following is None:
+            post.account.set_is_following(logged_in_account)
 
     logger.debug("Post metadata is updated")
 

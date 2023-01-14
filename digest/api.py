@@ -71,11 +71,13 @@ def fetch_posts_and_boosts(
 
             if post.url not in seen_post_urls:
                 # Ignore logged-in user's posts or posts they've interacted with
+                # Also ignore accounts that have explicitly said #nobot
                 if (
                     not post.reblogged
                     and not post.favourited
                     and not post.bookmarked
                     and post.account.url != logged_in_account.url
+                    and not post.account.is_nobot
                 ):
                     # Append to either the boosts list or the posts lists
                     if is_boosted:

@@ -37,7 +37,7 @@ def _format_display_name(display_name: str, emojis: list) -> str:
 class Account:
     additional_posts: list["Post"]
     follows: list["Account"]
-    _is_following: bool = None
+    _is_following: Optional[bool] = None
 
     def __init__(self, data: dict):
         self._data = data
@@ -48,9 +48,8 @@ class Account:
     def is_following(self):
         return self._is_following
 
-    @is_following.setter
-    def is_following(self, val):
-        self._is_following = val
+    def set_is_following(self, logged_in_account: "Account"):
+        self._is_following = any(self == a for a in logged_in_account.follows)
 
     @property
     def id(self) -> int:
@@ -81,12 +80,22 @@ class Account:
         return self._data["avatar"]
 
     @property
-    def followers_count(self) -> int:
-        return self._data["followers_count"]
+    def note(self) -> str:
+        return self._data["note"]
+
+    @property
+    def discoverable(self) -> bool:
+        return self._data["discoverable"]
 
     @property
     def url(self) -> str:
         return self._data["url"].lower()
+
+    @property
+    def is_nobot(self) -> bool:
+        _note = self.note.lower()
+
+        return "#nobot" in _note or "#nobots" in _note
 
     def add_additional_post(self, post: "Post") -> None:
         self.additional_posts.append(post)
@@ -96,6 +105,9 @@ class Account:
 
         for data in accounts:
             self.follows.append(Account(data))
+
+    def __eq__(self, obj: object) -> bool:
+        return isinstance(obj, Account) and self.url == obj.url
 
 
 @dataclass
