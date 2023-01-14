@@ -49,6 +49,10 @@ Feel free to DM me [@adamghill](https://indieweb.social/@adamghill) or start a [
 - Third-party, privacy-respecting analytics services are used to get a sense of traffic patterns.
 - *Instance URL* and *Application Token* can optionally be stored in the user's browser by explicitly opting in.
 
+## How can people opt out of being included in these summaries?
+
+`fediview` tries to follow Mastodon etiquette and respects accounts who want to opt out by filtering out users who have put `#nobot` or `#nobots` in their profile.
+
 ## Why can I trust you?
 
 The [code for this website is open-source](https://github.com/adamghill/fediview) and you can inspect it to make sure I am not doing anything shady. I include the currently deployed version of the site in the footer.
