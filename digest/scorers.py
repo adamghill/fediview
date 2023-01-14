@@ -30,7 +30,8 @@ class InverseFollowerWeight(Weight):
     @classmethod
     def weight(cls, post: Post) -> float:
         # Zero out posts by accounts with zero followers that somehow made it to the feed
-        if post.account.followers_count == 0:
+        # When followers are hidden, the count is -1
+        if post.account.followers_count <= 0:
             weight = 0
         else:
             # Inversely weight against how big the account is
