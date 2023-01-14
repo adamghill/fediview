@@ -117,13 +117,16 @@
         <div class="tabs" id="tabs">
             <ul>
                 <li class="{% if are_posts_shown %}active{% endif %}">
-                    <a href="#" u:click.prevent="display_posts">Posts ({{ posts|length }})</a>
+                    <a u:click.prevent="display_posts" class="plausible-event-name=posts" id="posts">Posts
+                        ({{ posts|length }})</a>
                 </li>
                 <li class="{% if are_boosts_shown %}active{% endif %}">
-                    <a href="#" u:click.prevent="display_boosts">Boosts ({{ boosts|length }})</a>
+                    <a u:click.prevent="display_boosts" class="plausible-event-name=boosts" id="boosts">Boosts
+                        ({{ boosts|length }})</a>
                 </li>
                 <li class="{% if are_links_shown %}active{% endif %}">
-                    <a href="#" u:click.prevent="display_links">Links ({{ links|length }})</a>
+                    <a u:click.prevent="display_links" class="plausible-event-name=links" id="links">Links
+                        ({{ links|length }})</a>
                 </li>
             </ul>
         </div>
@@ -167,9 +170,22 @@
         {% endif %}
     </div>
 
-    {% comment %}Re-init GLightbox so that it picks up any new images that get loaded{% endcomment %}
     <script>
-        const lightbox = GLightbox({});
+        // Re-init GLightbox so that it picks up any new images that get loaded
+        var lightbox = GLightbox({});
+
+        // Send click events to panelbear
+        ['posts', 'boosts', 'links', ].forEach(function (id) {
+            var el = document.getElementById(id);
+
+            if (el) {
+                el.addEventListener('click', function () {
+                    if (typeof (panelbear) !== 'undefined') {
+                        panelbear('track', id);
+                    }
+                });
+            }
+        });
     </script>
     {% endif %}
 </div>

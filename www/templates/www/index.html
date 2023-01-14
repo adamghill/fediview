@@ -25,32 +25,37 @@
 </script>
 
 <script>
-    const elementIds = ['url', 'token', ];
-    const saveInputsId = 'saveInputs';
+    const saveInputTextboxIds = ['url', 'token', ];
+    const saveInputCheckboxId = 'saveInputs';
 
-    let loadInputs = function () {
-        elementIds.forEach(function (id) {
-            const val = localStorage.getItem(id);
+    // Load the url and token from localstorage
+    var loadInputs = function () {
+        const saveInput = localStorage.getItem(saveInputCheckboxId);
+        var isChecked = false;
 
-            if (val) {
-                document.getElementById(id).value = val;
+        if (saveInput && (saveInput === "true" || saveInput === "false")) {
+            isChecked = JSON.parse(saveInput);
+            document.getElementById(saveInputCheckboxId).checked = isChecked;
+        }
 
-                // Make sure that unicorn "sees" the change to the text input
-                Unicorn.trigger("timeline", id);
-            }
-        });
+        if (isChecked) {
+            saveInputTextboxIds.forEach(function (id) {
+                const val = localStorage.getItem(id);
 
-        const saveInput = localStorage.getItem(saveInputsId);
+                if (val) {
+                    document.getElementById(id).value = val;
 
-        if (saveInput) {
-            document.getElementById(saveInputsId).checked = JSON.parse(saveInput);
+                    // Make sure that unicorn "sees" the change to the text input
+                    Unicorn.trigger("timeline", id);
+                }
+            });
         }
     };
 
-    let saveInputs = function () {
-        const isChecked = document.getElementById(saveInputsId).checked;
+    var saveInputs = function () {
+        const isChecked = document.getElementById(saveInputCheckboxId).checked;
 
-        elementIds.forEach(function (id) {
+        saveInputTextboxIds.forEach(function (id) {
             if (isChecked) {
                 localStorage.setItem(id, document.getElementById(id).value);
             } else {
@@ -58,22 +63,25 @@
             }
         });
 
-        localStorage.setItem(saveInputsId, JSON.stringify(isChecked));
+        localStorage.setItem(saveInputCheckboxId, JSON.stringify(isChecked));
     };
 
     window.addEventListener('load', function (event) {
         loadInputs();
 
-        document.getElementById(saveInputsId).addEventListener('change', function () {
-            if (typeof (panelbear) !== "undefined") {
-                panelbear("track", "save-url-and-token");
+        // Save inputs when checkbox is changed
+        document.getElementById(saveInputCheckboxId).addEventListener('change', function () {
+            if (typeof (panelbear) !== 'undefined') {
+                panelbear('track', 'save-url-and-token');
             }
 
             saveInputs();
         });
+
+        // Save inputs when get popular toots button is clicked
         document.getElementById('getPopularToots').addEventListener('click', function () {
-            if (typeof (panelbear) !== "undefined") {
-                panelbear("track", "get-popular-toots");
+            if (typeof (panelbear) !== 'undefined') {
+                panelbear('track', 'get-popular-toots');
             }
 
             saveInputs();
