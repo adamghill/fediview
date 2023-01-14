@@ -1,6 +1,7 @@
 import pytest
 
-from digest.digester import _get_scorer
+from digest.scorers import get_scorer_from_name
+
 from digest.scorers import (
     ExtendedSimpleScorer,
     ExtendedSimpleWeightedScorer,
@@ -18,12 +19,12 @@ from digest.scorers import (
         ("ExtendedSimpleWeighted", ExtendedSimpleWeightedScorer),
     ),
 )
-def test_get_scorer(scorer_name: str, expected: str):
-    actual = _get_scorer(scorer_name)
+def test_get_scorer_from_name(scorer_name: str, expected: str):
+    actual = get_scorer_from_name(scorer_name)
 
     assert actual == expected
 
 
-def test_get_scorer_invalid():
+def test_get_scorer_from_name_invalid():
     with pytest.raises(Exception):
-        _get_scorer("Unknown")
+        get_scorer_from_name("Unknown")

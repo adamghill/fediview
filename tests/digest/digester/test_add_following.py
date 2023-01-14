@@ -22,7 +22,7 @@ def mastodon_client():
 
 @pytest.mark.integration
 def test_add_following(mastodon_client):
-    logged_in_account = Account(mastodon_client.me())
+    logged_in_account = Account.parse_obj(mastodon_client.me())
 
     _add_following_to_account(mastodon_client, logged_in_account)
 

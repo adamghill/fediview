@@ -59,15 +59,15 @@ def fetch_posts_and_boosts(
         else:
             filtered_posts = response
 
-        for post in filtered_posts:
+        for post_data in filtered_posts:
             total_posts_seen += 1
             is_boosted = False
 
-            if post["reblog"] is not None:
-                post = post["reblog"]  # look at the boosted post
+            if post_data["reblog"] is not None:
+                post_data = post_data["reblog"]  # use the reblog data
                 is_boosted = True
 
-            post = Post(post)  # wrap the post data as a `Post`
+            post = Post.parse_obj(post_data)  # wrap the post data as a `Post`
 
             if post.url not in seen_post_urls:
                 # Ignore logged-in user's posts or posts they've interacted with

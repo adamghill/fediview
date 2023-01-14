@@ -157,7 +157,7 @@ def build_digest(
 
         logger.debug("Mastodon API initialized")
 
-        logged_in_account = Account(mastodon.me())
+        logged_in_account = Account.parse_obj(mastodon.me())
         _add_following_to_account(mastodon, logged_in_account)
 
         logger.debug("User followings retrieved")
