@@ -1,0 +1,55 @@
+.tooltip {
+    position: relative; /* making the .tooltip span a container for the tooltip text */
+    /* border-bottom: 1px dashed #000; little indicater to indicate it's hoverable */
+}
+
+.tooltip:hover:before {
+    display: block;
+    z-index: 100;
+}
+
+.tooltip:after {
+    content: "";
+    position: absolute;
+    
+    /* position tooltip correctly */
+    left: 100%;
+    margin-left: -5px;
+   
+    /* vertically center */
+    top: 50%;
+    transform: translateY(-50%);
+   
+    /* the arrow */
+    border: 10px solid #000;
+    border-color: transparent #000 transparent transparent;
+    
+    display: none;
+}
+
+.tooltip:hover:before, .tooltip:hover:after {
+    display: block;
+}
+
+.tooltip:before {
+    content: attr(data-text);
+    position: absolute;
+    
+    /* vertically center */
+    top: 50%;
+    transform: translateY(-50%);
+    
+    /* move to right */
+    left: 100%;
+    margin-left: 15px;
+    
+    /* basic styles */
+    width: 200px;
+    padding: 6px;
+    border-radius: 10px;
+    background: #000;
+    color: #fff;
+    text-align: center;
+  
+    display: none;
+}
