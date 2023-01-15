@@ -142,6 +142,7 @@ def build_digest(
     hours = int(hours)
     scorer = get_scorer_from_name(scorer_name)
     threshold = get_threshold_from_name(threshold_name)
+    assert timeline in ("home", "local", "federated"), "Invalid timeline"
     url = _clean_url(url)
 
     logger.debug(f"Building digest for the past {hours} hours")

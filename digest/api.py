@@ -5,6 +5,43 @@ from mastodon import Mastodon
 from digest.models import Account, Post
 
 
+def get_timeline_posts(mastodon: Mastodon, timeline: str, hours: int) -> list[dict]:
+    """Get responses from Mastodon for the timeline.
+
+    If timeline name is specified as hashtag:tagName or list:list-name, look-up with
+    those names, else accept 'federated' and 'local' to process from the server public
+    and local timelines.
+
+    Defaults to the 'home' timeline.
+    """
+
+    # Set our start query
+    start = datetime.now(timezone.utc) - timedelta(hours=hours)
+
+    timeline = timeline.lower()
+
+    if ":" in timeline:
+        (timeline, timeline_id) = timeline.lower().split(":", 1)
+
+        if timeline == "hashtag":
+            return mastodon.timeline_hashtag(timeline_id, min_id=start)
+        elif timeline == "list":
+            if not timeline_id.isnumeric():
+                raise TypeError(
+                    "Cannot load list timeline: ID must be numeric, e.g. https://example.social/lists/4 would be list:4"
+                )
+
+            return mastodon.timeline_list(timeline_id, min_id=start)
+
+    if timeline == "federated":
+        return mastodon.timeline_public(min_id=start)
+    elif timeline == "local":
+        return mastodon.timeline_local(min_id=start)
+
+    # Default to the home timeline
+    return mastodon.timeline(min_id=start)
+
+
 def fetch_posts_and_boosts(
     mastodon: Mastodon,
     logged_in_account: Account,
@@ -17,47 +54,21 @@ def fetch_posts_and_boosts(
     # First, get our filters
     filters = mastodon.filters()
 
-    # Set our start query
-    start = datetime.now(timezone.utc) - timedelta(hours=hours)
-
     posts = []
     boosts = []
     seen_post_urls = set()
     total_posts_seen = 0
 
-    # If timeline name is specified as hashtag:tagName or list:list-name, look-up with
-    # those names, else accept 'federated' and 'local' to process from the server public
-    # and local timelines.
-    #
-    # Default to 'home' if the name is unrecognized.
-    if ":" in timeline:
-        (timeline_type, timeline_id) = timeline.lower().split(":", 1)
-    else:
-        timeline_type = timeline.lower()
-
-    if timeline_type == "hashtag":
-        response = mastodon.timeline_hashtag(timeline_id, min_id=start)
-    elif timeline_type == "list":
-        if not timeline_id.isnumeric():
-            raise TypeError(
-                "Cannot load list timeline: ID must be numeric, e.g. https://example.social/lists/4 would be list:4"
-            )
-
-        response = mastodon.timeline_list(timeline_id, min_id=start)
-    elif timeline_type == "federated":
-        response = mastodon.timeline_public(min_id=start)
-    elif timeline_type == "local":
-        response = mastodon.timeline_local(min_id=start)
-    else:
-        response = mastodon.timeline(min_id=start)
+    timeline_posts = get_timeline_posts(mastodon, timeline, hours)
 
     # Iterate over our timeline until we run out of posts or we hit the limit
-    while response and total_posts_seen < limit:
+    while timeline_posts and total_posts_seen < limit:
         # Apply our server-side filters
         if filters:
-            filtered_posts = mastodon.filters_apply(response, filters, "home")
+            # TODO: Use public context for federated timeline?
+            filtered_posts = mastodon.filters_apply(timeline_posts, filters, "home")
         else:
-            filtered_posts = response
+            filtered_posts = timeline_posts
 
         for post_data in filtered_posts:
             total_posts_seen += 1
@@ -67,7 +78,8 @@ def fetch_posts_and_boosts(
                 post_data = post_data["reblog"]  # use the reblog data
                 is_boosted = True
 
-            post = Post.parse_obj(post_data)  # wrap the post data as a `Post`
+            # Convert the data into a `Post` model
+            post = Post.parse_obj(post_data)
 
             if post.url not in seen_post_urls:
                 # Ignore logged-in user's posts or posts they've interacted with
@@ -87,7 +99,7 @@ def fetch_posts_and_boosts(
 
                     seen_post_urls.add(post.url)
 
-        # fetch the previous (because of reverse chronological) page of results
-        response = mastodon.fetch_previous(response)
+        # Fetch the previous (because of reverse chronological) page of results
+        timeline_posts = mastodon.fetch_previous(timeline_posts)
 
     return (posts, boosts)
