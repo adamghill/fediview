@@ -1,10 +1,14 @@
+import logging
 from datetime import datetime
-from typing import Optional, TYPE_CHECKING, Any, Union
-from pydantic import BaseModel, Field, HttpUrl, parse_obj_as
+from typing import TYPE_CHECKING, Any, Optional, Union
+
+from pydantic import BaseModel, Field, HttpUrl, ValidationError, parse_obj_as
 
 if TYPE_CHECKING:
     # Only import during type-checking to prevent circular import
     from digest.scorers import Scorer
+
+logger = logging.getLogger(__name__)
 
 
 class Account(BaseModel):
@@ -78,14 +82,19 @@ class Card(BaseModel):
     def __init__(self, **data: Any):
         super().__init__(**data)
 
-        if self.embed_url:
-            self.embed_url = parse_obj_as(HttpUrl, self.embed_url)
+        self.parse_and_set_url("embed_url")
+        self.parse_and_set_url("provider_url")
+        self.parse_and_set_url("author_url")
 
-        if self.provider_url:
-            self.provider_url = parse_obj_as(HttpUrl, self.provider_url)
+    def parse_and_set_url(self, field_name: str) -> None:
+        url = getattr(self, field_name)
 
-        if self.author_url:
-            self.author_url = parse_obj_as(HttpUrl, self.author_url)
+        if url:
+            try:
+                http_url = parse_obj_as(HttpUrl, url)
+                setattr(self, field_name, http_url)
+            except ValidationError as e:
+                logger.exception(e)
 
 
 class Post(BaseModel):

@@ -1,8 +1,11 @@
+import logging
 from datetime import datetime, timedelta, timezone
 
 from mastodon import Mastodon
 
 from digest.models import Account, Post
+
+logger = logging.getLogger(__name__)
 
 
 def get_timeline_posts(mastodon: Mastodon, timeline: str, hours: int) -> list[dict]:
@@ -79,7 +82,11 @@ def fetch_posts_and_boosts(
                 is_boosted = True
 
             # Convert the data into a `Post` model
-            post = Post.parse_obj(post_data)
+            try:
+                post = Post.parse_obj(post_data)
+            except Exception as e:
+                logger.exception(e)
+                continue
 
             if post.url not in seen_post_urls:
                 # Ignore logged-in user's posts or posts they've interacted with
