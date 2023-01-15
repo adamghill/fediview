@@ -103,6 +103,7 @@ class Post(BaseModel):
     media_attachments: list  # = Field(default_factory=list)
     account: Account
     card: Optional[Card]
+    muted: bool
 
     # gets set after init
     base_url: Optional[str]
