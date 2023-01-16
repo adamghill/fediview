@@ -25,11 +25,13 @@ To generate a token:
 
 First off, that's more of a statement than an actual question, but... I'll allow it!
 
-As a somewhat newer user of Mastodon myself, I understand the worry about the algorithms used to juice engagement on other social networks. However, providing access to a user-controlled summary of popular toots is *not* inherently evil. Personally, my main issue with algorithmic timelines is the corporate incentives around driving engagement to increase ad spend and the unhealthy results for society as a whole. Also, the algorithms are a black-box and are forced on users without the ability to control or tweak them.
+As a somewhat newer user of Mastodon myself, I understand the worry about the algorithms used to juice engagement on other social networks. However, providing access to a user-controlled summary of popular toots is *not* inherently evil. Personally, my main issue with algorithmic timelines is the corporate incentives around driving engagement to increase ad spend and the unhealthy results for society as a whole. The algorithms are a black-box and are forced on users without the ability to control or tweak them.
 
-On the other hand, this website is completely separate from Mastodon and not pushed on anyone. You can skip it if it isn't useful. [This website is MIT-licensed](https://github.com/adamghill/fediview) and the [original algorithm is BSD licensed](https://github.com/hodgesmr/mastodon_digest) to see the algorithm for popular posts and boosts.
+On the other hand, this website doesn't track what posts you click on, it doesn't tailor the results by "people like you", and it doesn't try to predict what you might click on in the future. It doesn't use ML or AI in any sense.
 
-My only hope is to provide more ways to find content on Mastodon -- not to sell ads.
+`fediview` is completely separate from Mastodon and not forced on anyone. It also respects other users' privacy who do not want to be included in the results via the `#nobot` hashtag.
+
+[This website is MIT-licensed](https://github.com/adamghill/fediview) and the [original algorithm is BSD licensed](https://github.com/hodgesmr/mastodon_digest) to see the original algorithm for popular posts and boosts.
 
 ## What are the available algorithms?
 
@@ -45,9 +47,9 @@ Feel free to DM me [@adamghill](https://indieweb.social/@adamghill) or start a [
 ## What data do you store?
 
 - No personalized data is currently persisted to a database.
-- A background worker is used to create personalized timelines so those are cached in `redis`. They get removed after 5 minutes.
+- A background worker is used to create personalized timelines so those are cached in `redis`. They get purged after 500 seconds.
 - Third-party, privacy-respecting analytics services are used to get a sense of traffic patterns.
-- *Instance URL* and *Application Token* can optionally be stored in the user's browser by explicitly opting in.
+- *Instance URL* and *Application Token* can optionally be stored in the user's browser by clicking a checkbox and explicitly opting in.
 
 ## How can people opt out of being included in these summaries?
 
