@@ -1,9 +1,11 @@
-window.addEventListener("load", function (event) {
+window.addEventListener("load", function () {
   document.querySelectorAll("[data-panelbear]").forEach(function (el) {
-    el.addEventListener("click", function () {
-      if (typeof panelbear !== "undefined") {
-        panelbear("track", el.dataset.panelbear);
-      }
-    });
+    if (el && el.dataset && el.dataset.panelbear) {
+      el.addEventListener("click", function () {
+        if (typeof panelbear !== "undefined") {
+          panelbear("track", el.dataset.panelbear);
+        }
+      });
+    }
   });
 });
