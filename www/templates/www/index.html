@@ -80,10 +80,7 @@
 
         // Save inputs when get popular toots button is clicked
         document.getElementById('getPopularToots').addEventListener('click', function () {
-            if (typeof (panelbear) !== 'undefined') {
-                panelbear('track', 'get-popular-toots');
-            }
-
+            // panelbear track happens via base script
             saveInputs();
         });
     });

@@ -1,4 +1,4 @@
-{% load cache compress git static unicorn %}
+{% load cache compress git mastodon static unicorn %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -21,6 +21,10 @@
     {% block css %}
     {% endblock css %}
 
+    {% compress js %}
+    <script src="{% static 'js/base.js' %}"></script>
+    {% endcompress %}
+
     {% block js %}
     {% endblock js %}
 </head>
@@ -28,21 +32,47 @@
 <body class="{{ body_class }}">
     {% csrf_token %}
     <nav>
-        <ul>
-            <li class="brand">
-                🔍 <a href="/" style="color: #4a4a4a;">fediview</a>
+        <ul style="display: flex;">
+            <li class="brand" style="padding-top: .1em;">
+                🔍 <a href="/" style="color: #4a4a4a;" class="plausible-event-name=nav-home"
+                    data-panelbear="nav-home">fediview</a>
             </li>
-            <li>
+            <li style="padding-top: .2em;">
                 <a href="{% url 'coltrane:content' 'faq' %}"
-                    class="{% if request.path == '/faq' %}active{% endif %}">FAQ</a>
+                    class="{% if request.path == '/faq' %}active{% endif %} plausible-event-name=nav-faq"
+                    data-panelbear="nav-faq">FAQ</a>
             </li>
-            <li>
+            <li style="padding-top: .2em;">
                 <a href="{% url 'coltrane:content' 'changelog' %}"
-                    class="{% if request.path == '/changelog' %}active{% endif %}">Changelog</a>
+                    class="{% if request.path == '/changelog' %}active{% endif %} plausible-event-name=nav-changelog"
+                    data-panelbear="nav-changelog">Changelog</a>
             </li>
-            <li>
-                <a href="https://github.com/adamghill/fediview" target="_blank">Code</a>
+            <li style="padding-top: .2em;">
+                <a href="https://github.com/adamghill/fediview" target="_blank" class="plausible-event-name=nav-code"
+                    data-panelbear="nav-code">Code</a>
                 <span style="color: grey;">⧉</span>
+            </li>
+            <li class="auth">
+                {% if request.user.is_authenticated %}
+                <form action="{% url 'account:logout' %}" method="POST" style="text-align: right;">
+                    {% csrf_token %}
+                    <span style="padding-right: .5em;">
+                        <a href="{{ request.user.username|username_to_url }}" class="plausible-event-name=nav-username"
+                            data-panelbear="nav-username">
+                            {{ request.user.username }}
+                        </a>
+                    </span>
+                    <button class="plausible-event-name=nav-logout" data-panelbear="nav-logout">Logout</button>
+                </form>
+                {% else %}
+                {% csrf_token %}
+                <div style="text-align: right;">
+                    <a href="{% url 'account:login' %}" class="plausible-event-name=nav-login"
+                        data-panelbear="nav-login">
+                        <button>Login</button>
+                    </a>
+                </div>
+                {% endif %}
             </li>
         </ul>
     </nav>
@@ -77,10 +107,14 @@
                         <p class="footer-header">Articles</p>
                         <ul>
                             <li>
-                                <a href="{% url 'coltrane:content' 'what-is-mastodon' %}">What is Mastodon?</a>
+                                <a href="{% url 'coltrane:content' 'what-is-mastodon' %}"
+                                    class="plausible-event-name=footer-what-is-mastodon"
+                                    data-panelbear="footer-what-is-mastodon">What is Mastodon?</a>
                             </li>
                             <li>
-                                <a href="{% url 'coltrane:content' 'best-tools-for-mastodon' %}">Tools for
+                                <a href="{% url 'coltrane:content' 'best-tools-for-mastodon' %}"
+                                    class="plausible-event-name=footer-best-tools-for-mastodon"
+                                    data-panelbear="footer-best-tools-for-mastodon">Tools for
                                     Mastodon</a>
                             </li>
                         </ul>
@@ -133,7 +167,7 @@
                         </ul>
                     </td>
                     <td>
-                        <p class="footer-header">My sites</p>
+                        <p class="footer-header">Other sites</p>
                         <ul>
                             <li>
                                 <a href="https://devmarks.io">devmarks.io</a>

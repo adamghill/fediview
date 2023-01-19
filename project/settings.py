@@ -26,6 +26,7 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
+    "django.contrib.sites",
 ]
 
 THIRD_PARTY_APPS = [
@@ -36,6 +37,7 @@ THIRD_PARTY_APPS = [
 ]
 
 INTERNAL_APPS = [
+    "account",
     "unicorn",
     "www",
 ]
@@ -51,6 +53,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "fbv.middleware.RequestMethodMiddleware",
 ]
 
 ROOT_URLCONF = "project.urls"
@@ -75,6 +78,12 @@ WSGI_APPLICATION = "project.wsgi.application"
 
 DATABASES = {"default": dj_database_url.config(conn_max_age=600)}
 
+AUTH_USER_MODEL = "account.User"
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+]
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -89,6 +98,8 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+SITE_ID = 1
 
 LANGUAGE_CODE = "en-us"
 

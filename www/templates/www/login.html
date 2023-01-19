@@ -1,0 +1,23 @@
+{% extends 'www/base.html' %}
+{% load cache compress static unicorn %}
+
+
+{% block content %}
+<div style="width: 500px; margin: 0 auto;">
+    <form method="POST" action="{{ request.path }}">{% csrf_token %}
+        <label for="url">Instance URL</label>
+        <input type="text" name="url" id="url" placeholder="mastodon-instance.social"></input>
+
+        <p class="help" style="padding-top: .5em;">
+            Both read and write permissions will be requested. <strong>read</strong> is needed to get posts from your
+            timeline. <strong>write</strong> will be used in the future.
+            Access can be revoked at any time from your Mastodon instance setting's page.
+        </p>
+
+        <div style="text-align: right;">
+            <button type="submit" style="margin-top: 1em;" class="plausible-event-name=authorize"
+                data-panelbear="authorize">Authorize</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

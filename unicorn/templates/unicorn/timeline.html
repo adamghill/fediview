@@ -3,10 +3,13 @@
 <div>
     <table style="width: 100%; border-top: 0; margin-bottom: 0;">
         <tr>
+            {% if request.user.is_authenticated %}
+            <!-- {{ request.user.username }} -->
+            {% else %}
             <td style="padding-bottom: 10px; vertical-align: top; padding-top: 0; width: 50%;">
                 <label for="url">Instance URL</label>
                 <input u:model.defer="url" u:keydown.enter="get_results" u:key="url" id="url"
-                    placeholder="https://mastodon-instance.social"></input>
+                    placeholder="mastodon-instance.social"></input>
                 <p class="help">
                     The URL of your Mastodon instance
                 </p>
@@ -21,6 +24,7 @@
                     <strong>read</strong> access is required
                 </p>
             </td>
+            {% endif %}
         </tr>
     </table>
 
@@ -70,15 +74,20 @@
         </tr>
     </table>
 
+    {% if not request.user.is_authenticated %}
     <div u:loading.remove style="padding-top: 10px; text-align: center;">
         <input type="checkbox" id="saveInputs" name="saveInputs" class="plausible-event-name=save-url-and-token">
         <label for="saveInputs">Save URL and Token in this browser</label>
     </div>
+    {% endif %}
+
     <div u:loading.remove style="padding-top: 10px; text-align: center;">
-        <button u:click="get_results" id="getPopularToots" class="plausible-event-name=get-popular-toots">
+        <button u:click="get_results" id="getPopularToots" class="plausible-event-name=get-popular-toots"
+            data-panelbear="get-popular-toots">
             Get Popular Toots
         </button>
     </div>
+
     <div u:loading style="padding-top: 10px; text-align: center;">
         <em>Building digest... this might take a few seconds...</em>
         <div style="padding-top: 100px;">

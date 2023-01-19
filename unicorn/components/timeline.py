@@ -8,6 +8,7 @@ from django.forms import ValidationError
 from django_unicorn.components import UnicornView
 from rq.job import JobStatus
 
+from account.models import Account
 from digest.digester import (
     Digest,
     InvalidURLError,
@@ -42,6 +43,13 @@ class TimelineView(UnicornView):
     def mount(self):
         self.url = getenv("MASTODON_INSTANCE_URL", "")
         self.token = getenv("MASTODON_TOKEN", "")
+
+        if self.request.user.is_authenticated:
+            account = Account.objects.filter(user=self.request.user).first()
+
+            if account:
+                self.url = account.instance.api_base_url
+                self.token = account.access_token
 
     def hydrate(self):
         self.errors = {}

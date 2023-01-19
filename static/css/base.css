@@ -49,17 +49,25 @@ nav ul {
 
 nav li {
     display: inline;
-    padding: 16px;
+    padding-left: 16px;
+    margin-top: .4em;
 }
 
 nav .brand {
     font-size: 1.5rem;
     text-align: center;
     color: #4a4a4a;
+    margin-top: 0;
 }
 
 nav a.active {
     color: #4a4a4a;
+}
+
+nav li.auth {
+    flex-grow: 1;
+    margin-right: 2em;
+    margin-top: 0;
 }
 
 label {
