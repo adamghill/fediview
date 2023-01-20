@@ -6,9 +6,11 @@ register = template.Library()
 @register.filter
 def username_to_url(username):
     username_splits = username.split("@")
-    server = username_splits[2]
-    username = username_splits[1]
 
-    url = f"https://{server}/@{username}"
+    if len(username_splits) == 3:
+        server = username_splits[2]
+        username = username_splits[1]
 
-    return url
+        url = f"https://{server}/@{username}"
+
+        return url

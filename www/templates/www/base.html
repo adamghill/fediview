@@ -57,8 +57,8 @@
                 <form action="{% url 'account:logout' %}" method="POST" style="text-align: right;">
                     {% csrf_token %}
                     <span style="padding-right: .5em;">
-                        <a href="{{ request.user.username|username_to_url }}" class="plausible-event-name=nav-username"
-                            data-panelbear="nav-username">
+                        <a href="{{ request.user.username|username_to_url|default:'' }}"
+                            class="plausible-event-name=nav-username" data-panelbear="nav-username">
                             {{ request.user.username }}
                         </a>
                     </span>
