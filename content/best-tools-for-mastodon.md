@@ -30,6 +30,7 @@ Because `Mastodon` has a robust API anyone can create a different interface for 
 
 - [Whalebird](https://whalebird.social): Slack-like UI for browsing Mastodon.
 - [Sengi](https://nicolasconstant.github.io/sengi/): A multi-account Mastodon desktop client.
+- [Elk Native](https://github.com/elk-zone/elk-native/releases): Still alpha, but a super slick desktop client from the same folks that build the web Elk client.
 
 ## Other networks
 
