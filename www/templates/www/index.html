@@ -29,13 +29,13 @@
     const saveInputCheckboxId = 'saveInputs';
 
     // Load the url and token from localstorage
-    var loadInputs = function () {
+    var loadInputs = function ($saveInput) {
         const saveInput = localStorage.getItem(saveInputCheckboxId);
         var isChecked = false;
 
         if (saveInput && (saveInput === "true" || saveInput === "false")) {
             isChecked = JSON.parse(saveInput);
-            document.getElementById(saveInputCheckboxId).checked = isChecked;
+            $saveInput.checked = isChecked;
         }
 
         if (isChecked) {
@@ -52,8 +52,8 @@
         }
     };
 
-    var saveInputs = function () {
-        const isChecked = document.getElementById(saveInputCheckboxId).checked;
+    var saveInputs = function ($saveInput) {
+        const isChecked = $saveInput.checked;
 
         saveInputTextboxIds.forEach(function (id) {
             if (isChecked) {
@@ -67,22 +67,26 @@
     };
 
     window.addEventListener('load', function (event) {
-        loadInputs();
+        let $saveInput = document.getElementById(saveInputCheckboxId);
 
-        // Save inputs when checkbox is changed
-        document.getElementById(saveInputCheckboxId).addEventListener('change', function () {
-            if (typeof (panelbear) !== 'undefined') {
-                panelbear('track', 'save-url-and-token');
-            }
+        if ($saveInput) {
+            loadInputs($saveInput);
 
-            saveInputs();
-        });
+            // Save inputs when checkbox is changed
+            $saveInput.addEventListener('change', function () {
+                if (typeof (panelbear) !== 'undefined') {
+                    panelbear('track', 'save-url-and-token');
+                }
 
-        // Save inputs when get popular toots button is clicked
-        document.getElementById('getPopularToots').addEventListener('click', function () {
-            // panelbear track happens via base script
-            saveInputs();
-        });
+                saveInputs($saveInput);
+            });
+
+            // Save inputs when get popular toots button is clicked
+            document.getElementById('getPopularToots').addEventListener('click', function () {
+                // panelbear track happens via base script
+                saveInputs($saveInput);
+            });
+        }
     });
 </script>
 {% endcompress %}
