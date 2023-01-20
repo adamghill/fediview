@@ -132,15 +132,15 @@
         <div class="tabs" id="tabs">
             <ul>
                 <li class="{% if are_posts_shown %}active{% endif %}">
-                    <a u:click.prevent="display_posts" class="plausible-event-name=posts" id="posts">Posts
+                    <a href="#" u:click.prevent="display_posts" class="plausible-event-name=posts" id="posts">Posts
                         ({{ posts|length }})</a>
                 </li>
                 <li class="{% if are_boosts_shown %}active{% endif %}">
-                    <a u:click.prevent="display_boosts" class="plausible-event-name=boosts" id="boosts">Boosts
+                    <a href="#" u:click.prevent="display_boosts" class="plausible-event-name=boosts" id="boosts">Boosts
                         ({{ boosts|length }})</a>
                 </li>
                 <li class="{% if are_links_shown %}active{% endif %}">
-                    <a u:click.prevent="display_links" class="plausible-event-name=links" id="links">Links
+                    <a href="#" u:click.prevent="display_links" class="plausible-event-name=links" id="links">Links
                         ({{ links|length }})</a>
                 </li>
             </ul>
