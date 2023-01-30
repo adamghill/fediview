@@ -8,6 +8,10 @@ body_class: changelog
 
 [All commits](https://github.com/adamghill/fediview/commits/main)
 
+## 2023-01-19
+
+- Add oauth login flow.
+
 ## 2023-01-07
 
 - Split posts and boosts into tabs. Add links summary.
