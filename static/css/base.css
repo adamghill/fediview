@@ -24,6 +24,37 @@ input {
     color: #000 !important;
 } */
 
+@media (max-width: 750px) {
+    .icon,
+    .auth .username {
+        display: none;
+    }
+
+    h3.tagline {
+        font-size: 20px;
+    }
+
+    h3.tagline span {
+        top: -.7em;
+    }
+
+    .info {
+        display: none;
+    }
+}
+
+h3.tagline {
+    display: flex;
+    height: 100%;
+    text-align: center;
+}
+
+h3.tagline span {
+    margin: auto;
+    top: -.5em;
+    position: relative;
+}
+
 body {
     background-color: var(--background);
     color: var(--text);

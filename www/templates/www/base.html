@@ -33,8 +33,9 @@
     {% csrf_token %}
     <nav>
         <ul style="display: flex;">
-            <li class="brand" style="padding-top: .1em;">
-                🔍 <a href="/" style="color: #4a4a4a;" class="plausible-event-name=nav-home"
+            <li class="brand" style="padding-top: .1em; padding-left: 0;">
+                <span class="icon">🔍</span>
+                <a href="/" style="color: #4a4a4a;" class="plausible-event-name=nav-home"
                     data-panelbear="nav-home">fediview</a>
             </li>
             <li style="padding-top: .2em;">
@@ -50,13 +51,13 @@
             <li style="padding-top: .2em;">
                 <a href="https://github.com/adamghill/fediview" target="_blank" class="plausible-event-name=nav-code"
                     data-panelbear="nav-code">Code</a>
-                <span style="color: grey;">⧉</span>
+                <span style="color: grey;" class="icon">⧉</span>
             </li>
             <li class="auth">
                 {% if request.user.is_authenticated %}
                 <form action="{% url 'account:logout' %}" method="POST" style="text-align: right;">
                     {% csrf_token %}
-                    <span style="padding-right: .5em;">
+                    <span style="padding-right: .5em;" class="username">
                         <a href="{{ request.user.username|username_to_url|default:'' }}"
                             class="plausible-event-name=nav-username" data-panelbear="nav-username">
                             {{ request.user.username }}
@@ -80,13 +81,14 @@
     <main>
         <header style="border-bottom: dashed 1px; margin-bottom: 3em;">
             <div style="display: flex;">
-                <div style="flex-grow: 1;">
-                    <h5>
-                        Aggregate the recent popular<br />
-                        posts from your Mastodon timeline
-                    </h5>
+                <div style="flex-grow: 1; padding-right: 1em;">
+                    <h3 class="tagline">
+                        <span>
+                            Aggregate recent posts from Mastodon
+                        </span>
+                    </h3>
                 </div>
-                <div style="padding-top: 1.5em;">
+                <div style="padding-top: 1.5em; padding-bottom: 1em;">
                     <a
                         href="https://www.digitalocean.com/?refcode=617d629f56c0&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img
                             src="https://web-platforms.sfo2.digitaloceanspaces.com/WWW/Badge%203.svg"

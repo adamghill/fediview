@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "fediview"
 version = "0.1.0"
-description = "fGet a digest of popular posts and boosts from your Mastodon (fediverse) timeline."
+description = "Get a digest of popular posts and boosts from your Mastodon (fediverse) timeline."
 authors = ["Adam Hill <hello@adamghill.com>"]
 license = "MIT"
 readme = "README.md"
