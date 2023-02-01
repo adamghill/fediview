@@ -46,10 +46,18 @@ Feel free to DM me [@adamghill](https://indieweb.social/@adamghill) or start a [
 
 ## What data do you store?
 
-- No personalized data is currently persisted to a database.
-- A background worker is used to create personalized timelines so those are cached in `redis`. They get purged after 500 seconds.
+- A background worker is used to create personalized timelines and those are cached in `redis`. Their TTL is set to 500 seconds, to that data gets automatically cleared after 500 seconds.
 - Third-party, privacy-respecting analytics services are used to get a sense of traffic patterns.
 - *Instance URL* and *Application Token* can optionally be stored in the user's browser by clicking a checkbox and explicitly opting in.
+
+### Logged-in users
+
+- The user's username and access token are stored in a database.
+
+### Remove access
+
+- Access for fediview to access a user's timeline can be revoked through the user's Mastodon settings page.
+- Data for logged-in users can be deleted via the account page, or via a private message to https://indieweb.social/@adamghill from the user's account.
 
 ## How can people opt out of being included in these summaries?
 

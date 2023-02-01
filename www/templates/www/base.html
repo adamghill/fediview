@@ -21,6 +21,9 @@
     {% block css %}
     {% endblock css %}
 
+    <link rel="stylesheet" type="text/css" href="{% static 'toastify/1.12.0/toastify.min.css' %}">
+    <script type="text/javascript" src="{% static 'toastify/1.12.0/toastify.js' %}"></script>
+
     {% compress js %}
     <script src="{% static 'js/base.js' %}"></script>
     {% endcompress %}
@@ -79,7 +82,7 @@
     </nav>
 
     <main>
-        <header style="border-bottom: dashed 1px; margin-bottom: 3em;">
+        <header style="border-bottom: dashed 1px; margin-bottom: 2em;">
             <div style="display: flex;">
                 <div style="flex-grow: 1; padding-right: 1em;">
                     <h3 class="tagline">
@@ -164,6 +167,9 @@
                                 <a href="https://mblode.github.io/marx/">Marx CSS</a>
                             </li>
                             <li>
+                                <a href="https://apvarun.github.io/toastify-js/">Toastify</a>
+                            </li>
+                            <li>
                                 <a href="https://m.do.co/c/617d629f56c0">DigitalOcean</a>
                             </li>
                         </ul>
@@ -203,6 +209,40 @@
             {% endif %}
         </footer>
     </main>
+
+    <script>
+        function notify(message, type) {
+            if (!type) {
+                type = 'is-success'
+            }
+
+            Toastify({
+                text: message,
+                duration: 3000,
+                position: 'center',
+                stopOnFocus: true,
+            }).showToast();
+        }
+    </script>
+
+    {% if messages %}
+    {% for message in messages %}
+    <script>
+        var tag = '{{ message.tags }}';
+        var type = 'is-success';
+
+        if (tag == "error") {
+            type = 'is-danger';
+        } else if (tag == "warning") {
+            type = 'is-warning';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            notify('{{ message }}', type);
+        });
+    </script>
+    {% endfor %}
+    {% endif %}
 </body>
 
 </html>

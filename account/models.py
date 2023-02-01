@@ -19,3 +19,11 @@ class Account(TimeStampedModel):
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     access_token = models.CharField(max_length=1024)
+
+
+class Profile(TimeStampedModel):
+    account = models.OneToOneField(Account, on_delete=models.CASCADE)
+    hours = models.IntegerField()
+    scorer = models.CharField(max_length=255)
+    threshold = models.CharField(max_length=255)
+    timeline = models.CharField(max_length=255)

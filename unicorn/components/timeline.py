@@ -4,11 +4,12 @@ from os import getenv
 from time import sleep
 
 import django_rq
+from django.core.exceptions import ObjectDoesNotExist
 from django.forms import ValidationError
 from django_unicorn.components import UnicornView
 from rq.job import JobStatus
 
-from account.models import Account
+from account.models import Account, Profile
 from digest.digester import (
     Digest,
     InvalidURLError,
@@ -50,6 +51,15 @@ class TimelineView(UnicornView):
             if account:
                 self.url = account.instance.api_base_url
                 self.token = account.access_token
+
+                try:
+                    if account.profile:
+                        self.hours = str(account.profile.hours)
+                        self.scorer = account.profile.scorer
+                        self.threshold = account.profile.threshold
+                        self.timeline = account.profile.timeline
+                except ObjectDoesNotExist:
+                    pass
 
     def hydrate(self):
         self.errors = {}
@@ -154,6 +164,28 @@ class TimelineView(UnicornView):
 
         self.has_results = digest.ok is True
         self.are_posts_shown = self.has_results
+
+        if self.request.user.is_authenticated:
+            account = Account.objects.filter(user=self.request.user).first()
+
+            if account:
+                profile = Profile.objects.filter(account=account).first()
+
+                if profile:
+                    profile.hours = int(self.hours)
+                    profile.scorer = self.scorer
+                    profile.threshold = self.threshold
+                    profile.timeline = self.timeline
+                else:
+                    profile = Profile(
+                        account=account,
+                        hours=int(self.hours),
+                        scorer=self.scorer,
+                        threshold=self.threshold,
+                        timeline=self.timeline,
+                    )
+
+                profile.save()
 
     class Meta:
         javascript_exclude = (

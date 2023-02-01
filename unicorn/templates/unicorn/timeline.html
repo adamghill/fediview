@@ -1,6 +1,24 @@
 {% load humanize static unicorn %}
 
 <div>
+    {% if not request.user.is_authenticated %}
+    <table style="width: 100%; border-top: 0; margin-bottom: 0; text-align: center;">
+        <tr>
+            <td>
+                <a href="{% url 'account:login' %}" class="plausible-event-name=timeline-login"
+                    data-panelbear="timeline-login">
+                    <button>Login to Mastodon</button>
+                </a>
+            </td>
+        </tr>
+    </table>
+
+    <p style="text-align: center; font-style: italic; margin-bottom: 0;">
+        OR
+    </p>
+    {% endif %}
+
+    {% if not request.user.is_authenticated %}
     <table style="width: 100%; border-top: 0; margin-bottom: 0;">
         <tr>
             {% if request.user.is_authenticated %}
@@ -27,52 +45,62 @@
             {% endif %}
         </tr>
     </table>
+    {% endif %}
 
-    <table class="config">
-        <tr>
-            <td>
-                <label for="timeline">Timeline</label>
-                <select u:model.defer="timeline" id="timeline">
-                    <option value="home">Home</option>
-                    <option value="local">Local</option>
-                    <option value="federated">Federated</option>
-                </select>
-            </td>
-            <td>
-                <label for="scorer">Algorithm</label>
-                <a href="{% url 'coltrane:content' 'faq' %}#what-are-the-available-algorithms" class="info tooltip"
-                    data-text="Simple is ↻ + ★. Extended includes ⥄. Weighted deprioritizes accounts with lots of followers.">
-                    ⓘ
-                </a>
-                <select u:model.defer="scorer" id="scorer">
-                    <option value="Simple">Simple</option>
-                    <option value="SimpleWeighted">Simple Weighted</option>
-                    <option value="ExtendedSimple">Extended Simple</option>
-                    <option value="ExtendedSimpleWeighted">Extended Simple Weighted</option>
-                </select>
-            </td>
-            <td>
-                <label for="threshold">Threshold</label>
-                <a class="info tooltip" data-text="How many posts to include.">
-                    ⓘ
-                </a>
-                <select u:model.defer="threshold" id="threshold">
-                    <option value="lax">More</option>
-                    <option value="normal">Normal</option>
-                    <option value="strict">Less</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td class="hours">
-                <label for="hours" id="hoursLabel">Hours</label>
-                <input type="range" min="1" max="24" u:model.defer="hours" id="hours">
-                <span id="hoursValue">{{ hours }}</span>
-            </td>
-            <td></td>
-        </tr>
-    </table>
+    {% if user.is_authenticated %}
+    <details>
+        <summary>Settings</summary>
+        {% endif %}
+
+        <table class="config">
+            <tr>
+                <td>
+                    <label for="timeline">Timeline</label>
+                    <select u:model.defer="timeline" id="timeline">
+                        <option value="home">Home</option>
+                        <option value="local">Local</option>
+                        <option value="federated">Federated</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="scorer">Algorithm</label>
+                    <a href="{% url 'coltrane:content' 'faq' %}#what-are-the-available-algorithms" class="info tooltip"
+                        data-text="Simple is ↻ + ★. Extended includes ⥄. Weighted deprioritizes accounts with lots of followers.">
+                        ⓘ
+                    </a>
+                    <select u:model.defer="scorer" id="scorer">
+                        <option value="Simple">Simple</option>
+                        <option value="SimpleWeighted">Simple Weighted</option>
+                        <option value="ExtendedSimple">Extended Simple</option>
+                        <option value="ExtendedSimpleWeighted">Extended Simple Weighted</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="threshold">Threshold</label>
+                    <a class="info tooltip" data-text="How many posts to include.">
+                        ⓘ
+                    </a>
+                    <select u:model.defer="threshold" id="threshold">
+                        <option value="lax">More</option>
+                        <option value="normal">Normal</option>
+                        <option value="strict">Less</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="hours">
+                    <label for="hours" id="hoursLabel">Hours</label>
+                    <input type="range" min="1" max="24" u:model.defer="hours" id="hours">
+                    <span id="hoursValue">{{ hours }}</span>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+
+        {% if user.is_authenticated %}
+    </details>
+    {% endif %}
 
     {% if not request.user.is_authenticated %}
     <div u:loading.remove style="padding-top: 10px; text-align: center;">
@@ -90,7 +118,7 @@
 
     <div u:loading style="padding-top: 10px; text-align: center;">
         <em>Building digest... this might take a few seconds...</em>
-        <div style="padding-top: 100px;">
+        <div style="padding-top: 3em;">
             <img src="{% static 'img/ball-triangle.svg' %}" />
         </div>
     </div>

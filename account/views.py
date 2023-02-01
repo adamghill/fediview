@@ -1,12 +1,15 @@
 from uuid import uuid4
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.cache import cache
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 from fbv.decorators import render_html
 from mastodon import Mastodon
 
@@ -23,7 +26,7 @@ def get_redirect_uri(request):
     return site_url + auth_path
 
 
-@render_html("www/login.html")
+@render_html("account/login.html")
 def login(request):
     redirect_uri = get_redirect_uri(request)
 
@@ -70,7 +73,7 @@ def login(request):
     return {"ANALYTICS_HTML": settings.ANALYTICS_HTML}
 
 
-@render_html("www/auth.html")
+@render_html("account/auth.html")
 def auth(request):
     redirect_uri = get_redirect_uri(request)
 
@@ -112,16 +115,38 @@ def auth(request):
         account = Account(user=user, access_token=access_token, instance=instance)
         account.save()
 
-    # log the user in
+    # force log the user in
     auth_login(request, user, backend=settings.AUTHENTICATION_BACKENDS[0])
+
+    messages.success(request, "Login successful")
 
     return redirect("www:index")
 
 
+@require_POST
+@login_required
 def logout(request):
-    if request.is_post:
-        auth_logout(request)
+    auth_logout(request)
+    messages.success(request, "Logout successful")
 
-        return redirect("www:index")
+    return redirect("www:index")
 
-    raise Exception("Logout must be a POST")
+
+@login_required
+@render_html("account/account.html")
+def account(request):
+    return {}
+
+
+@require_POST
+@login_required
+def delete(request):
+    user_id = request.user.id
+    auth_logout(request)
+
+    Account.objects.filter(user__id=user_id).delete()
+    User.objects.filter(id=user_id).delete()
+
+    messages.success(request, "Account has been deleted")
+
+    return redirect("www:index")

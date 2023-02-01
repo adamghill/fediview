@@ -28,7 +28,7 @@ urlpatterns = [
         {"sitemaps": sitemaps},
         name="django.contrib.sitemaps.views.sitemap",
     ),
-    path("account/", include(account_urls, namespace="account")),
+    path("account", include(account_urls, namespace="account")),
     path("", include(www_urls, namespace="www")),
     path("", include("coltrane.urls")),
 ]
