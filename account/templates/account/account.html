@@ -1,10 +1,37 @@
 {% extends 'www/base.html' %}
-{% load cache compress static unicorn %}
+{% load cache compress mastodon static unicorn %}
 
 
 {% block content %}
-<div style="">
+<div>
+    <h4>
+        Mastodon
+    </h4>
+    <p>
+        <a href="{{ request.user.username|username_to_url|default:'' }}" target="_blank">
+            {{ request.user.username }}
+        </a>
+    </p>
 
+    <h4 style="margin-top: 3em;">
+        Configuration
+    </h4>
+    {% if user.account.profile %}
+    <ul>
+        <li>Timeline: {{ user.account.profile.timeline|title }}</li>
+        <li>Algorithm: {{ user.account.profile.scorer }}</li>
+        <li>Threshold: {{ user.account.profile.threshold|title }}</li>
+        <li>Hours: {{ user.account.profile.hours }}</li>
+    </ul>
+    {% else %}
+    n/a
+    {% endif %}
+
+    <hr style="margin-top: 5em; border-top: 1px black dashed" />
+
+    <h4 style="margin-top: 1em;">
+        Remove Account
+    </h4>
     <p>
         Deleting your account is permanent. Any data cannot be recovered.
     </p>
@@ -12,7 +39,7 @@
     <form method="POST" action="{% url 'account:delete' %}">{% csrf_token %}
         <button type="submit" style="margin-top: 1em; background-color: red;" class="plausible-event-name=remove-data"
             data-panelbear="remove-data"
-            onclick="javascript: confirm('This will remove all data associated with {{ request.user.username }} and it can not be recovered. Are you sure?');">
+            onclick="javascript: return confirm('This will remove all data associated with {{ request.user.username }} and it can not be recovered. Are you sure?');">
             Delete Account
         </button>
     </form>
