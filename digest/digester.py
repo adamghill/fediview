@@ -130,7 +130,8 @@ def _catalog_links(posts: list[Post]) -> list[Link]:
 
 
 def build_digest(
-    hours: str,
+    start: datetime,
+    end: Optional[datetime],
     scorer_name: str,
     threshold_name: str,
     timeline: str,
@@ -139,13 +140,12 @@ def build_digest(
 ) -> Digest:
     """Creates a digest of popular posts and boosts the user has not interacted with."""
 
-    hours = int(hours)
     scorer = get_scorer_from_name(scorer_name)
     threshold = get_threshold_from_name(threshold_name)
     assert timeline in ("home", "local", "federated"), "Invalid timeline"
     url = _clean_url(url)
 
-    logger.debug(f"Building digest for the past {hours} hours")
+    logger.debug(f"Building digest for {start} to {end}")
 
     digest = Digest()
 
@@ -165,7 +165,7 @@ def build_digest(
 
         # Fetch all the posts and boosts from the timeline
         (posts, boosts) = fetch_posts_and_boosts(
-            mastodon, logged_in_account, timeline, hours
+            mastodon, logged_in_account, timeline, start, end
         )
 
         logger.debug("Posts and boosts fetched")

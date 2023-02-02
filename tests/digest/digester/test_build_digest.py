@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
 
 from mastodon import MastodonError
@@ -5,7 +6,8 @@ from mastodon import MastodonError
 from digest.digester import build_digest
 
 INIT_KWARGS = {
-    "hours": "1",
+    "start": datetime.now(timezone.utc) - timedelta(hours=1),
+    "end": None,
     "scorer_name": "Simple",
     "threshold_name": "lax",
     "timeline": "home",

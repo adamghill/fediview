@@ -1,11 +1,12 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from os import getenv
 from time import sleep
 
 import django_rq
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import ValidationError
+from django.utils.timezone import now
 from django_unicorn.components import UnicornView
 from rq.job import JobStatus
 
@@ -111,10 +112,14 @@ class TimelineView(UnicornView):
 
         digest = Digest()
 
+        start = datetime.now(timezone.utc) - timedelta(hours=int(self.hours))
+        end = None
+
         try:
             job = django_rq.enqueue(
                 build_digest,
-                self.hours,
+                start,
+                end,
                 self.scorer,
                 self.threshold,
                 self.timeline,
@@ -185,6 +190,7 @@ class TimelineView(UnicornView):
                         timeline=self.timeline,
                     )
 
+                profile.last_retrieval = now()
                 profile.save()
 
     class Meta:

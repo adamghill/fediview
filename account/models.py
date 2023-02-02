@@ -27,3 +27,4 @@ class Profile(TimeStampedModel):
     scorer = models.CharField(max_length=255)
     threshold = models.CharField(max_length=255)
     timeline = models.CharField(max_length=255)
+    last_retrieval = models.DateTimeField(blank=True, null=True)

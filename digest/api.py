@@ -1,5 +1,6 @@
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
+from typing import Optional
 
 from mastodon import Mastodon
 
@@ -8,7 +9,9 @@ from digest.models import Account, Post
 logger = logging.getLogger(__name__)
 
 
-def get_timeline_posts(mastodon: Mastodon, timeline: str, hours: int) -> list[dict]:
+def get_timeline_posts(
+    mastodon: Mastodon, timeline: str, start: datetime, end: Optional[datetime] = None
+) -> list[dict]:
     """Get responses from Mastodon for the timeline.
 
     If timeline name is specified as hashtag:tagName or list:list-name, look-up with
@@ -19,7 +22,7 @@ def get_timeline_posts(mastodon: Mastodon, timeline: str, hours: int) -> list[di
     """
 
     # Set our start query
-    start = datetime.now(timezone.utc) - timedelta(hours=hours)
+    # start = datetime.now(timezone.utc) - timedelta(hours=hours)
 
     timeline = timeline.lower()
 
@@ -49,7 +52,8 @@ def fetch_posts_and_boosts(
     mastodon: Mastodon,
     logged_in_account: Account,
     timeline: str,
-    hours: int,
+    start: datetime,
+    end: Optional[datetime] = None,
     limit: int = 1000,
 ) -> tuple[list[Post], list[Post]]:
     """Fetches posts from the home timeline that the account hasn't interacted with."""
@@ -62,7 +66,7 @@ def fetch_posts_and_boosts(
     seen_post_urls = set()
     total_posts_seen = 0
 
-    timeline_posts = get_timeline_posts(mastodon, timeline, hours)
+    timeline_posts = get_timeline_posts(mastodon, timeline, start=start, end=end)
 
     # Iterate over our timeline until we run out of posts or we hit the limit
     while timeline_posts and total_posts_seen < limit:

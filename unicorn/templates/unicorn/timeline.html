@@ -109,6 +109,18 @@
     </div>
     {% endif %}
 
+    {% comment %}
+    {% if request.user.is_authenticated and user.account.profile.last_retrieval %}
+    <div u:loading.remove style="padding-top: 0; text-align: center;">
+        <input type="checkbox" id="sinceLastRetrieval" name="sinceLastRetrieval"
+            class="plausible-event-name=since-last-retrieval" checked>
+        <label for="sinceLastRetrieval">
+            Only get posts since your last retrieval ({{ user.account.profile.last_retrieval|naturaltime }})
+        </label>
+    </div>
+    {% endif %}
+    {% endcomment %}
+
     <div u:loading.remove style="padding-top: 10px; text-align: center;">
         <button u:click="get_results" id="getPopularToots" class="plausible-event-name=get-popular-toots"
             data-panelbear="get-popular-toots">
