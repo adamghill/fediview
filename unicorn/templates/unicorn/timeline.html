@@ -47,9 +47,9 @@
     </table>
     {% endif %}
 
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and user.account.profile %}
     <details>
-        <summary>Settings</summary>
+        <summary>Configuration</summary>
         {% endif %}
 
         <table class="config">
