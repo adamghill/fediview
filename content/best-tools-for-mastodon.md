@@ -9,7 +9,7 @@ publish_date: 2023-01-13
 
 Here are the best tools for Mastodon I have found and personally used. I am especially interested in tools focused on less technical users, so they should all be relatively intuitive and usable from a web browser.
 
-## Move from Twitter to Mastodon
+## Following accounts
 
 - [Movetodon](https://www.movetodon.org): Log in with Twitter and movetodon will look at who you currently follow and find their Mastodon account. Will also show when they joined Mastodon and when they were last active. Made by [@Tibor](https://mastodon.social/@Tibor).
 - [Followgraph](https://followgraph.vercel.app): Find awesome people on Mastodon by looking up who you follow on and surfacing who *they* follow. It expands your connection graph based on who you are already connected to. Made by [@gabipurcaru](https://mastodon.online/@gabipurcaru).
@@ -23,7 +23,7 @@ Because `Mastodon` has a robust API anyone can create a different interface for 
 - [tooty](https://n1k0.github.io/tooty/): An experimental multi-account Mastodon web client that is all client-side (no server needed!).
 - [Phanpy](https://phanpy.social): A minimalist, opinionated Mastodon web client. Made by [@cheeaun](https://mastodon.social/@cheeaun).
 - [Cuckoo](https://www.cuckoo.social/): A GooglePlus-Like third-party web client for mastodon.
-- [searchtodon](https://searchtodon.social): Private Timeline Search for Mastodon.
+- [feditrends](https://feditrends.com/): Aggregates what is trending across the fediverse.
 - [Pinafore](https://pinafore.social): An alternative web client for Mastodon, focused on speed and simplicity. Made by [@nolan](https://toot.cafe/@nolan), but [unmaintained](https://nolanlawson.com/2023/01/09/retiring-pinafore/).
 
 ## Desktop clients
