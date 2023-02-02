@@ -1,7 +1,7 @@
 ---
 template: www/base.html
 title: The Best Tools for Mastodon in 2023
-publish_date: 2023-01-13
+publish_date: 2023-02-02
 ---
 
 # The Best Tools for Mastodon in 2023
