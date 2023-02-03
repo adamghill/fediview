@@ -1,8 +1,7 @@
 {% load humanize static unicorn %}
 
 <div>
-    {% comment %}TODO: If user already has plus hide this{% endcomment %}
-    {% if True %}
+    {% if not request.user.is_authenticated or not request.user.account.profile.has_plus %}
     <p class="callout">
         Get more features with
         <a href="{% url 'www:plus' %}" class="plausible-event-name=timeline-plus" data-panelbear="timeline-plus">

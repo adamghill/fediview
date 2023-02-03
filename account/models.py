@@ -28,3 +28,4 @@ class Profile(TimeStampedModel):
     threshold = models.CharField(max_length=255)
     timeline = models.CharField(max_length=255)
     last_retrieval = models.DateTimeField(blank=True, null=True)
+    has_plus = models.BooleanField(default=False)
