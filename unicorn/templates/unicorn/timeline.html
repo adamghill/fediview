@@ -1,6 +1,22 @@
 {% load humanize static unicorn %}
 
 <div>
+    {% comment %}TODO: If user already has plus hide this{% endcomment %}
+    {% if True %}
+    <p class="callout">
+        Get more features with
+        <a href="{% url 'www:plus' %}" class="plausible-event-name=timeline-plus" data-panelbear="timeline-plus">
+            Fediview Plus</a>. ✨
+        <br />
+        <br />
+
+        <a href="{% url 'www:plus' %}" class="plausible-event-name=timeline-button-plus"
+            data-panelbear="timeline-button-plus">
+            <button>Sign Up</button>
+        </a>
+    </p>
+    {% endif %}
+
     {% if not request.user.is_authenticated %}
     <table style="width: 100%; border-top: 0; margin-bottom: 0; text-align: center;">
         <tr>
@@ -124,7 +140,7 @@
     <div u:loading.remove style="padding-top: 10px; text-align: center;">
         <button u:click="get_results" id="getPopularToots" class="plausible-event-name=get-popular-toots"
             data-panelbear="get-popular-toots">
-            Get Popular Toots
+            Get Summary
         </button>
     </div>
 

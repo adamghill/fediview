@@ -92,6 +92,10 @@
 {% endcompress %}
 {% endblock js %}
 
+{% block header %}
+Aggregate recent posts from Mastodon
+{% endblock header %}
+
 {% block content %}
 {% unicorn 'timeline' %}
 {% endblock content %}

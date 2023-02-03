@@ -1,0 +1,67 @@
+{% extends 'www/base.html' %}
+{% load cache compress static unicorn %}
+
+
+{% block header %}
+<div style="padding: .6em;">
+    Fediview Plus ✨
+</div>
+{% endblock header %}
+
+{% block digitalocean %}
+{% endblock digitalocean %}
+
+{% block content %}
+<p>
+    I have a few features that I have been thinking about for <em>fediview</em>:
+</p>
+
+<ul>
+    <li>Send daily/weekly emails with Mastodon summaries</li>
+    <li>Get a summary of tags or lists</li>
+    <li>"If this, than that" style workflows (e.g. when a post with a certain tag is in my home timeline, automatically
+        bookmark it)</li>
+    <li>Store an archival of digests (in a way that is acceptable to the Mastodon ethos)</li>
+    <li>Always include posts from certain accounts in the summary</li>
+    <li>Schedule posts</li>
+    <li>Able to boost or favorite a post directly</li>
+    <li>Follow users directly</li>
+    <li>See replies to a post</li>
+    <li>See whether a post is part of a thread</li>
+    <li>Surface posts by users who haven't posted in a while</li>
+</ul>
+
+<p style="margin-top: 40px;">
+    These features (and more!) will soon be available for those that <a
+        href="https://github.com/sponsors/adamghill">sponsor me on GitHub</a>. Sponsoring will allow me to cover server
+    hosting and email sending costs. You will also get a say in new features and it helps support the project.
+</p>
+
+<p style="margin-top: 40px;">
+    How to sign up for <strong>Fediview Plus</strong>:
+</p>
+
+<ol>
+    <li>
+        {% if request.user.is_authenticated %}
+        <strike>Login on fediview</strike>
+        {% else %}
+        <a href="{% url 'account:login' %}?next=/plus">Login on fediview</a>
+        {% endif %}
+    </li>
+    <li>
+        <a href="https://github.com/sponsors/adamghill" target="_blank">Sponsor me on GitHub</a>
+    </li>
+    <li>
+        <a href="https://indieweb.social/@adamghill">Send me a message with your GitHub username</a>
+    </li>
+    <li>
+        🎉🎉🎉
+    </li>
+</ol>
+
+<p style="text-align: center; margin-top: 40px;">
+    <iframe src="https://github.com/sponsors/adamghill/button" title="Sponsor adamghill" height="32" width="114"
+        style="border: 0; border-radius: 6px;"></iframe>
+</p>
+{% endblock content %}

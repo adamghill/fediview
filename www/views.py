@@ -5,3 +5,8 @@ from fbv.decorators import render_html
 @render_html("www/index.html")
 def index(request):
     return {"ANALYTICS_HTML": settings.ANALYTICS_HTML}
+
+
+@render_html("www/plus.html")
+def plus(request):
+    return {}

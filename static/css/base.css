@@ -76,12 +76,14 @@ nav ul {
     padding-bottom: 8px;
     padding-top: 8px;
     margin: 0;
+    display: flex;
 }
 
 nav li {
     display: inline;
     padding-left: 16px;
     margin-top: .4em;
+    padding-top: .2em;
 }
 
 nav .brand {
@@ -89,8 +91,11 @@ nav .brand {
     text-align: center;
     color: #4a4a4a;
     margin-top: 0;
+    padding-top: .1em;
+    padding-left: 0;
 }
 
+nav .brand a,
 nav a.active {
     color: #4a4a4a;
 }
@@ -99,6 +104,10 @@ nav li.auth {
     flex-grow: 1;
     margin-right: 2em;
     margin-top: 0;
+}
+
+.icon {
+    color: grey;
 }
 
 label {
@@ -487,6 +496,14 @@ body.changelog li img {
 
 summary {
     margin-bottom: 0;
+}
+
+.callout {
+    background-color: white;
+    padding: 25px;
+    text-align: center;
+    border: 1px solid #E6E3E1;
+    border-radius: 4px;
 }
 
 /* .post.additional .avatar {

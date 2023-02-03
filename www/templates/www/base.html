@@ -35,27 +35,42 @@
 <body class="{{ body_class }}">
     {% csrf_token %}
     <nav>
-        <ul style="display: flex;">
-            <li class="brand" style="padding-top: .1em; padding-left: 0;">
+        <ul>
+            <!-- left nav -->
+            <li class="brand">
                 <span class="icon">🔍</span>
-                <a href="/" style="color: #4a4a4a;" class="plausible-event-name=nav-home"
-                    data-panelbear="nav-home">fediview</a>
+                <a href="/" class="plausible-event-name=nav-home" data-panelbear="nav-home">
+                    fediview
+                </a>
             </li>
-            <li style="padding-top: .2em;">
+            <li>
                 <a href="{% url 'coltrane:content' 'faq' %}"
                     class="{% if request.path == '/faq' %}active{% endif %} plausible-event-name=nav-faq"
-                    data-panelbear="nav-faq">FAQ</a>
+                    data-panelbear="nav-faq">
+                    FAQ
+                </a>
             </li>
-            <li style="padding-top: .2em;">
+            <li>
                 <a href="{% url 'coltrane:content' 'changelog' %}"
                     class="{% if request.path == '/changelog' %}active{% endif %} plausible-event-name=nav-changelog"
-                    data-panelbear="nav-changelog">Changelog</a>
+                    data-panelbear="nav-changelog">
+                    Changelog
+                </a>
             </li>
-            <li style="padding-top: .2em;">
+            <li>
                 <a href="https://github.com/adamghill/fediview" target="_blank" class="plausible-event-name=nav-code"
-                    data-panelbear="nav-code">Code</a>
-                <span style="color: grey;" class="icon">⧉</span>
+                    data-panelbear="nav-code">
+                    Code
+                </a>
+                <span class="icon">⧉</span>
             </li>
+            <li>
+                <a href="{% url 'www:plus' %}" class="plausible-event-name=nav-plus" data-panelbear="nav-plus">
+                    Fediview Plus
+                </a>
+            </li>
+
+            <!-- right nav -->
             <li class="auth">
                 {% if request.user.is_authenticated %}
                 <form action="{% url 'account:logout' %}" method="POST" style="text-align: right;">
@@ -87,10 +102,12 @@
                 <div style="flex-grow: 1; padding-right: 1em;">
                     <h3 class="tagline">
                         <span>
-                            Aggregate recent posts from Mastodon
+                            {% block header %}
+                            {% endblock header %}
                         </span>
                     </h3>
                 </div>
+                {% block digitalocean %}
                 <div style="padding-top: 1.5em; padding-bottom: 1em;">
                     <a
                         href="https://www.digitalocean.com/?refcode=617d629f56c0&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img
@@ -98,6 +115,7 @@
                             alt="DigitalOcean Referral Badge" />
                     </a>
                 </div>
+                {% endblock digitalocean %}
             </div>
         </header>
 
