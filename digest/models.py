@@ -113,6 +113,7 @@ class Post(BaseModel):
     account: Account
     card: Optional[Card]
     muted: bool
+    language: Optional[str]
 
     # gets set after init
     base_url: Optional[str]

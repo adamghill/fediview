@@ -15,6 +15,7 @@ from mastodon.errors import (
     MastodonUnauthorizedError,
 )
 
+from account.models import Profile
 from digest.api import fetch_posts_and_boosts
 from digest.models import Account, Card, Post
 from digest.scorers import get_scorer_from_name
@@ -137,6 +138,7 @@ def build_digest(
     timeline: str,
     url: str,
     token: str,
+    profile: Profile = None,
 ) -> Digest:
     """Creates a digest of popular posts and boosts the user has not interacted with."""
 
@@ -165,7 +167,12 @@ def build_digest(
 
         # Fetch all the posts and boosts from the timeline
         (posts, boosts) = fetch_posts_and_boosts(
-            mastodon, logged_in_account, timeline, start, end
+            mastodon,
+            logged_in_account,
+            timeline,
+            start,
+            end=end,
+            profile=profile,
         )
 
         logger.debug("Posts and boosts fetched")

@@ -29,3 +29,4 @@ class Profile(TimeStampedModel):
     timeline = models.CharField(max_length=255)
     last_retrieval = models.DateTimeField(blank=True, null=True)
     has_plus = models.BooleanField(default=False)
+    language = models.CharField(blank=True, null=True, max_length=10)

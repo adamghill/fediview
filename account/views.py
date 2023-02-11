@@ -135,6 +135,22 @@ def logout(request):
 @login_required
 @render_html("account/account.html")
 def account(request):
+    if request.is_post:
+        profile = request.user.account.profile
+
+        if not profile.has_plus:
+            raise Exception(f"User {request.user.id} is not plus")
+        
+        if request.POST.get("language", "__all__") == "__all__":
+            profile.language = None
+        else:    
+            profile.language = request.POST.get("language")
+        
+        profile.save()
+        messages.success(request, "Profile saved")
+
+        return redirect("account:account")
+
     return {}
 
 

@@ -125,6 +125,7 @@ class TimelineView(UnicornView):
                 self.timeline,
                 self.url,
                 self.token,
+                profile=self.request.user.account.profile,
             )
             logger.info(f"Job enqueued: {job.id}")
 

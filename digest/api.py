@@ -4,6 +4,7 @@ from typing import Optional
 
 from mastodon import Mastodon
 
+from account.models import Profile
 from digest.models import Account, Post
 
 logger = logging.getLogger(__name__)
@@ -55,6 +56,7 @@ def fetch_posts_and_boosts(
     start: datetime,
     end: Optional[datetime] = None,
     limit: int = 1000,
+    profile: Profile = None,
 ) -> tuple[list[Post], list[Post]]:
     """Fetches posts from the home timeline that the account hasn't interacted with."""
 
@@ -103,6 +105,15 @@ def fetch_posts_and_boosts(
                     and not post.account.is_nobot
                     and not post.muted
                 ):
+                    if (
+                        profile
+                        and profile.has_plus
+                        and profile.language
+                        and post.language
+                        and profile.language != post.language
+                    ):
+                        continue
+
                     # Append to either the boosts list or the posts lists
                     if is_boosted:
                         boosts.append(post)
