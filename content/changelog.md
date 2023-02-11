@@ -11,6 +11,7 @@ body_class: changelog
 ## 2023-02-11
 
 - Add filter by language to the <a href="{% url 'account:account' %}">account</a> page for <a href="{% url 'www:plus' %}">Fediview Plus</a>.
+![Language Filter](/static/img/screenshots/language-filter.png)
 
 ## 2023-02-02
 
