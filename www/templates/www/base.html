@@ -78,7 +78,7 @@
                     <span style="padding-right: .5em;" class="username">
                         <a href="{% url 'account:account' %}" class="plausible-event-name=nav-username"
                             data-panelbear="nav-username">
-                            {{ request.user.username }}
+                            {{ request.user.username|username_no_server }}
                         </a>
                     </span>
                     <button class="plausible-event-name=nav-logout" data-panelbear="nav-logout">Logout</button>

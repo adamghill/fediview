@@ -1,19 +1,17 @@
 {% load humanize static unicorn %}
 
 <div>
-    {% if not request.user.is_authenticated or not request.user.account.profile.has_plus %}
-    <p class="callout">
-        Get more features with
-        <a href="{% url 'www:plus' %}" class="plausible-event-name=timeline-plus" data-panelbear="timeline-plus">
-            Fediview Plus</a>. ✨
-        <br />
-        <br />
+    {% include "account/_plus_callout.html" with section_name="timeline" %}
 
-        <a href="{% url 'www:plus' %}" class="plausible-event-name=timeline-button-plus"
-            data-panelbear="timeline-button-plus">
-            <button>Sign Up</button>
-        </a>
-    </p>
+    {% if user.account.profile.has_plus %}
+    <div class="callout">
+        <p>
+            Thank you for being a Fediview Plus ✨ user. You can now filter posts by language!
+        </p>
+        <p>
+            Configure <a href="{% url 'account:account' %}">your profile</a>.
+        </p>
+    </div>
     {% endif %}
 
     {% if not request.user.is_authenticated %}

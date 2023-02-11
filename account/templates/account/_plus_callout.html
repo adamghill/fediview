@@ -1,0 +1,20 @@
+{% if not user.account.profile.has_plus %}
+<div class="callout">
+    Get more features with
+    <a href="{% url 'www:plus' %}" class="plausible-event-name={{ section_name }}-plus"
+        data-panelbear="{{ section_name }}-plus">
+        Fediview Plus</a>. ✨
+
+    <ul style="padding-bottom: .5em">
+        <li>Filter posts by language</li>
+        <li>More coming soon!</li>
+    </ul>
+
+    <div>
+        <a href="{% url 'www:plus' %}" class="plausible-event-name={{ section_name }}-button-plus"
+            data-panelbear="{{ section_name }}-button-plus">
+            <button>Sign Up</button>
+        </a>
+    </div>
+</div>
+{% endif %}

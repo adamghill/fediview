@@ -14,3 +14,13 @@ def username_to_url(username):
         url = f"https://{server}/@{username}"
 
         return url
+
+
+@register.filter
+def username_no_server(username):
+    username_splits = username.split("@")
+
+    if len(username_splits) == 3:
+        username = f"@{username_splits[1]}"
+
+    return username

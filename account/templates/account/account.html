@@ -1,5 +1,5 @@
 {% extends 'www/base.html' %}
-{% load cache compress mastodon static unicorn %}
+{% load cache compress humanize mastodon static unicorn %}
 
 
 {% block content %}
@@ -24,11 +24,18 @@
 
     {% if user.account.profile %}
     <h4 style="margin-top: 2em;">
-        Last Configuration
+        Saved Configuration
     </h4>
     <ul>
+        <li>Last Retrieval: {{ user.account.profile.last_retrieval|naturaltime }}</li>
         <li>Timeline: {{ user.account.profile.timeline|title }}</li>
-        <li>Algorithm: {{ user.account.profile.scorer }}</li>
+        <li>
+            Algorithm: {{ user.account.profile.scorer }}
+            <a href="{% url 'coltrane:content' 'faq' %}#what-are-the-available-algorithms" class="info tooltip"
+                data-text="Simple is ↻ + ★. Extended includes ⥄. Weighted deprioritizes accounts with lots of followers.">
+                ⓘ
+            </a>
+        </li>
         <li>Threshold: {{ user.account.profile.threshold|title }}</li>
         <li>Hours: {{ user.account.profile.hours }}</li>
     </ul>
@@ -39,20 +46,7 @@
         Profile
     </h4>
 
-    {% if not user.account.profile.has_plus %}
-    <p class="callout">
-        Get the features below with
-        <a href="{% url 'www:plus' %}" class="plausible-event-name=timeline-plus" data-panelbear="timeline-plus">
-            Fediview Plus</a>. ✨
-        <br />
-        <br />
-
-        <a href="{% url 'www:plus' %}" class="plausible-event-name=timeline-button-plus"
-            data-panelbear="timeline-button-plus">
-            <button>Sign Up</button>
-        </a>
-    </p>
-    {% endif %}
+    {% include "account/_plus_callout.html" with section_name="account" %}
 
     <form method="POST" action="{{ request.path }}">{% csrf_token %}
         <label>Language Filter</label>
@@ -367,15 +361,17 @@
         Remove Account
     </h4>
     <p>
-        Deleting your account is permanent. Any data cannot be recovered.
+        Deleting your Fediview account is permanent. Data cannot be recovered after it has been deleted.
     </p>
 
     <form method="POST" action="{% url 'account:delete' %}">{% csrf_token %}
-        <button type="submit" style="margin-top: 1em; background-color: red;" class="plausible-event-name=remove-data"
-            data-panelbear="remove-data"
-            onclick="javascript: return confirm('This will remove all data associated with {{ request.user.username }} and it can not be recovered. Are you sure?');">
-            Delete Account
-        </button>
+        <div style="text-align: right;">
+            <button type="submit" style="margin-top: 1em; background-color: red;"
+                class="plausible-event-name=remove-data" data-panelbear="remove-data"
+                onclick="javascript: return confirm('This will remove all data associated with {{ request.user.username }} and it can not be recovered. Are you sure?');">
+                Delete Fediview Account
+            </button>
+        </div>
     </form>
 </div>
 {% endblock content %}

@@ -8,6 +8,14 @@ body_class: changelog
 
 [All commits](https://github.com/adamghill/fediview/commits/main)
 
+## 2023-02-11
+
+- Add filter by language to the <a href="{% url 'account:account' %}">account</a> page for <a href="{% url 'www:plus' %}">Fediview Plus</a>.
+
+## 2023-02-02
+
+- Add <a href="{% url 'www:plus' %}">Fediview Plus</a> page.
+
 ## 2023-01-31
 
 - Save settings for logged-in users.
