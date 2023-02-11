@@ -1,17 +1,21 @@
 ---
 template: www/base.html
 title: The Best Tools for Mastodon in 2023
-publish_date: 2023-02-02
+publish_date: 2023-02-10
 ---
 
 # The Best Tools for Mastodon in 2023
 *{{ publish_date }}*
 
-Here are the best tools for Mastodon I have found and personally used. I am especially interested in tools focused on less technical users, so they should all be relatively intuitive and usable from a web browser.
+Here are the best tools for Mastodon I have found and personally used. All of these tools should be relatively intuitive and usable from a web browser.
+
+## Finding servers
+
+- [fedi.garden](https://fedi.garden/): Discovering nice servers on Mastodon and the fediverse. Made by [@FediGarden](https://social.growyourown.services/@FediGarden).
+- [Mastodonn instances](https://instances.social/): A guided wizard that helps pick the right Mastodon instance for you. Made by [@TheKinrar](https://mastodon.xyz/@TheKinrar).
 
 ## Following accounts
 
-- [Movetodon](https://www.movetodon.org): Log in with Twitter and movetodon will look at who you currently follow and find their Mastodon account. Will also show when they joined Mastodon and when they were last active. Made by [@Tibor](https://mastodon.social/@Tibor).
 - [Followgraph](https://followgraph.vercel.app): Find awesome people on Mastodon by looking up who you follow on and surfacing who *they* follow. It expands your connection graph based on who you are already connected to. Made by [@gabipurcaru](https://mastodon.online/@gabipurcaru).
 
 ## Web clients
