@@ -115,6 +115,13 @@ class TimelineView(UnicornView):
         start = datetime.now(timezone.utc) - timedelta(hours=int(self.hours))
         end = None
 
+        profile = None
+
+        try:
+            profile = self.request.user.account.profile
+        except Exception:
+            pass
+
         try:
             job = django_rq.enqueue(
                 build_digest,
@@ -125,7 +132,7 @@ class TimelineView(UnicornView):
                 self.timeline,
                 self.url,
                 self.token,
-                profile=self.request.user.account.profile,
+                profile=profile,
             )
             logger.info(f"Job enqueued: {job.id}")
 
