@@ -43,32 +43,26 @@
                     fediview
                 </a>
             </li>
+            {% if user.is_authenticated and user.account.profile.has_plus %}
             <li>
-                <a href="{% url 'coltrane:content' 'faq' %}"
-                    class="{% if request.path == '/faq' %}active{% endif %} plausible-event-name=nav-faq"
-                    data-panelbear="nav-faq">
-                    FAQ
+                <a href="{% url 'activity:activity' %}" class="plausible-event-name=nav-activity-activity"
+                    data-panelbear="nav-activity-activity">
+                    Activity
                 </a>
             </li>
             <li>
-                <a href="{% url 'coltrane:content' 'changelog' %}"
-                    class="{% if request.path == '/changelog' %}active{% endif %} plausible-event-name=nav-changelog"
-                    data-panelbear="nav-changelog">
-                    Changelog
+                <a href="{% url 'activity:search' %}" class="plausible-event-name=nav-activity-search"
+                    data-panelbear="nav-activity-search">
+                    Search
                 </a>
             </li>
-            <li>
-                <a href="https://github.com/adamghill/fediview" target="_blank" class="plausible-event-name=nav-code"
-                    data-panelbear="nav-code">
-                    Code
-                </a>
-                <span class="icon">⧉</span>
-            </li>
+            {% else %}
             <li>
                 <a href="{% url 'www:plus' %}" class="plausible-event-name=nav-plus" data-panelbear="nav-plus">
                     Fediview Plus ✨
                 </a>
             </li>
+            {% endif %}
 
             <!-- right nav -->
             <li class="auth">
@@ -132,6 +126,13 @@
                         <p class="footer-header">Articles</p>
                         <ul>
                             <li>
+                                <a href="{% url 'coltrane:content' 'faq' %}"
+                                    class="{% if request.path == '/faq' %}active{% endif %} plausible-event-name=footer-faq"
+                                    data-panelbear="footer-faq">
+                                    FAQ
+                                </a>
+                            </li>
+                            <li>
                                 <a href="{% url 'coltrane:content' 'what-is-mastodon' %}"
                                     class="plausible-event-name=footer-what-is-mastodon"
                                     data-panelbear="footer-what-is-mastodon">What is Mastodon?</a>
@@ -147,6 +148,13 @@
                         <br />
                         <p class="footer-header">Code</p>
                         <ul>
+                            <li>
+                                <a href="{% url 'coltrane:content' 'changelog' %}"
+                                    class="{% if request.path == '/changelog' %}active{% endif %} plausible-event-name=footer-changelog"
+                                    data-panelbear="footer-changelog">
+                                    Changelog
+                                </a>
+                            </li>
                             <li>
                                 <a href="https://github.com/adamghill/fediview">fediview</a> by <a
                                     href="https://indieweb.social/@adamghill">@adamghill</a>

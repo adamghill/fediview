@@ -1,0 +1,50 @@
+{% extends 'www/base.html' %}
+{% load cache compress humanize mastodon static unicorn %}
+
+
+{% block js %}
+{% unicorn_scripts %}
+{% endblock js %}
+
+{% block content %}
+<style>
+    header {
+        display: none;
+    }
+</style>
+
+<div style="margin-top: 3em;">
+    {% if user.account.profile.indexing_type == user.account.profile.IndexingType.CONTENT %}
+    <form method="POST" action="{% url 'activity:search' %}">{% csrf_token %}
+        <input name="query" value="{{ query|default:'' }}" placeholder="Text to search for..."></input>
+
+        <div style="text-align: right;">
+            <button type="submit" style="margin-top: 1em;" class="plausible-event-name=search-posts"
+                data-panelbear="search-posts">
+                Search
+            </button>
+        </div>
+    </form>
+
+    {% if results %}
+    {% for post in results %}
+    <div class="post">
+        <div class="status">
+            <div class="status_content">
+                {{ post.text_content }}
+            </div>
+
+            <div class="footer">
+                <div class="reactions">
+                    <a href="{{ post.url }}">Original post 🔗</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% else %}
+    Update indexing type to content in <a href="{% url 'account:account' %}">account settings</a> to enable search.
+    {% endif %}
+</div>
+{% endblock content %}

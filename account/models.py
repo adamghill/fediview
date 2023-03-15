@@ -19,10 +19,18 @@ class Account(TimeStampedModel):
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     access_token = models.CharField(max_length=1024)
+    account_id = models.BigIntegerField(blank=True, null=True)
 
 
 class Profile(TimeStampedModel):
-    account = models.OneToOneField(Account, on_delete=models.CASCADE)
+    class IndexingType(models.IntegerChoices):
+        NONE = 1
+        METADATA = 2
+        CONTENT = 3
+
+    account = models.OneToOneField(
+        Account, related_name="profile", on_delete=models.CASCADE
+    )
     hours = models.IntegerField()
     scorer = models.CharField(max_length=255)
     threshold = models.CharField(max_length=255)
@@ -30,3 +38,6 @@ class Profile(TimeStampedModel):
     last_retrieval = models.DateTimeField(blank=True, null=True)
     has_plus = models.BooleanField(default=False)
     language = models.CharField(blank=True, null=True, max_length=10)
+    indexing_type = models.IntegerField(
+        choices=IndexingType.choices, default=IndexingType.NONE
+    )

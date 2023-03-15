@@ -14,14 +14,16 @@ logger = logging.getLogger(__name__)
 class Account(BaseModel):
     id: int
     acct: str
-    followers_count: int
-    following_count: int
     username: str
-    display_name: str
-    avatar: str
-    emojis: list[dict] = Field(default_factory=list)
-    note: str
     url: HttpUrl
+
+    # optionals
+    followers_count: Optional[int]
+    following_count: Optional[int]
+    display_name: Optional[str]
+    avatar: Optional[str]
+    emojis: list[dict] = Field(default_factory=list)
+    note: Optional[str]
     discoverable: Optional[bool]
 
     # gets set after init
@@ -35,8 +37,9 @@ class Account(BaseModel):
 
         self.display_name = self._format_display_name()
 
-        _note = self.note.lower()
-        self.is_nobot = "#nobot" in _note or "#nobots" in _note
+        if self.note:
+            _note = self.note.lower()
+            self.is_nobot = "#nobot" in _note or "#nobots" in _note
 
     def _format_display_name(self) -> str:
         for emoji in self.emojis:
@@ -97,6 +100,15 @@ class Card(BaseModel):
                 logger.exception(e)
 
 
+class Tag(BaseModel):
+    name: str
+
+
+class Application(BaseModel):
+    name: str
+    website: Union[Optional[str], HttpUrl]
+
+
 class Post(BaseModel):
     id: int
     url: Optional[str]
@@ -114,11 +126,23 @@ class Post(BaseModel):
     card: Optional[Card]
     muted: bool
     language: Optional[str]
+    tags: list[Tag]
+    mentions: list[Account]
+    application: Optional[Application]
+    edited_at: Optional[datetime]
+    visibility: str
+    pinned: bool = False
 
     # gets set after init
+    is_poll: bool = False
     base_url: Optional[str]
     score: Optional[float]
     home_url: Optional[str]
+
+    def __init__(self, **data: Any):
+        super().__init__(**data)
+
+        self.is_poll = data["poll"] is not None
 
     def set_base_url(self, base_url: str) -> None:
         self.base_url = base_url

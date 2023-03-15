@@ -1,0 +1,98 @@
+{% extends 'www/base.html' %}
+{% load cache compress humanize mastodon static unicorn %}
+
+
+{% block js %}
+{% unicorn_scripts %}
+{% endblock js %}
+
+{% block content %}
+<style>
+    header {
+        display: none;
+    }
+</style>
+
+<div style="margin-top: 3em;">
+    {% if show_refresh_message %}
+    <div class="callout">
+        Posts are currently being indexed. Please <a href="{{ request.path_and_query }}">refresh the page</a> in a few
+        minutes.
+    </div>
+    {% endif %}
+
+    {% if posts_indexed_count == 0 %}
+    <p>
+        No posts found.
+
+        {% if profile.indexing_type == profile.IndexingType.NONE %}
+        Enable indexing in <a href="{% url 'account:account' %}">account settings</a>.
+        {% else %}
+        <form method="POST" action="{% url 'activity:refresh' %}">{% csrf_token %}
+            <div style="text-align: right;">
+                <button type="submit" style="margin-top: 1em;" class="plausible-event-name=index-posts"
+                    data-panelbear="index-posts">
+                    Index Post
+                    {% if profile.indexing_type == profile.IndexingType.METADATA %}Metadata{% elif profile.indexing_type == profile.IndexingType.CONTENT %}Content{% endif %}
+                </button>
+            </div>
+        </form>
+        {% endif %}
+    </p>
+    {% else %}
+    <div style="float: right; top: 1.5em; position: relative;">
+        <form method="POST" action="{% url 'activity:refresh' %}">{% csrf_token %}
+            <button type="submit" class="plausible-event-name=refresh-posts" data-panelbear="refresh-posts">
+                Re-index Post
+                {% if profile.indexing_type == profile.IndexingType.METADATA %}Metadata{% elif profile.indexing_type == profile.IndexingType.CONTENT %}Content{% endif %}
+            </button>
+        </form>
+    </div>
+
+    <div>
+        <div class="box">
+            <div class="title">
+                {{ posts_indexed_count|default:'n/a' }}
+            </div>
+            <div class="subtitle">
+                Posts
+            </div>
+        </div>
+
+        <div class="box">
+            <div class="title">
+                {{ replies_indexed_count|default:'n/a' }}
+            </div>
+            <div class="subtitle">
+                Replies
+            </div>
+        </div>
+    </div>
+
+    {% unicorn 'reports' %}
+
+    <hr style="margin-top: 5em; border-top: 1px black dashed" />
+
+    <details style="margin-top: 2em;">
+        <summary>
+            <span style="color: var(--red-600);">Remove Indexed Posts</span>
+        </summary>
+
+        <p class="help">
+            Removing the indexed posts is permanent. Data cannot be recovered after it has been deleted.
+        </p>
+
+        <form method="POST" action="{% url 'activity:delete' %}">{% csrf_token %}
+            <div style="text-align: right;">
+                <button type="submit" style="margin-top: 1em;" class="danger plausible-event-name=delete-posts"
+                    data-panelbear="delete-posts"
+                    onclick="javascript: return confirm('This will remove all of the posts indexed for {{ request.user.username }}. Are you sure?');">
+                    Remove Indexed Posts
+                </button>
+            </div>
+        </form>
+    </details>
+</div>
+{% endif %}
+
+{% endblock content %}

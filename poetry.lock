@@ -540,6 +540,20 @@ docs = ["Sphinx (>=4.3.2,<5.0.0)", "furo (>=2021.11.23,<2022.0.0)", "linkify-it-
 minify = ["htmlmin (>=0.1.12,<0.2.0)"]
 
 [[package]]
+name = "emoji"
+version = "2.2.0"
+description = "Emoji for Python"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+files = [
+    {file = "emoji-2.2.0.tar.gz", hash = "sha256:a2986c21e4aba6b9870df40ef487a17be863cb7778dcf1c01e25917b7cd210bb"},
+]
+
+[package.extras]
+dev = ["coverage", "coveralls", "pytest"]
+
+[[package]]
 name = "exceptiongroup"
 version = "1.1.0"
 description = "Backport of PEP 654 (exception groups)"
@@ -1934,4 +1948,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "f0d9511a7c4bf39e10e1a418c14317fe048bd94eecd47237b2d14a11a6f55e4c"
+content-hash = "0b829da6aa1ea0f2b6ab5ae23c6da70eb084705d0cd2041c54826b072dd6070f"

@@ -1,5 +1,7 @@
+import logging
 from uuid import uuid4
 
+import django_rq
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login as auth_login
@@ -14,6 +16,9 @@ from fbv.decorators import render_html
 from mastodon import Mastodon
 
 from account.models import Account, Instance, User
+from activity.postgres_indexer import index_posts
+
+logger = logging.getLogger(__name__)
 
 SCOPES = ["read", "write"]
 
@@ -137,17 +142,30 @@ def logout(request):
 def account(request):
     if request.is_post:
         profile = request.user.account.profile
+        assert profile.has_plus, "Plus is required"
 
-        if not profile.has_plus:
-            raise Exception(f"User {request.user.id} is not plus")
-        
+        message = "Profile saved"
+
         if request.POST.get("language", "__all__") == "__all__":
             profile.language = None
-        else:    
+        else:
             profile.language = request.POST.get("language")
-        
+
+        original_indexing_type = profile.indexing_type
+        profile.indexing_type = int(request.POST.get("indexing_type", "1"))
+
+        if profile.indexing_type == profile.IndexingType.NONE.value:
+            pass
+        else:
+            # Start indexing posts if the user updated their indexing type
+            if original_indexing_type != profile.indexing_type:
+                job = django_rq.enqueue(index_posts, profile)
+                logger.info(f"Start indexing posts with {job.id}")
+
+                message = f"{message} and start to index posts"
+
         profile.save()
-        messages.success(request, "Profile saved")
+        messages.success(request, message)
 
         return redirect("account:account")
 

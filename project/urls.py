@@ -6,6 +6,7 @@ from django.urls import include, path
 from fbv.views import favicon_emoji, favicon_file
 
 from account import urls as account_urls
+from activity import urls as activity_urls
 from www import urls as www_urls
 
 ContentSitemap.protocol = "https"
@@ -29,6 +30,7 @@ urlpatterns = [
         name="django.contrib.sitemaps.views.sitemap",
     ),
     path("account", include(account_urls, namespace="account")),
+    path("activity", include(activity_urls, namespace="activity")),
     path("", include(www_urls, namespace="www")),
     path("", include("coltrane.urls")),
 ]

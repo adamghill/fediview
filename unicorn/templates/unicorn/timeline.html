@@ -4,6 +4,7 @@
     {% include "account/_plus_callout.html" with section_name="timeline" %}
 
     {% if user.account.profile.has_plus %}
+    {% comment %}
     <div class="callout">
         <p>
             Thank you for being a Fediview Plus ✨ user. You can now filter posts by language!
@@ -12,6 +13,7 @@
             Configure <a href="{% url 'account:account' %}">your profile</a>.
         </p>
     </div>
+    {% endcomment %}
     {% endif %}
 
     {% if not request.user.is_authenticated %}

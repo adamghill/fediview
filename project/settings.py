@@ -24,6 +24,7 @@ DJANGO_APPS = [
     "django.contrib.humanize",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "django.contrib.postgres",
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
     "django.contrib.sites",
@@ -38,6 +39,7 @@ THIRD_PARTY_APPS = [
 
 INTERNAL_APPS = [
     "account",
+    "activity",
     "unicorn",
     "www",
 ]

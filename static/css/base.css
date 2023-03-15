@@ -313,7 +313,7 @@ a.mention,
 }
 
 footer {
-    margin-top: 12em;
+    margin-top: 2em;
     border-top: black 1px dashed !important;
 }
 
@@ -505,6 +505,35 @@ summary {
     border: 1px solid #E6E3E1;
     border-radius: 4px;
     margin-bottom: 2em;
+}
+
+.danger {
+    background-color: var(--red);
+}
+
+.danger:hover {
+    background-color: var(--red-600);
+    border-color: var(--red-600);
+}
+
+.box {
+    max-width: 160px;
+    max-height: 160px;
+    background-color: var(--yellow);
+    color: white;
+    padding: 1em;
+    border-radius: 4px;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+.box .title {
+    font-size: x-large;
+    font-weight: bolder;
+}
+
+.box .subtitle {
+    font-variant: all-small-caps;
 }
 
 /* .post.additional .avatar {

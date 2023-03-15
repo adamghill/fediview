@@ -1,0 +1,93 @@
+<div>
+    <div style="margin-top: 3em; margin-bottom: 3em;">
+        <select u:model="report_type" u:click="get_report">
+            <option selected>-- Choose a report --</option>
+            <option value="posts">Top posts</option>
+            <option value="mentions">Top mentioned accounts</option>
+            <option value="tags">Top tags</option>
+            <option value="emojis">Top emojis</option>
+        </select>
+    </div>
+
+    {% if report_type == "emojis" %}
+    <h3>Top emojis</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Emoji</th>
+                <th>#</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emoji, count in emojis_counter %}
+            <tr>
+                <td>{{ emoji }}</td>
+                <td>{{ count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% elif report_type == "posts" %}
+    <h3>Top posts</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Post</th>
+                <th>Boosted</th>
+                <th>Favorited</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for post in top_posts %}
+            <tr>
+                <td>
+                    <a href="{{ post.url }}">{{ post.text_content|truncatewords:20|default:post.url }}</a>
+                </td>
+                <td>{{ post.reblogs_count }}</td>
+                <td>{{ post.favourites_count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% elif report_type == "mentions" %}
+    <h3>Top mentioned accounts</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Account</th>
+                <th>#</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mention, count in mentions_counter %}
+            <tr>
+                <td>{{ mention }}</td>
+                <td>{{ count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% elif report_type == "tags" %}
+    <h3>Top tags</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Tag</th>
+                <th>#</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tag, count in tags_counter %}
+            <tr>
+                <td>{{ tag }}</td>
+                <td>{{ count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
