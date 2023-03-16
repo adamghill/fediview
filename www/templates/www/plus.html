@@ -11,23 +11,34 @@ Fediview Plus ✨
 
 {% block content %}
 <p>
-    I have a few features that I have been thinking about for <em>fediview</em>:
+    Some newly added features to Fediview:
 </p>
 
 <ul>
     <li>
-        <strike>Only include posts of a particular language</strike>
-        (now available on <a href="{% url 'account:account' %}">your profile</a>)
+        Only include posts of a particular language
+        (available on <a href="{% url 'account:account' %}">your profile</a>)
     </li>
     <li>
-        <strike>Get a summary of personal emojis, tags, and mentions</strike> (now available)
+        Get a summary of personal emojis, tags, and mentions (now available)
     </li>
     <li>
-        <strike>Get your top posts</strike> (now available)
+        Get your top posts (now available)
     </li>
     <li>
-        <strike>Search your personal posts</strike> (now available)
+        Search your personal posts
     </li>
+</ul>
+
+<video width="640" controls style="border: 1px solid #ccc">
+    <source src="{% static 'mov/fediview-activity.mp4' %}" type="video/mp4">
+</video>
+
+<p style="margin-top: 2em;">
+    I have a few features that I have been thinking about for Fediview:
+</p>
+
+<ul>
     <li>Send daily/weekly emails with Mastodon summaries</li>
     <li>"If this, than that" style workflows (e.g. when a post with a certain tag is in my home timeline, automatically
         bookmark it)</li>
@@ -44,7 +55,7 @@ Fediview Plus ✨
 <p style="margin-top: 40px;">
     These features (and more!) will soon be available for those that <a
         href="https://github.com/sponsors/adamghill">sponsor me on GitHub</a>. Sponsoring will allow me to cover server
-    hosting and email sending costs. You will also get a say in new features and it helps support the project.
+    hosting and other costs. You will also get a say in new features and it helps support the project!
 </p>
 
 <p style="margin-top: 40px;">
