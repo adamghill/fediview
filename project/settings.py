@@ -101,6 +101,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_URL = "/account/login"
+
 SITE_ID = 1
 
 LANGUAGE_CODE = "en-us"
