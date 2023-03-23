@@ -13,60 +13,67 @@
 
 {% compress js %}
 <script>
-    window.addEventListener("load", function (event) {
+    function updateHours() {
         var hours = document.getElementById("hours");
         var hoursValue = document.getElementById("hoursValue");
 
-        // Update the current slider value (each time you drag the slider handle)
-        hours.oninput = function () {
-            hoursValue.innerHTML = this.value;
+        if (hours) { // Update the current slider value (each time you drag the slider handle)
+            hours.oninput = function () {
+                hoursValue.innerHTML = this.value;
+            }
         }
-    });
-</script>
+    }
 
-<script>
-    const saveInputTextboxIds = ['url', 'token', ];
-    const saveInputCheckboxId = 'saveInputs';
+    function saveLocal() {
+        const saveInputTextboxIds = ['url', 'token', ];
+        const saveInputCheckboxId = 'saveInputs';
+        const manualAuthorizationDetailsId = 'manual-authorization';
 
-    // Load the url and token from localstorage
-    var loadInputs = function ($saveInput) {
-        const saveInput = localStorage.getItem(saveInputCheckboxId);
-        var isChecked = false;
+        // Load the url and token from localstorage
+        var loadInputs = function ($saveInput) {
+            const saveInput = localStorage.getItem(saveInputCheckboxId);
+            var isChecked = false;
 
-        if (saveInput && (saveInput === "true" || saveInput === "false")) {
-            isChecked = JSON.parse(saveInput);
+            if (saveInput && saveInput === "true") {
+                isChecked = true;
+            }
+
             $saveInput.checked = isChecked;
-        }
 
-        if (isChecked) {
+            if (isChecked) {
+                saveInputTextboxIds.forEach(function (id) {
+                    const val = localStorage.getItem(id);
+
+                    if (val) {
+                        document.getElementById(id).value = val;
+
+                        // Make sure that unicorn "sees" the change to the text input
+                        Unicorn.trigger("timeline", id);
+                    }
+                });
+
+                let $manualAuthorizationDetails = document.getElementById(manualAuthorizationDetailsId);
+
+                if ($manualAuthorizationDetails) {
+                    $manualAuthorizationDetails.open = true;
+                }
+            }
+        };
+
+        var saveInputs = function ($saveInput) {
+            const isChecked = $saveInput.checked;
+
             saveInputTextboxIds.forEach(function (id) {
-                const val = localStorage.getItem(id);
-
-                if (val) {
-                    document.getElementById(id).value = val;
-
-                    // Make sure that unicorn "sees" the change to the text input
-                    Unicorn.trigger("timeline", id);
+                if (isChecked) {
+                    localStorage.setItem(id, document.getElementById(id).value);
+                } else {
+                    localStorage.removeItem(id);
                 }
             });
-        }
-    };
 
-    var saveInputs = function ($saveInput) {
-        const isChecked = $saveInput.checked;
+            localStorage.setItem(saveInputCheckboxId, JSON.stringify(isChecked));
+        };
 
-        saveInputTextboxIds.forEach(function (id) {
-            if (isChecked) {
-                localStorage.setItem(id, document.getElementById(id).value);
-            } else {
-                localStorage.removeItem(id);
-            }
-        });
-
-        localStorage.setItem(saveInputCheckboxId, JSON.stringify(isChecked));
-    };
-
-    window.addEventListener('load', function (event) {
         let $saveInput = document.getElementById(saveInputCheckboxId);
 
         if ($saveInput) {
@@ -74,19 +81,17 @@
 
             // Save inputs when checkbox is changed
             $saveInput.addEventListener('change', function () {
-                if (typeof (panelbear) !== 'undefined') {
-                    panelbear('track', 'save-url-and-token');
+                if (typeof (cronitor) !== 'undefined') {
+                    cronitor('track', 'save-url-and-token');
                 }
 
                 saveInputs($saveInput);
             });
-
-            // Save inputs when get popular toots button is clicked
-            document.getElementById('getPopularToots').addEventListener('click', function () {
-                // panelbear track happens via base script
-                saveInputs($saveInput);
-            });
         }
+    }
+
+    window.addEventListener('load', function (event) {
+        saveLocal();
     });
 </script>
 {% endcompress %}

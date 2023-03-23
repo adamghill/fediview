@@ -1,152 +1,35 @@
 {% load humanize static unicorn %}
 
 <div>
-    {% include "account/_plus_callout.html" with section_name="timeline" %}
-
-    {% if user.account.profile.has_plus %}
-    {% comment %}
-    <div class="callout">
-        <p>
-            Thank you for being a Fediview Plus ✨ user. You can now filter posts by language!
-        </p>
-        <p>
-            Configure <a href="{% url 'account:account' %}">your profile</a>.
-        </p>
-    </div>
-    {% endcomment %}
-    {% endif %}
-
-    {% if not request.user.is_authenticated %}
-    <table style="width: 100%; border-top: 0; margin-bottom: 0; text-align: center;">
-        <tr>
-            <td>
-                <a href="{% url 'account:login' %}" class="plausible-event-name=timeline-login"
-                    data-panelbear="timeline-login">
-                    <button>Login to Mastodon</button>
-                </a>
-            </td>
-        </tr>
-    </table>
-
-    <p style="text-align: center; font-style: italic; margin-bottom: 0;">
-        OR
-    </p>
-    {% endif %}
-
-    {% if not request.user.is_authenticated %}
-    <table style="width: 100%; border-top: 0; margin-bottom: 0;">
-        <tr>
-            {% if request.user.is_authenticated %}
-            <!-- {{ request.user.username }} -->
-            {% else %}
-            <td style="padding-bottom: 10px; vertical-align: top; padding-top: 0; width: 50%;">
-                <label for="url">Instance URL</label>
-                <input u:model.defer="url" u:keydown.enter="get_results" u:key="url" id="url"
-                    placeholder="mastodon-instance.social"></input>
-                <p class="help">
-                    The URL of your Mastodon instance
-                </p>
-            </td>
-            <td style="padding-top: 0">
-                <label for="token">Application Token</label>
-                <a href="{% url 'coltrane:content' 'faq' %}#how-do-i-generate-a-token" class="info">ⓘ</a>
-                <input u:model.defer="token" u:keydown.enter="get_results" u:key="token" id="token"></input>
-                <p class="help">
-                    Generate a token: <em>Edit profile</em>
-                    -> <em>Development</em> -> <em>New application</em>; only
-                    <strong>read</strong> access is required
-                </p>
-            </td>
-            {% endif %}
-        </tr>
-    </table>
-    {% endif %}
-
-    {% if user.is_authenticated and user.account.profile %}
-    <details>
-        <summary>Configuration</summary>
-        {% endif %}
-
-        <table class="config">
-            <tr>
-                <td>
-                    <label for="timeline">Timeline</label>
-                    <select u:model.defer="timeline" id="timeline">
-                        <option value="home">Home</option>
-                        <option value="local">Local</option>
-                        <option value="federated">Federated</option>
-                    </select>
-                </td>
-                <td>
-                    <label for="scorer">Algorithm</label>
-                    <a href="{% url 'coltrane:content' 'faq' %}#what-are-the-available-algorithms" class="info tooltip"
-                        data-text="Simple is ↻ + ★. Extended includes ⥄. Weighted deprioritizes accounts with lots of followers.">
-                        ⓘ
-                    </a>
-                    <select u:model.defer="scorer" id="scorer">
-                        <option value="Simple">Simple</option>
-                        <option value="SimpleWeighted">Simple Weighted</option>
-                        <option value="ExtendedSimple">Extended Simple</option>
-                        <option value="ExtendedSimpleWeighted">Extended Simple Weighted</option>
-                    </select>
-                </td>
-                <td>
-                    <label for="threshold">Threshold</label>
-                    <a class="info tooltip" data-text="How many posts to include.">
-                        ⓘ
-                    </a>
-                    <select u:model.defer="threshold" id="threshold">
-                        <option value="lax">More</option>
-                        <option value="normal">Normal</option>
-                        <option value="strict">Less</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td class="hours">
-                    <label for="hours" id="hoursLabel">Hours</label>
-                    <input type="range" min="1" max="24" u:model.defer="hours" id="hours">
-                    <span id="hoursValue">{{ hours }}</span>
-                </td>
-                <td></td>
-            </tr>
-        </table>
-
-        {% if user.is_authenticated %}
-    </details>
-    {% endif %}
-
-    {% if not request.user.is_authenticated %}
-    <div u:loading.remove style="padding-top: 10px; text-align: center;">
-        <input type="checkbox" id="saveInputs" name="saveInputs" class="plausible-event-name=save-url-and-token">
-        <label for="saveInputs">Save URL and Token in this browser</label>
-    </div>
-    {% endif %}
-
-    {% comment %}
-    {% if request.user.is_authenticated and user.account.profile.last_retrieval %}
-    <div u:loading.remove style="padding-top: 0; text-align: center;">
-        <input type="checkbox" id="sinceLastRetrieval" name="sinceLastRetrieval"
-            class="plausible-event-name=since-last-retrieval" checked>
-        <label for="sinceLastRetrieval">
-            Only get posts since your last retrieval ({{ user.account.profile.last_retrieval|naturaltime }})
-        </label>
-    </div>
-    {% endif %}
-    {% endcomment %}
-
-    <div u:loading.remove style="padding-top: 10px; text-align: center;">
-        <button u:click="get_results" id="getPopularToots" class="plausible-event-name=get-popular-toots"
-            data-panelbear="get-popular-toots">
-            Get Summary
-        </button>
-    </div>
-
-    <div u:loading style="padding-top: 10px; text-align: center;">
-        <em>Building digest... this might take a few seconds...</em>
-        <div style="padding-top: 3em;">
-            <img src="{% static 'img/ball-triangle.svg' %}" />
+    <div class="stepper-wrapper">
+        <div
+            class="stepper-item {% if show_configure or has_results %} completed{% endif %}{% if show_authorization %} active{% endif %}">
+            <div class="step-counter">1</div>
+            <div class="step-name">
+                {% if not request.user.is_authenticated %}
+                {% if show_configure or has_results %}
+                <a href="javascript:void(0);" u:click="reauthorize">Authorize</a>
+                {% else %}
+                Authorize
+                {% endif %}
+                {% else %}
+                Authorize
+                {% endif %}
+            </div>
+        </div>
+        <div class="stepper-item {% if has_results %} completed{% endif %}{% if show_configure %} active{% endif %}">
+            <div class="step-counter">2</div>
+            <div class="step-name">
+                {% if has_results %}
+                <a href="javascript:void(0);" u:click="reconfigure">Settings</a>
+                {% else %}
+                Settings
+                {% endif %}
+            </div>
+        </div>
+        <div class="stepper-item {% if has_results %} active{% endif %}">
+            <div class="step-counter">3</div>
+            <div class="step-name">Summary</div>
         </div>
     </div>
 
@@ -182,7 +65,139 @@
     </div>
     {% endif %}
 
+    {% if not request.user.is_authenticated and show_authorization %}
+    <table style="width: 100%; border-top: 0; margin-bottom: 0; text-align: center;">
+        <tr>
+            <td>
+                <a href="{% url 'account:login' %}" class="plausible-event-name=timeline-login"
+                    data-track="timeline-login">
+                    <button>Login with Mastodon</button>
+                </a>
+            </td>
+        </tr>
+    </table>
+
+    <details {% if unicorn.errors %}open{% endif %} id="manual-authorization">
+        <summary>
+            <span style="color: var(--secondary);">Manual Authorization</span>
+        </summary>
+
+        <table style="width: 100%; border-top: 0; margin-bottom: 0;">
+            <tr>
+                <td style="padding-bottom: 10px; vertical-align: top; padding-top: 0; width: 50%;">
+                    <label for="url">Instance URL</label>
+                    <input u:model.defer="url" u:keydown.enter="get_results" u:key="url" id="url"
+                        placeholder="mastodon-instance.social"></input>
+                    <p class="help">
+                        The URL of your Mastodon instance
+                    </p>
+                </td>
+                <td style="padding-top: 0">
+                    <label for="token">Application Token</label>
+                    <a href="{% url 'coltrane:content' 'faq' %}#how-do-i-generate-a-token" class="info">ⓘ</a>
+                    <input u:model.defer="token" u:keydown.enter="get_results" u:key="token" id="token"></input>
+                    <p class="help">
+                        Generate a token: <em>Edit profile</em>
+                        -> <em>Development</em> -> <em>New application</em>; only
+                        <strong>read</strong> access is required
+                    </p>
+                </td>
+            </tr>
+        </table>
+
+        <div style="text-align: right;">
+            <div style="float: right; padding-left: 1em;">
+                <button u:click="manually_authorize">Manually Authorize</button>
+            </div>
+
+            <span style="top: 5px; position: relative;">
+                <input type="checkbox" id="saveInputs" name="saveInputs"
+                    class="plausible-event-name=save-url-and-token">
+                <label for="saveInputs">Save URL and Token in this browser</label>
+            </span>
+        </div>
+    </details>
+    {% endif %}
+
+    {% if show_configure %}
+    <table class="config" u:loading.remove>
+        <tr>
+            <td>
+                <label for="timeline">Timeline</label>
+                <select u:model.defer="timeline" id="timeline">
+                    <option value="home">Home</option>
+                    <option value="local">Local</option>
+                    <option value="federated">Federated</option>
+                </select>
+            </td>
+            <td>
+                <label for="scorer">Algorithm</label>
+                <a href="{% url 'coltrane:content' 'faq' %}#what-are-the-available-algorithms" class="info tooltip"
+                    data-text="Simple is ↻ + ★. Extended includes ⥄. Weighted deprioritizes accounts with lots of followers.">
+                    ⓘ
+                </a>
+                <select u:model.defer="scorer" id="scorer">
+                    <option value="Simple">Simple</option>
+                    <option value="SimpleWeighted">Simple Weighted</option>
+                    <option value="ExtendedSimple">Extended Simple</option>
+                    <option value="ExtendedSimpleWeighted">Extended Simple Weighted</option>
+                </select>
+            </td>
+            <td>
+                <label for="threshold">Threshold</label>
+                <a class="info tooltip" data-text="How many posts to include.">
+                    ⓘ
+                </a>
+                <select u:model.defer="threshold" id="threshold">
+                    <option value="lax">More</option>
+                    <option value="normal">Normal</option>
+                    <option value="strict">Less</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="hours">
+                <label for="hours" id="hoursLabel">Hours</label>
+                <input type="range" min="1" max="24" u:model.defer="hours" id="hours">
+                <span id="hoursValue">{{ hours }}</span>
+
+                <script>
+                    window.addEventListener("load", function (event) {
+                        var hours = document.getElementById("hours");
+                        console.log("hours", hours)
+                        var hoursValue = document.getElementById("hoursValue");
+
+                        if (hours) { // Update the current slider value (each time you drag the slider handle)
+                            hours.oninput = function () {
+                                hoursValue.innerHTML = this.value;
+                            }
+                        }
+                    });
+                </script>
+            </td>
+            <td></td>
+        </tr>
+    </table>
+
+    <div u:loading.remove style="padding-top: 10px; text-align: right;">
+        <button u:click="get_results" id="getPopularToots" class="plausible-event-name=get-popular-toots"
+            data-track="get-popular-toots">
+            Get Summary
+        </button>
+    </div>
+
+    <div u:loading style="padding-top: 10px; text-align: center;">
+        <em>Building digest... this might take a few seconds...</em>
+        <div style="padding-top: 3em;">
+            <img src="{% static 'img/ball-triangle.svg' %}" />
+        </div>
+    </div>
+    {% endif %}
+
     {% if has_results %}
+    {% include "account/_plus_callout.html" with section_name="timeline" %}
+
     <div class="results" u:loading.remove>
         <div class="tabs" id="tabs">
             <ul>
@@ -247,14 +262,14 @@
         // Re-init GLightbox so that it picks up any new images that get loaded
         var lightbox = GLightbox({});
 
-        // Send click events to panelbear
+        // Send click events to cronitor
         ['posts', 'boosts', 'links', ].forEach(function (id) {
             var el = document.getElementById(id);
 
             if (el) {
                 el.addEventListener('click', function () {
-                    if (typeof (panelbear) !== 'undefined') {
-                        panelbear('track', id);
+                    if (typeof (cronitor) !== 'undefined') {
+                        cronitor('track', id);
                     }
                 });
             }

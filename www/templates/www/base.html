@@ -101,17 +101,6 @@
                         </span>
                     </h3>
                 </div>
-                {% block digitalocean %}
-                {% if not request.user.is_authenticated or not request.user.account.profile.has_plus %}
-                <div style="padding-top: 1.5em; padding-bottom: 1em;">
-                    <a
-                        href="https://www.digitalocean.com/?refcode=617d629f56c0&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img
-                            src="https://web-platforms.sfo2.digitaloceanspaces.com/WWW/Badge%203.svg"
-                            alt="DigitalOcean Referral Badge" />
-                    </a>
-                </div>
-                {% endif %}
-                {% endblock digitalocean %}
             </div>
         </header>
 
@@ -120,6 +109,18 @@
         {% endblock content %}
 
         <footer>
+            {% block digitalocean %}
+            {% if not request.user.is_authenticated or not request.user.account.profile.has_plus %}
+            <div style="padding-top: 1.5em; padding-bottom: 1em;">
+                <a
+                    href="https://www.digitalocean.com/?refcode=617d629f56c0&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge"><img
+                        src="https://web-platforms.sfo2.digitaloceanspaces.com/WWW/Badge%203.svg"
+                        alt="DigitalOcean Referral Badge" />
+                </a>
+            </div>
+            {% endif %}
+            {% endblock digitalocean %}
+
             <table>
                 <tr>
                     <td>

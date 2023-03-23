@@ -34,6 +34,8 @@ class TimelineView(UnicornView):
     token: str = ""
     error: str = ""
 
+    show_authorization: bool = True
+    show_configure: bool = False
     has_results: bool = False
     posts: list[dict] = []
     boosts: list[dict] = []
@@ -52,6 +54,8 @@ class TimelineView(UnicornView):
             if account:
                 self.url = account.instance.api_base_url
                 self.token = account.access_token
+                self.show_authorization = False
+                self.show_configure = True
 
                 try:
                     if account.profile:
@@ -64,6 +68,26 @@ class TimelineView(UnicornView):
 
     def hydrate(self):
         self.errors = {}
+
+    def manually_authorize(self):
+        self.errors = {}
+        self.clean()
+
+        self.reconfigure()
+
+    def reconfigure(self):
+        self.show_authorization = False
+        self.show_configure = True
+        self.has_results = False
+
+        self.call("updateHours")
+
+    def reauthorize(self):
+        self.show_authorization = True
+        self.show_configure = False
+        self.has_results = False
+
+        self.call("saveLocal")
 
     def display_posts(self):
         self.has_results = True
@@ -177,6 +201,7 @@ class TimelineView(UnicornView):
 
         self.has_results = digest.ok is True
         self.are_posts_shown = self.has_results
+        self.show_configure = not self.has_results
 
         if self.request.user.is_authenticated:
             account = Account.objects.filter(user=self.request.user).first()
@@ -210,4 +235,9 @@ class TimelineView(UnicornView):
             "links",
             "has_results",
             "error",
+            "show_authorization",
+            "show_configure",
+            "are_posts_shown",
+            "are_boosts_shown",
+            "are_links_shown",
         )
