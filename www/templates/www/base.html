@@ -39,26 +39,26 @@
             <!-- left nav -->
             <li class="brand">
                 <span class="icon">🔍</span>
-                <a href="/" class="plausible-event-name=nav-home" data-panelbear="nav-home">
+                <a href="/" class="plausible-event-name=nav-home" data-track="nav-home">
                     fediview
                 </a>
             </li>
             {% if user.is_authenticated and user.account.profile.has_plus %}
             <li>
                 <a href="{% url 'activity:activity' %}" class="plausible-event-name=nav-activity-activity"
-                    data-panelbear="nav-activity-activity">
+                    data-track="nav-activity-activity">
                     Activity
                 </a>
             </li>
             <li>
                 <a href="{% url 'activity:search' %}" class="plausible-event-name=nav-activity-search"
-                    data-panelbear="nav-activity-search">
+                    data-track="nav-activity-search">
                     Search
                 </a>
             </li>
             {% else %}
             <li>
-                <a href="{% url 'www:plus' %}" class="plausible-event-name=nav-plus" data-panelbear="nav-plus">
+                <a href="{% url 'www:plus' %}" class="plausible-event-name=nav-plus" data-track="nav-plus">
                     Fediview Plus ✨
                 </a>
             </li>
@@ -71,18 +71,17 @@
                     {% csrf_token %}
                     <span style="padding-right: .5em;" class="username">
                         <a href="{% url 'account:account' %}" class="plausible-event-name=nav-username"
-                            data-panelbear="nav-username">
+                            data-track="nav-username">
                             {{ request.user.username|username_no_server }}
                         </a>
                     </span>
-                    <button class="plausible-event-name=nav-logout" data-panelbear="nav-logout">Logout</button>
+                    <button class="plausible-event-name=nav-logout" data-track="nav-logout">Logout</button>
                 </form>
                 {% else %}
                 {% csrf_token %}
                 <div style="text-align: right;">
-                    <a href="{% url 'account:login' %}" class="plausible-event-name=nav-login"
-                        data-panelbear="nav-login">
-                        <button>Login</button>
+                    <a href="{% url 'account:login' %}" class="plausible-event-name=nav-login" data-track="nav-login">
+                        <button>Login with Mastodon</button>
                     </a>
                 </div>
                 {% endif %}
@@ -129,19 +128,19 @@
                             <li>
                                 <a href="{% url 'coltrane:content' 'faq' %}"
                                     class="{% if request.path == '/faq' %}active{% endif %} plausible-event-name=footer-faq"
-                                    data-panelbear="footer-faq">
+                                    data-track="footer-faq">
                                     FAQ
                                 </a>
                             </li>
                             <li>
                                 <a href="{% url 'coltrane:content' 'what-is-mastodon' %}"
                                     class="plausible-event-name=footer-what-is-mastodon"
-                                    data-panelbear="footer-what-is-mastodon">What is Mastodon?</a>
+                                    data-track="footer-what-is-mastodon">What is Mastodon?</a>
                             </li>
                             <li>
                                 <a href="{% url 'coltrane:content' 'best-tools-for-mastodon' %}"
                                     class="plausible-event-name=footer-best-tools-for-mastodon"
-                                    data-panelbear="footer-best-tools-for-mastodon">Tools for
+                                    data-track="footer-best-tools-for-mastodon">Tools for
                                     Mastodon</a>
                             </li>
                         </ul>
@@ -152,7 +151,7 @@
                             <li>
                                 <a href="{% url 'coltrane:content' 'changelog' %}"
                                     class="{% if request.path == '/changelog' %}active{% endif %} plausible-event-name=footer-changelog"
-                                    data-panelbear="footer-changelog">
+                                    data-track="footer-changelog">
                                     Changelog
                                 </a>
                             </li>

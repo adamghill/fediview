@@ -1,9 +1,9 @@
 window.addEventListener("load", function () {
-  document.querySelectorAll("[data-panelbear]").forEach(function (el) {
-    if (el && el.dataset && el.dataset.panelbear) {
+  document.querySelectorAll("[data-track]").forEach(function (el) {
+    if (el && el.dataset && el.dataset.track) {
       el.addEventListener("click", function () {
         if (typeof panelbear !== "undefined") {
-          panelbear("track", el.dataset.panelbear);
+          cronitor("track", el.dataset.track);
         }
       });
     }
