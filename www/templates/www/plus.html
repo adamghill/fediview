@@ -11,34 +11,45 @@ Fediview Plus ✨
 
 {% block content %}
 <p>
-    Some newly added features to Fediview:
+    👋 Hello, I'm <a href="https://indieweb.social/@adamghill/">Adam</a>. I'm a solo developer who
+    believes in the promise of decentralized social media. I am looking to improve the ecosystem around
+    Mastodon by creating useful tools.
 </p>
 
-<ul>
+<h4 class="pt-4 pb-1">Support</h4>
+
+<p>
+    Some of the tools I build require hosting costs and other non-free infrastructure for features like sending emails,
+    not to mention the time it takes to build, support, and maintain the code. <em>Fediview Plus</em> is one way to
+    support this project and helps motivate me to keep adding new features!
+</p>
+
+<h4 class="pt-4 pb-1">Features</h4>
+
+<ul class="mt-0">
     <li>
-        Only include posts of a particular language
-        (available on <a href="{% url 'account:account' %}">your profile</a>)
+        Only include posts for a particular language
     </li>
     <li>
-        Get a summary of personal emojis, tags, and mentions (now available)
+        Get your top posts based on boosts and favorites
     </li>
     <li>
-        Get your top posts (now available)
+        Personal posts search engine to find one of your previous posts
     </li>
     <li>
-        Search your personal posts
+        Get your most used tags, mentions, and emojis
     </li>
 </ul>
+
+<h4 class="pt-4 pb-2">Video Demo</h4>
 
 <video width="640" controls style="border: 1px solid #ccc">
     <source src="{% static 'mov/fediview-activity.mp4' %}" type="video/mp4">
 </video>
 
-<p style="margin-top: 2em;">
-    I have a few features that I have been thinking about for Fediview:
-</p>
+<h4 class="pt-4 pb-1">Upcoming Features</h4>
 
-<ul>
+<ul class="mt-0">
     <li>Send daily/weekly emails with Mastodon summaries</li>
     <li>"If this, than that" style workflows (e.g. when a post with a certain tag is in my home timeline, automatically
         bookmark it)</li>
@@ -52,39 +63,26 @@ Fediview Plus ✨
     <li>Surface posts by users who haven't posted in a while</li>
 </ul>
 
-<p style="margin-top: 40px;">
-    These features (and more!) will soon be available for those that <a
-        href="https://github.com/sponsors/adamghill">sponsor me on GitHub</a>. Sponsoring will allow me to cover server
-    hosting and other costs. You will also get a say in new features and it helps support the project!
-</p>
-
-<p style="margin-top: 40px;">
-    How to sign up for <strong>Fediview Plus</strong>:
-</p>
+<h4 class="pt-4 pb-1" id="sign-up">Sign Up</h4>
 
 <ol>
     <li>
         {% if request.user.is_authenticated %}
         <strike>Login on fediview</strike>
         {% else %}
-        <a href="{% url 'account:login' %}?next=/plus">Login on fediview</a>
+        <a href="{% url 'account:login' %}?next=/plus#sign-up">Login on fediview</a>
         {% endif %}
     </li>
     <li>
-        <a href="https://github.com/sponsors/adamghill" target="_blank">Sponsor me on GitHub</a>
+        <a href="https://github.com/sponsors/adamghill" target="_blank">Sponsor me on GitHub</a> at any level
     </li>
     <li>
-        <a href="https://indieweb.social/@adamghill">Send me a message with your GitHub username</a>
+        <a href="https://indieweb.social/@adamghill">Send me a message</a> with your GitHub username
     </li>
     <li>
         🎉🎉🎉
     </li>
 </ol>
-
-<p style="text-align: center; margin-top: 4em;">
-    <iframe src="https://github.com/sponsors/adamghill/button" title="Sponsor adamghill" height="32" width="114"
-        style="border: 0; border-radius: 6px;"></iframe>
-</p>
 
 <div class="callout" style="margin-top: 4em;">
     If you are an open-source developer, student, or if in any way sponsoring me would cause undue financial stress,
