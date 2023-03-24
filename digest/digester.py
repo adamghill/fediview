@@ -153,10 +153,7 @@ def build_digest(
 
     # Get a Mastodon API instance
     try:
-        mastodon = Mastodon(
-            access_token=token,
-            api_base_url=url,
-        )
+        mastodon = Mastodon(access_token=token, api_base_url=url, user_agent="fediview")
 
         logger.debug("Mastodon API initialized")
 

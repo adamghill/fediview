@@ -26,6 +26,7 @@ def _get_account_posts(profile) -> Iterator[DigestPost]:
     mastodon = Mastodon(
         access_token=profile.account.access_token,
         api_base_url=profile.account.instance.api_base_url,
+        user_agent="fediview",
     )
 
     if not profile.account.account_id:

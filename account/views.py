@@ -37,7 +37,6 @@ def login(request):
 
     if request.is_post:
         api_base_url = request.POST.get("url").strip()
-
         api_base_url = api_base_url.replace("https://", "").replace("http://", "")
 
         if api_base_url.endswith("/"):
@@ -63,7 +62,7 @@ def login(request):
 
         state = str(uuid4())
 
-        mastodon = Mastodon(api_base_url=api_base_url)
+        mastodon = Mastodon(api_base_url=api_base_url, user_agent="fediview")
         auth_request_url = mastodon.auth_request_url(
             client_id=instance.client_id,
             state=state,
@@ -94,6 +93,7 @@ def auth(request):
         api_base_url=instance.api_base_url,
         client_id=instance.client_id,
         client_secret=instance.client_secret,
+        user_agent="fediview",
     )
 
     access_token = mastodon.log_in(

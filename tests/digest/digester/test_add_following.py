@@ -12,10 +12,7 @@ def mastodon_client():
     token = getenv("MASTODON_TOKEN")
     url = getenv("MASTODON_INSTANCE_URL")
 
-    mastodon = Mastodon(
-        access_token=token,
-        api_base_url=url,
-    )
+    mastodon = Mastodon(access_token=token, api_base_url=url, user_agent="fediview")
 
     return mastodon
 
