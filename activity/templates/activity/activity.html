@@ -6,13 +6,11 @@
 {% unicorn_scripts %}
 {% endblock js %}
 
-{% block content %}
-<style>
-    header {
-        display: none;
-    }
-</style>
+{% block header %}
+{{ request.user.username }}
+{% endblock header %}
 
+{% block content %}
 <div style="margin-top: 3em;">
     {% if show_refresh_message %}
     <div class="callout">
@@ -21,35 +19,24 @@
     </div>
     {% endif %}
 
-    {% if posts_indexed_count == 0 %}
+    {% if posts_indexed_count == 0 or profile.indexing_type == profile.IndexingType.NONE %}
     <p>
-        No posts found.
-
         {% if profile.indexing_type == profile.IndexingType.NONE %}
-        Enable indexing in <a href="{% url 'account:account' %}">account settings</a>.
+        Update the <em>Post Indexing</em> option in <a href="{% url 'account:account' %}">account settings</a> to enable
+        activity.
         {% else %}
         <form method="POST" action="{% url 'activity:refresh' %}">{% csrf_token %}
             <div style="text-align: right;">
                 <button type="submit" style="margin-top: 1em;" class="plausible-event-name=index-posts"
                     data-track="index-posts">
-                    Index Post
-                    {% if profile.indexing_type == profile.IndexingType.METADATA %}Metadata{% elif profile.indexing_type == profile.IndexingType.CONTENT %}Content{% endif %}
+                    Index Posts
                 </button>
             </div>
         </form>
         {% endif %}
     </p>
     {% else %}
-    <div style="float: right; top: 1.5em; position: relative;">
-        <form method="POST" action="{% url 'activity:refresh' %}">{% csrf_token %}
-            <button type="submit" class="plausible-event-name=refresh-posts" data-track="refresh-posts">
-                Re-index Post
-                {% if profile.indexing_type == profile.IndexingType.METADATA %}Metadata{% elif profile.indexing_type == profile.IndexingType.CONTENT %}Content{% endif %}
-            </button>
-        </form>
-    </div>
-
-    <div>
+    <div class="center">
         <div class="box">
             <div class="title">
                 {{ posts_indexed_count|default:'n/a' }}
@@ -67,11 +54,55 @@
                 Replies
             </div>
         </div>
+
+        <div class="box">
+            <div class="title">
+                {{ profile.account.favorites_count|default:'n/a' }}
+            </div>
+            <div class="subtitle">
+                Favorites
+            </div>
+        </div>
+
+        <div class="box">
+            <div class="title">
+                {{ profile.account.bookmarks_count|default:'n/a' }}
+            </div>
+            <div class="subtitle">
+                Bookmarks
+            </div>
+        </div>
+
+        <div class="box">
+            <div class="title">
+                {{ profile.account.following_count|default:'n/a' }}
+            </div>
+            <div class="subtitle">
+                Following
+            </div>
+        </div>
+
+        <div class="box">
+            <div class="title">
+                {{ profile.account.followers_count|default:'n/a' }}
+            </div>
+            <div class="subtitle">
+                Followers
+            </div>
+        </div>
     </div>
 
     {% unicorn 'reports' %}
 
     <hr style="margin-top: 5em; border-top: 1px black dashed" />
+
+    <div class="pt-4">
+        <form method="POST" action="{% url 'activity:refresh' %}">{% csrf_token %}
+            <button type="submit" class="plausible-event-name=refresh-posts" data-track="refresh-posts">
+                Re-index Posts
+            </button>
+        </form>
+    </div>
 
     <details style="margin-top: 2em;">
         <summary>
@@ -79,7 +110,9 @@
         </summary>
 
         <p class="help">
-            Removing the indexed posts is permanent. Data cannot be recovered after it has been deleted.
+            Removing the indexed posts will permanently remove them from being stored by <em>Fediview</em>. Data cannot
+            be recovered after it has been deleted.
+            It <strong>does not</strong> delete the posts from your Mastodon instance.
         </p>
 
         <form method="POST" action="{% url 'activity:delete' %}">{% csrf_token %}

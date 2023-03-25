@@ -30,7 +30,7 @@ input {
         display: none;
     }
 
-    h3.tagline {
+    .tagline {
         font-size: 20px;
     }
 
@@ -43,13 +43,13 @@ input {
     }
 }
 
-h3.tagline {
+.tagline {
     display: flex;
     height: 100%;
     text-align: center;
 }
 
-h3.tagline span {
+.tagline span {
     margin: auto;
     top: -.5em;
     position: relative;
@@ -533,8 +533,13 @@ summary {
     color: white;
     padding: 1em;
     border-radius: 4px;
-    margin-right: 10px;
+    margin-right: .4em;
     display: inline-block;
+    margin-bottom: .4em;
+}
+
+.center {
+    text-align: center;
 }
 
 .box .title {

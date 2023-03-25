@@ -20,6 +20,10 @@ class Account(TimeStampedModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     access_token = models.CharField(max_length=1024)
     account_id = models.BigIntegerField(blank=True, null=True)
+    followers_count = models.BigIntegerField(blank=True, null=True)
+    following_count = models.BigIntegerField(blank=True, null=True)
+    favorites_count = models.BigIntegerField(blank=True, null=True)
+    bookmarks_count = models.BigIntegerField(blank=True, null=True)
 
 
 class Profile(TimeStampedModel):

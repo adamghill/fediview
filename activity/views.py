@@ -11,7 +11,7 @@ from django.contrib.postgres.search import (
 )
 from django.shortcuts import redirect, reverse
 from fbv.views import render_html
-from rq.job import Job, JobStatus
+from rq.job import JobStatus
 
 from activity.models import Acct, Post
 from activity.postgres_indexer import index_posts
@@ -33,8 +33,6 @@ def activity(request):
         job = django_rq.queues.get_queue().fetch_job(job_id)
 
         if job:
-            print("job", job, job.get_status())
-
             JOB_OK_STATES = (
                 JobStatus.CANCELED.value,
                 JobStatus.FINISHED.value,
@@ -50,7 +48,6 @@ def activity(request):
 
     posts_indexed_count = None
     replies_indexed_count = None
-    last_post = None
 
     acct = Acct.objects.filter(account=account).first()
 
@@ -59,13 +56,11 @@ def activity(request):
 
         posts_indexed_count = posts.count()
         replies_indexed_count = posts.filter(reply_id__isnull=False).count()
-        last_post = posts.order_by("id").first()
 
     return {
         "profile": profile,
         "posts_indexed_count": posts_indexed_count,
         "replies_indexed_count": replies_indexed_count,
-        "last_post": last_post,
         "show_refresh_message": show_refresh_message,
     }
 

@@ -16,18 +16,12 @@ def delete_posts(profile: Profile) -> None:
     Post.objects.all(acct__profile=profile).delete()
 
 
-def _get_account_posts(profile) -> Iterator[DigestPost]:
+def _get_account_posts(mastodon: Mastodon, profile: Profile) -> Iterator[DigestPost]:
     if profile.indexing_type == profile.IndexingType.NONE:
         logger.debug(f"Skip indexing posts for profile id {profile.id}")
         return
 
     logger.debug(f"Login to mastodon for profile id {profile.id}")
-
-    mastodon = Mastodon(
-        access_token=profile.account.access_token,
-        api_base_url=profile.account.instance.api_base_url,
-        user_agent="fediview",
-    )
 
     if not profile.account.account_id:
         profile.account.account_id = mastodon.me().get("id")
@@ -42,10 +36,45 @@ def _get_account_posts(profile) -> Iterator[DigestPost]:
         posts = mastodon.fetch_next(posts)
 
 
+def _get_count(mastodon: Mastodon, status_type: str):
+    status_function = None
+
+    if status_type == "favourites":
+        status_function = mastodon.favourites
+    elif status_type == "bookmarks":
+        status_function = mastodon.bookmarks
+    else:
+        raise Exception("Invlaid status type")
+
+    count = 0
+    statuses = status_function(limit=10000)
+
+    while statuses:
+        count += len(statuses)
+
+        statuses = mastodon.fetch_next(statuses)
+
+    return count
+
+
 def index_posts(profile: Profile) -> None:
     logger.info(f"Get posts for profile id {profile.id}")
 
-    posts = _get_account_posts(profile)
+    mastodon = Mastodon(
+        access_token=profile.account.access_token,
+        api_base_url=profile.account.instance.api_base_url,
+        user_agent="fediview",
+    )
+
+    profile.account.favorites_count = _get_count(mastodon, "favourites")
+    profile.account.bookmarks_count = _get_count(mastodon, "bookmarks")
+
+    account_dict = mastodon.me()
+    profile.account.followers_count = account_dict.get("followers_count")
+    profile.account.following_count = account_dict.get("following_count")
+    profile.account.save()
+
+    posts = _get_account_posts(mastodon, profile)
     post_count = 0
 
     for digest_post in posts:
