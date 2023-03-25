@@ -5,8 +5,13 @@
 
 <head>
     <meta chartset="utf-8" />
+    <meta name="description" content="Generate algorithmic summary for Mastodon">
+    <meta name="keywords" content="Mastodon, Fediverse, Algorithm, Summary, Social Media">
+    <meta name="author" content="John Doe">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>fediview{% if title %}: {{ title }}{% endif %}</title>
+    <link rel="canonical" href="https://fediview.com/{{ request.get_full_path }}" />
+
+    <title>fediview - {% if title %}{{ title }}{% else %}Generate Summary for Mastodon{% endif %}</title>
 
     {% compress css %}
     <link rel="stylesheet" href="{% static 'css/marx.min.css' %}">
@@ -95,12 +100,13 @@
         <header style="border-bottom: dashed 1px; margin-bottom: 2em; padding: .6em;">
             <div style="display: flex;">
                 <div style="flex-grow: 1; padding-right: 1em;">
-                    <h3 class="tagline">
+                    <h1 class="tagline"
+                        style="font-size: var(--font-size-h3); text-align: center; margin: var(--md-pad) 0 var(--xs-pad);">
                         <span>
                             {% block header %}
                             {% endblock header %}
                         </span>
-                    </h3>
+                    </h1>
                 </div>
             </div>
         </header>
