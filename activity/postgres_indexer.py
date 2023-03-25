@@ -58,6 +58,16 @@ def _get_count(mastodon: Mastodon, status_type: str):
 
 
 def index_posts(profile: Profile) -> None:
+    if profile.indexing_type == profile.IndexingType.NONE.value:
+        logger.info(
+            f"Skip indexing posts for profile id {profile.id} with {profile.indexing_type} indexing type"
+        )
+        return
+
+    if not profile.has_plus:
+        logger.error(f"Skip indexing posts for non-plus profile id {profile.id}")
+        return
+
     logger.info(f"Get posts for profile id {profile.id}")
 
     mastodon = Mastodon(

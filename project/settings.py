@@ -232,7 +232,7 @@ if ENVIRONMENT == "live":
     # Use the typical worker
     RQ = {"WORKER_CLASS": "rq.Worker"}
 
-    # Make that RQ is async
+    # Make sure that RQ is async in prod
     RQ_QUEUES["default"]["ASYNC"] = True
 
     LOGGING = {
