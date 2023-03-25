@@ -45,3 +45,4 @@ class Profile(TimeStampedModel):
     indexing_type = models.IntegerField(
         choices=IndexingType.choices, default=IndexingType.NONE
     )
+    last_indexed_at = models.DateTimeField(blank=True, null=True)

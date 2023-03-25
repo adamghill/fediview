@@ -2,6 +2,7 @@ import logging
 from typing import Iterator
 
 from django.utils.html import strip_tags
+from django.utils.timezone import now
 from emoji import distinct_emoji_list
 from mastodon import Mastodon
 
@@ -205,5 +206,8 @@ def index_posts(profile: Profile) -> None:
             post.text_emojis.add(text_emoji)
 
         post_count += 1
+
+    profile.last_indexed_at = now()
+    profile.save()
 
     logger.info(f"Found {post_count} posts")

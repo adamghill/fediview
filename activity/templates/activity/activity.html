@@ -101,6 +101,10 @@
             <button type="submit" class="plausible-event-name=refresh-posts" data-track="refresh-posts">
                 Re-index Posts
             </button>
+            <p class="help mt-1">
+                Last indexed: <span
+                    title="{{ profile.last_indexed_at|default:'n/a' }}">{{ profile.last_indexed_at|naturaltime|default:'n/a' }}</span>
+            </p>
         </form>
     </div>
 
