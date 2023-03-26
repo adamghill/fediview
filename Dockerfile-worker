@@ -45,4 +45,4 @@ WORKDIR /app
 
 EXPOSE 80
 
-CMD python /app/manage.py rqworker
+CMD python /app/manage.py rqworker --with-scheduler
