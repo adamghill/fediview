@@ -35,6 +35,7 @@ THIRD_PARTY_APPS = [
     "coltrane",
     "django_rq",
     "django_unicorn",
+    "scheduler",
 ]
 
 INTERNAL_APPS = [
