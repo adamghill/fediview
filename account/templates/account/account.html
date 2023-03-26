@@ -11,357 +11,365 @@
 
 <div>
     {% if user.account %}
-    <h4 style="margin-top: 1em;">
-        Account
-    </h4>
-    <ul>
-        <li>
-            <a href="{{ request.user.username|username_to_url|default:'' }}" target="_blank">
-                {{ request.user.username }}
-            </a>
-        </li>
-        <li>
-            Instance: <a
-                href="https://{{ user.account.instance.api_base_url }}">{{ user.account.instance.api_base_url }}</a>
-        </li>
-        <li>Access Token: {{ user.account.access_token }}</li>
-    </ul>
+    <div class="mt-6 mb-6">
+        <h4>
+            Account
+        </h4>
+        <ul class="mb-0 mt-0">
+            <li>
+                <a href="{{ request.user.username|username_to_url|default:'' }}" target="_blank">
+                    {{ request.user.username }}
+                </a>
+            </li>
+            <li>
+                Instance: <a
+                    href="https://{{ user.account.instance.api_base_url }}">{{ user.account.instance.api_base_url }}</a>
+            </li>
+            <li>Access Token: {{ user.account.access_token }}</li>
+        </ul>
+    </div>
     {% endif %}
 
     {% with user.account.profile as profile %}
     {% if profile %}
-    <h4 style="margin-top: 2em;">
-        Saved Configuration
-    </h4>
-    <ul>
-        <li>Last Retrieval: {{ profile.last_retrieval|naturaltime }}</li>
-        <li>Timeline: {{ profile.timeline|title }}</li>
-        <li>
-            Algorithm: {{ profile.scorer }}
-            <a href="{% url 'coltrane:content' 'faq' %}#what-are-the-available-algorithms" class="info tooltip"
-                data-text="Simple is ↻ + ★. Extended includes ⥄. Weighted deprioritizes accounts with lots of followers.">
-                ⓘ
-            </a>
-        </li>
-        <li>Threshold: {{ profile.threshold|title }}</li>
-        <li>Hours: {{ profile.hours }}</li>
-    </ul>
-    {% endif %}
+    <div class="mb-6">
+        <h4>
+            Saved Configuration
+        </h4>
+        <ul class="mb-0 mt-0">
+            <li>Last Retrieval: {{ profile.last_retrieval|naturaltime }}</li>
+            <li>Timeline: {{ profile.timeline|title }}</li>
+            <li>
+                Algorithm: {{ profile.scorer }}
+                <a href="{% url 'coltrane:content' 'faq' %}#what-are-the-available-algorithms" class="info tooltip"
+                    data-text="Simple is ↻ + ★. Extended includes ⥄. Weighted deprioritizes accounts with lots of followers.">
+                    ⓘ
+                </a>
+            </li>
+            <li>Threshold: {{ profile.threshold|title }}</li>
+            <li>Hours: {{ profile.hours }}</li>
+        </ul>
+    </div>
 
-    {% if profile %}
-    <h4 style="margin-top: 2em; margin-bottom: 1em">
+    <h4 class="mb-2">
         Profile
     </h4>
 
     {% include "account/_plus_callout.html" with section_name="account" %}
 
     <form method="POST" action="{{ request.path }}">{% csrf_token %}
-        <label>Language Filter</label>
-        <select name="language">
-            <option value="__all__">Show everything</option>
-            <option value="aa" {% if profile.language == "" %}selected{% endif %}>Afar</option>
-            <option value="ab" {% if profile.language == "ab" %}selected{% endif %}>Abkhazian
-            </option>
-            <option value="ae" {% if profile.language == "ae" %}selected{% endif %}>Avestan
-            </option>
-            <option value="af" {% if profile.language == "af" %}selected{% endif %}>Afrikaans
-            </option>
-            <option value="ak" {% if profile.language == "ak" %}selected{% endif %}>Akan</option>
-            <option value="am" {% if profile.language == "am" %}selected{% endif %}>Amharic
-            </option>
-            <option value="an" {% if profile.language == "an" %}selected{% endif %}>Aragonese
-            </option>
-            <option value="ar" {% if profile.language == "ar" %}selected{% endif %}>Arabic</option>
-            <option value="as" {% if profile.language == "as" %}selected{% endif %}>Assamese
-            </option>
-            <option value="av" {% if profile.language == "av" %}selected{% endif %}>Avaric</option>
-            <option value="ay" {% if profile.language == "ay" %}selected{% endif %}>Aymara</option>
-            <option value="az" {% if profile.language == "az" %}selected{% endif %}>Azerbaijani
-            </option>
-            <option value="ba" {% if profile.language == "ba" %}selected{% endif %}>Bashkir
-            </option>
-            <option value="be" {% if profile.language == "be" %}selected{% endif %}>Belarusian
-            </option>
-            <option value="bg" {% if profile.language == "bg" %}selected{% endif %}>Bulgarian
-            </option>
-            <option value="bh" {% if profile.language == "bh" %}selected{% endif %}>Bihari
-                languages</option>
-            <option value="bi" {% if profile.language == "bi" %}selected{% endif %}>Bislama
-            </option>
-            <option value="bm" {% if profile.language == "bm" %}selected{% endif %}>Bambara
-            </option>
-            <option value="bn" {% if profile.language == "bn" %}selected{% endif %}>Bengali
-            </option>
-            <option value="bo" {% if profile.language == "bo" %}selected{% endif %}>Tibetan
-            </option>
-            <option value="br" {% if profile.language == "br" %}selected{% endif %}>Breton</option>
-            <option value="bs" {% if profile.language == "bs" %}selected{% endif %}>Bosnian
-            </option>
-            <option value="ca" {% if profile.language == "ca" %}selected{% endif %}>Catalan
-            </option>
-            <option value="ce" {% if profile.language == "ce" %}selected{% endif %}>Chechen
-            </option>
-            <option value="ch" {% if profile.language == "ch" %}selected{% endif %}>Chamorro
-            </option>
-            <option value="co" {% if profile.language == "co" %}selected{% endif %}>Corsican
-            </option>
-            <option value="cr" {% if profile.language == "cr" %}selected{% endif %}>Cree</option>
-            <option value="cs" {% if profile.language == "cs" %}selected{% endif %}>Czech</option>
-            <option value="cu" {% if profile.language == "cu" %}selected{% endif %}>Church Slavic
-            </option>
-            <option value="cv" {% if profile.language == "cv" %}selected{% endif %}>Chuvash
-            </option>
-            <option value="cy" {% if profile.language == "cy" %}selected{% endif %}>Welsh</option>
-            <option value="da" {% if profile.language == "da" %}selected{% endif %}>Danish</option>
-            <option value="de" {% if profile.language == "de" %}selected{% endif %}>German</option>
-            <option value="dv" {% if profile.language == "dv" %}selected{% endif %}>Divehi</option>
-            <option value="dz" {% if profile.language == "dz" %}selected{% endif %}>Dzongkha
-            </option>
-            <option value="ee" {% if profile.language == "ee" %}selected{% endif %}>Ewe</option>
-            <option value="el" {% if profile.language == "el" %}selected{% endif %}>Greek</option>
-            <option value="en" {% if profile.language == "en" %}selected{% endif %}>English
-            </option>
-            <option value="eo" {% if profile.language == "eo" %}selected{% endif %}>Esperanto
-            </option>
-            <option value="es" {% if profile.language == "es" %}selected{% endif %}>Spanish
-            </option>
-            <option value="et" {% if profile.language == "et" %}selected{% endif %}>Estonian
-            </option>
-            <option value="eu" {% if profile.language == "eu" %}selected{% endif %}>Basque</option>
-            <option value="fa" {% if profile.language == "fa" %}selected{% endif %}>Persian
-            </option>
-            <option value="ff" {% if profile.language == "ff" %}selected{% endif %}>Fulah</option>
-            <option value="fi" {% if profile.language == "fi" %}selected{% endif %}>Finnish
-            </option>
-            <option value="fj" {% if profile.language == "fj" %}selected{% endif %}>Fijian</option>
-            <option value="fo" {% if profile.language == "fo" %}selected{% endif %}>Faroese
-            </option>
-            <option value="fr" {% if profile.language == "fr" %}selected{% endif %}>French</option>
-            <option value="fy" {% if profile.language == "fy" %}selected{% endif %}>Western Frisian
-            </option>
-            <option value="ga" {% if profile.language == "ga" %}selected{% endif %}>Irish</option>
-            <option value="gd" {% if profile.language == "gd" %}selected{% endif %}>Scottish Gaelic
-            </option>
-            <option value="gl" {% if profile.language == "gl" %}selected{% endif %}>Galician
-            </option>
-            <option value="gn" {% if profile.language == "gn" %}selected{% endif %}>Guaraní
-            </option>
-            <option value="gu" {% if profile.language == "gu" %}selected{% endif %}>Gujarati
-            </option>
-            <option value="gv" {% if profile.language == "gv" %}selected{% endif %}>Manx</option>
-            <option value="ha" {% if profile.language == "ha" %}selected{% endif %}>Hausa</option>
-            <option value="he" {% if profile.language == "he" %}selected{% endif %}>Hebrew</option>
-            <option value="hi" {% if profile.language == "hi" %}selected{% endif %}>Hindi</option>
-            <option value="ho" {% if profile.language == "ho" %}selected{% endif %}>Hiri Motu
-            </option>
-            <option value="hr" {% if profile.language == "hr" %}selected{% endif %}>Croatian
-            </option>
-            <option value="ht" {% if profile.language == "ht" %}selected{% endif %}>Haitian Creole
-            </option>
-            <option value="hu" {% if profile.language == "hu" %}selected{% endif %}>Hungarian
-            </option>
-            <option value="hy" {% if profile.language == "hy" %}selected{% endif %}>Armenian
-            </option>
-            <option value="hz" {% if profile.language == "hz" %}selected{% endif %}>Herero</option>
-            <option value="ia" {% if profile.language == "ia" %}selected{% endif %}>Interlingua
-            </option>
-            <option value="id" {% if profile.language == "id" %}selected{% endif %}>Indonesian
-            </option>
-            <option value="ie" {% if profile.language == "ie" %}selected{% endif %}>Interlingue
-            </option>
-            <option value="ig" {% if profile.language == "ig" %}selected{% endif %}>Igbo</option>
-            <option value="ii" {% if profile.language == "ii" %}selected{% endif %}>Sichuan Yi
-            </option>
-            <option value="ik" {% if profile.language == "ik" %}selected{% endif %}>Inupiaq
-            </option>
-            <option value="io" {% if profile.language == "io" %}selected{% endif %}>Ido</option>
-            <option value="is" {% if profile.language == "is" %}selected{% endif %}>Icelandic
-            </option>
-            <option value="it" {% if profile.language == "it" %}selected{% endif %}>Italian
-            </option>
-            <option value="iu" {% if profile.language == "iu" %}selected{% endif %}>Inuktitut
-            </option>
-            <option value="ja" {% if profile.language == "ja" %}selected{% endif %}>Japanese
-            </option>
-            <option value="jv" {% if profile.language == "jv" %}selected{% endif %}>Javanese
-            </option>
-            <option value="ka" {% if profile.language == "ka" %}selected{% endif %}>Georgian
-            </option>
-            <option value="kg" {% if profile.language == "kg" %}selected{% endif %}>Kongo</option>
-            <option value="ki" {% if profile.language == "ki" %}selected{% endif %}>Kikuyu</option>
-            <option value="kj" {% if profile.language == "kj" %}selected{% endif %}>Kuanyama
-            </option>
-            <option value="kk" {% if profile.language == "kk" %}selected{% endif %}>Kazakh</option>
-            <option value="kl" {% if profile.language == "kl" %}selected{% endif %}>Kalaallisut
-            </option>
-            <option value="km" {% if profile.language == "km" %}selected{% endif %}>Central Khmer
-            </option>
-            <option value="kn" {% if profile.language == "kn" %}selected{% endif %}>Kannada
-            </option>
-            <option value="ko" {% if profile.language == "ko" %}selected{% endif %}>Korean</option>
-            <option value="kr" {% if profile.language == "kr" %}selected{% endif %}>Kanuri</option>
-            <option value="ks" {% if profile.language == "ks" %}selected{% endif %}>Kashmiri
-            </option>
-            <option value="ku" {% if profile.language == "ku" %}selected{% endif %}>Kurdish
-            </option>
-            <option value="kv" {% if profile.language == "kv" %}selected{% endif %}>Komi</option>
-            <option value="kw" {% if profile.language == "kw" %}selected{% endif %}>Cornish
-            </option>
-            <option value="ky" {% if profile.language == "ky" %}selected{% endif %}>Kirghiz
-            </option>
-            <option value="la" {% if profile.language == "la" %}selected{% endif %}>Latin</option>
-            <option value="lb" {% if profile.language == "lb" %}selected{% endif %}>Luxembourgish
-            </option>
-            <option value="lg" {% if profile.language == "lg" %}selected{% endif %}>Ganda</option>
-            <option value="li" {% if profile.language == "li" %}selected{% endif %}>Limburgish
-            </option>
-            <option value="ln" {% if profile.language == "ln" %}selected{% endif %}>Lingala
-            </option>
-            <option value="lo" {% if profile.language == "lo" %}selected{% endif %}>Lao</option>
-            <option value="lt" {% if profile.language == "lt" %}selected{% endif %}>Lithuanian
-            </option>
-            <option value="lu" {% if profile.language == "lu" %}selected{% endif %}>Luba-Katanga
-            </option>
-            <option value="lv" {% if profile.language == "lv" %}selected{% endif %}>Latvian
-            </option>
-            <option value="mg" {% if profile.language == "mg" %}selected{% endif %}>Malagasy
-            </option>
-            <option value="mh" {% if profile.language == "mh" %}selected{% endif %}>Marshallese
-            </option>
-            <option value="mi" {% if profile.language == "mi" %}selected{% endif %}>Maori</option>
-            <option value="mk" {% if profile.language == "mk" %}selected{% endif %}>Macedonian
-            </option>
-            <option value="ml" {% if profile.language == "ml" %}selected{% endif %}>Malayalam
-            </option>
-            <option value="mn" {% if profile.language == "mn" %}selected{% endif %}>Mongolian
-            </option>
-            <option value="mr" {% if profile.language == "mr" %}selected{% endif %}>Marathi
-            </option>
-            <option value="ms" {% if profile.language == "ms" %}selected{% endif %}>Malay</option>
-            <option value="mt" {% if profile.language == "mt" %}selected{% endif %}>Maltese
-            </option>
-            <option value="my" {% if profile.language == "my" %}selected{% endif %}>Burmese
-            </option>
-            <option value="na" {% if profile.language == "na" %}selected{% endif %}>Nauru</option>
-            <option value="nb" {% if profile.language == "nb" %}selected{% endif %}>Norwegian
-                Bokmål</option>
-            <option value="nd" {% if profile.language == "nd" %}selected{% endif %}>North Ndebele
-            </option>
-            <option value="ne" {% if profile.language == "ne" %}selected{% endif %}>Nepali</option>
-            <option value="ng" {% if profile.language == "ng" %}selected{% endif %}>Ndonga</option>
-            <option value="nl" {% if profile.language == "nl" %}selected{% endif %}>Dutch</option>
-            <option value="nn" {% if profile.language == "nn" %}selected{% endif %}>Norwegian
-                Nynorsk</option>
-            <option value="no" {% if profile.language == "no" %}selected{% endif %}>Norwegian
-            </option>
-            <option value="nr" {% if profile.language == "nr" %}selected{% endif %}>South Ndebele
-            </option>
-            <option value="nv" {% if profile.language == "nv" %}selected{% endif %}>Navajo</option>
-            <option value="ny" {% if profile.language == "ny" %}selected{% endif %}>Chichewa
-            </option>
-            <option value="oc" {% if profile.language == "oc" %}selected{% endif %}>Occitan
-            </option>
-            <option value="oj" {% if profile.language == "oj" %}selected{% endif %}>Ojibwe</option>
-            <option value="om" {% if profile.language == "om" %}selected{% endif %}>Oromo</option>
-            <option value="or" {% if profile.language == "or" %}selected{% endif %}>Oriya</option>
-            <option value="os" {% if profile.language == "os" %}selected{% endif %}>Ossetian
-            </option>
-            <option value="pa" {% if profile.language == "pa" %}selected{% endif %}>Panjabi
-            </option>
-            <option value="pi" {% if profile.language == "pi" %}selected{% endif %}>Pali</option>
-            <option value="pl" {% if profile.language == "pl" %}selected{% endif %}>Polish</option>
-            <option value="ps" {% if profile.language == "ps" %}selected{% endif %}>Pushto</option>
-            <option value="pt" {% if profile.language == "pt" %}selected{% endif %}>Portuguese
-            </option>
-            <option value="qu" {% if profile.language == "qu" %}selected{% endif %}>Quechua
-            </option>
-            <option value="rm" {% if profile.language == "rm" %}selected{% endif %}>Romansh
-            </option>
-            <option value="rn" {% if profile.language == "rn" %}selected{% endif %}>Rundi</option>
-            <option value="ro" {% if profile.language == "ro" %}selected{% endif %}>Romanian
-            </option>
-            <option value="ru" {% if profile.language == "ru" %}selected{% endif %}>Russian
-            </option>
-            <option value="rw" {% if profile.language == "rw" %}selected{% endif %}>Kinyarwanda
-            </option>
-            <option value="sa" {% if profile.language == "sa" %}selected{% endif %}>Sanskrit
-            </option>
-            <option value="sc" {% if profile.language == "sc" %}selected{% endif %}>Sardinian
-            </option>
-            <option value="sd" {% if profile.language == "sd" %}selected{% endif %}>Sindhi</option>
-            <option value="se" {% if profile.language == "se" %}selected{% endif %}>Northern Sami
-            </option>
-            <option value="sg" {% if profile.language == "sg" %}selected{% endif %}>Sango</option>
-            <option value="si" {% if profile.language == "si" %}selected{% endif %}>Sinhalese
-            </option>
-            <option value="sk" {% if profile.language == "sk" %}selected{% endif %}>Slovak</option>
-            <option value="sl" {% if profile.language == "sl" %}selected{% endif %}>Slovenian
-            </option>
-            <option value="sm" {% if profile.language == "sm" %}selected{% endif %}>Samoan</option>
-            <option value="sn" {% if profile.language == "sn" %}selected{% endif %}>Shona</option>
-            <option value="so" {% if profile.language == "so" %}selected{% endif %}>Somali</option>
-            <option value="sq" {% if profile.language == "sq" %}selected{% endif %}>Albanian
-            </option>
-            <option value="sr" {% if profile.language == "sr" %}selected{% endif %}>Serbian
-            </option>
-            <option value="ss" {% if profile.language == "ss" %}selected{% endif %}>Swati</option>
-            <option value="st" {% if profile.language == "st" %}selected{% endif %}>Sotho, Southern
-            </option>
-            <option value="su" {% if profile.language == "su" %}selected{% endif %}>Sundanese
-            </option>
-            <option value="sv" {% if profile.language == "sv" %}selected{% endif %}>Swedish
-            </option>
-            <option value="sw" {% if profile.language == "sw" %}selected{% endif %}>Swahili
-            </option>
-            <option value="ta" {% if profile.language == "ta" %}selected{% endif %}>Tamil</option>
-            <option value="te" {% if profile.language == "te" %}selected{% endif %}>Telugu</option>
-            <option value="tg" {% if profile.language == "tg" %}selected{% endif %}>Tajik</option>
-            <option value="th" {% if profile.language == "th" %}selected{% endif %}>Thai</option>
-            <option value="ti" {% if profile.language == "ti" %}selected{% endif %}>Tigrinya
-            </option>
-            <option value="tk" {% if profile.language == "tk" %}selected{% endif %}>Turkmen
-            </option>
-            <option value="tl" {% if profile.language == "tl" %}selected{% endif %}>Tagalog
-            </option>
-            <option value="tn" {% if profile.language == "tn" %}selected{% endif %}>Tswana</option>
-            <option value="to" {% if profile.language == "to" %}selected{% endif %}>Tonga</option>
-            <option value="tr" {% if profile.language == "tr" %}selected{% endif %}>Turkish
-            </option>
-            <option value="ts" {% if profile.language == "ts" %}selected{% endif %}>Tsonga</option>
-            <option value="tt" {% if profile.language == "tt" %}selected{% endif %}>Tatar</option>
-            <option value="tw" {% if profile.language == "tw" %}selected{% endif %}>Twi</option>
-            <option value="ty" {% if profile.language == "ty" %}selected{% endif %}>Tahitian
-            </option>
-            <option value="ug" {% if profile.language == "ug" %}selected{% endif %}>Uighur</option>
-            <option value="uk" {% if profile.language == "uk" %}selected{% endif %}>Ukrainian
-            </option>
-            <option value="ur" {% if profile.language == "ur" %}selected{% endif %}>Urdu</option>
-            <option value="uz" {% if profile.language == "uz" %}selected{% endif %}>Uzbek</option>
-            <option value="ve" {% if profile.language == "ve" %}selected{% endif %}>Venda</option>
-            <option value="vi" {% if profile.language == "vi" %}selected{% endif %}>Vietnamese
-            </option>
-            <option value="vo" {% if profile.language == "vo" %}selected{% endif %}>Volapük
-            </option>
-            <option value="wa" {% if profile.language == "wa" %}selected{% endif %}>Walloon
-            </option>
-            <option value="wo" {% if profile.language == "wo" %}selected{% endif %}>Wolof</option>
-            <option value="xh" {% if profile.language == "xh" %}selected{% endif %}>Xhosa</option>
-            <option value="yi" {% if profile.language == "yi" %}selected{% endif %}>Yiddish
-            </option>
-            <option value="yo" {% if profile.language == "yo" %}selected{% endif %}>Yoruba</option>
-            <option value="za" {% if profile.language == "za" %}selected{% endif %}>Zhuang</option>
-            <option value="zh" {% if profile.language == "zh" %}selected{% endif %}>Chinese
-            </option>
-            <option value="zu" {% if profile.language == "zu" %}selected{% endif %}>Zulu</option>
-        </select>
+        <div class="mb-5">
+            <label>Language Filter</label>
+            <p class="help mb-1">
+                Filter posts that show up in summaries by language.
+            </p>
 
-        <div style="margin-top: 2em;">
+            <select name="language">
+                <option value="__all__">Show all languages</option>
+                <option value="aa" {% if profile.language == "" %}selected{% endif %}>Afar</option>
+                <option value="ab" {% if profile.language == "ab" %}selected{% endif %}>Abkhazian
+                </option>
+                <option value="ae" {% if profile.language == "ae" %}selected{% endif %}>Avestan
+                </option>
+                <option value="af" {% if profile.language == "af" %}selected{% endif %}>Afrikaans
+                </option>
+                <option value="ak" {% if profile.language == "ak" %}selected{% endif %}>Akan</option>
+                <option value="am" {% if profile.language == "am" %}selected{% endif %}>Amharic
+                </option>
+                <option value="an" {% if profile.language == "an" %}selected{% endif %}>Aragonese
+                </option>
+                <option value="ar" {% if profile.language == "ar" %}selected{% endif %}>Arabic</option>
+                <option value="as" {% if profile.language == "as" %}selected{% endif %}>Assamese
+                </option>
+                <option value="av" {% if profile.language == "av" %}selected{% endif %}>Avaric</option>
+                <option value="ay" {% if profile.language == "ay" %}selected{% endif %}>Aymara</option>
+                <option value="az" {% if profile.language == "az" %}selected{% endif %}>Azerbaijani
+                </option>
+                <option value="ba" {% if profile.language == "ba" %}selected{% endif %}>Bashkir
+                </option>
+                <option value="be" {% if profile.language == "be" %}selected{% endif %}>Belarusian
+                </option>
+                <option value="bg" {% if profile.language == "bg" %}selected{% endif %}>Bulgarian
+                </option>
+                <option value="bh" {% if profile.language == "bh" %}selected{% endif %}>Bihari
+                    languages</option>
+                <option value="bi" {% if profile.language == "bi" %}selected{% endif %}>Bislama
+                </option>
+                <option value="bm" {% if profile.language == "bm" %}selected{% endif %}>Bambara
+                </option>
+                <option value="bn" {% if profile.language == "bn" %}selected{% endif %}>Bengali
+                </option>
+                <option value="bo" {% if profile.language == "bo" %}selected{% endif %}>Tibetan
+                </option>
+                <option value="br" {% if profile.language == "br" %}selected{% endif %}>Breton</option>
+                <option value="bs" {% if profile.language == "bs" %}selected{% endif %}>Bosnian
+                </option>
+                <option value="ca" {% if profile.language == "ca" %}selected{% endif %}>Catalan
+                </option>
+                <option value="ce" {% if profile.language == "ce" %}selected{% endif %}>Chechen
+                </option>
+                <option value="ch" {% if profile.language == "ch" %}selected{% endif %}>Chamorro
+                </option>
+                <option value="co" {% if profile.language == "co" %}selected{% endif %}>Corsican
+                </option>
+                <option value="cr" {% if profile.language == "cr" %}selected{% endif %}>Cree</option>
+                <option value="cs" {% if profile.language == "cs" %}selected{% endif %}>Czech</option>
+                <option value="cu" {% if profile.language == "cu" %}selected{% endif %}>Church Slavic
+                </option>
+                <option value="cv" {% if profile.language == "cv" %}selected{% endif %}>Chuvash
+                </option>
+                <option value="cy" {% if profile.language == "cy" %}selected{% endif %}>Welsh</option>
+                <option value="da" {% if profile.language == "da" %}selected{% endif %}>Danish</option>
+                <option value="de" {% if profile.language == "de" %}selected{% endif %}>German</option>
+                <option value="dv" {% if profile.language == "dv" %}selected{% endif %}>Divehi</option>
+                <option value="dz" {% if profile.language == "dz" %}selected{% endif %}>Dzongkha
+                </option>
+                <option value="ee" {% if profile.language == "ee" %}selected{% endif %}>Ewe</option>
+                <option value="el" {% if profile.language == "el" %}selected{% endif %}>Greek</option>
+                <option value="en" {% if profile.language == "en" %}selected{% endif %}>English
+                </option>
+                <option value="eo" {% if profile.language == "eo" %}selected{% endif %}>Esperanto
+                </option>
+                <option value="es" {% if profile.language == "es" %}selected{% endif %}>Spanish
+                </option>
+                <option value="et" {% if profile.language == "et" %}selected{% endif %}>Estonian
+                </option>
+                <option value="eu" {% if profile.language == "eu" %}selected{% endif %}>Basque</option>
+                <option value="fa" {% if profile.language == "fa" %}selected{% endif %}>Persian
+                </option>
+                <option value="ff" {% if profile.language == "ff" %}selected{% endif %}>Fulah</option>
+                <option value="fi" {% if profile.language == "fi" %}selected{% endif %}>Finnish
+                </option>
+                <option value="fj" {% if profile.language == "fj" %}selected{% endif %}>Fijian</option>
+                <option value="fo" {% if profile.language == "fo" %}selected{% endif %}>Faroese
+                </option>
+                <option value="fr" {% if profile.language == "fr" %}selected{% endif %}>French</option>
+                <option value="fy" {% if profile.language == "fy" %}selected{% endif %}>Western Frisian
+                </option>
+                <option value="ga" {% if profile.language == "ga" %}selected{% endif %}>Irish</option>
+                <option value="gd" {% if profile.language == "gd" %}selected{% endif %}>Scottish Gaelic
+                </option>
+                <option value="gl" {% if profile.language == "gl" %}selected{% endif %}>Galician
+                </option>
+                <option value="gn" {% if profile.language == "gn" %}selected{% endif %}>Guaraní
+                </option>
+                <option value="gu" {% if profile.language == "gu" %}selected{% endif %}>Gujarati
+                </option>
+                <option value="gv" {% if profile.language == "gv" %}selected{% endif %}>Manx</option>
+                <option value="ha" {% if profile.language == "ha" %}selected{% endif %}>Hausa</option>
+                <option value="he" {% if profile.language == "he" %}selected{% endif %}>Hebrew</option>
+                <option value="hi" {% if profile.language == "hi" %}selected{% endif %}>Hindi</option>
+                <option value="ho" {% if profile.language == "ho" %}selected{% endif %}>Hiri Motu
+                </option>
+                <option value="hr" {% if profile.language == "hr" %}selected{% endif %}>Croatian
+                </option>
+                <option value="ht" {% if profile.language == "ht" %}selected{% endif %}>Haitian Creole
+                </option>
+                <option value="hu" {% if profile.language == "hu" %}selected{% endif %}>Hungarian
+                </option>
+                <option value="hy" {% if profile.language == "hy" %}selected{% endif %}>Armenian
+                </option>
+                <option value="hz" {% if profile.language == "hz" %}selected{% endif %}>Herero</option>
+                <option value="ia" {% if profile.language == "ia" %}selected{% endif %}>Interlingua
+                </option>
+                <option value="id" {% if profile.language == "id" %}selected{% endif %}>Indonesian
+                </option>
+                <option value="ie" {% if profile.language == "ie" %}selected{% endif %}>Interlingue
+                </option>
+                <option value="ig" {% if profile.language == "ig" %}selected{% endif %}>Igbo</option>
+                <option value="ii" {% if profile.language == "ii" %}selected{% endif %}>Sichuan Yi
+                </option>
+                <option value="ik" {% if profile.language == "ik" %}selected{% endif %}>Inupiaq
+                </option>
+                <option value="io" {% if profile.language == "io" %}selected{% endif %}>Ido</option>
+                <option value="is" {% if profile.language == "is" %}selected{% endif %}>Icelandic
+                </option>
+                <option value="it" {% if profile.language == "it" %}selected{% endif %}>Italian
+                </option>
+                <option value="iu" {% if profile.language == "iu" %}selected{% endif %}>Inuktitut
+                </option>
+                <option value="ja" {% if profile.language == "ja" %}selected{% endif %}>Japanese
+                </option>
+                <option value="jv" {% if profile.language == "jv" %}selected{% endif %}>Javanese
+                </option>
+                <option value="ka" {% if profile.language == "ka" %}selected{% endif %}>Georgian
+                </option>
+                <option value="kg" {% if profile.language == "kg" %}selected{% endif %}>Kongo</option>
+                <option value="ki" {% if profile.language == "ki" %}selected{% endif %}>Kikuyu</option>
+                <option value="kj" {% if profile.language == "kj" %}selected{% endif %}>Kuanyama
+                </option>
+                <option value="kk" {% if profile.language == "kk" %}selected{% endif %}>Kazakh</option>
+                <option value="kl" {% if profile.language == "kl" %}selected{% endif %}>Kalaallisut
+                </option>
+                <option value="km" {% if profile.language == "km" %}selected{% endif %}>Central Khmer
+                </option>
+                <option value="kn" {% if profile.language == "kn" %}selected{% endif %}>Kannada
+                </option>
+                <option value="ko" {% if profile.language == "ko" %}selected{% endif %}>Korean</option>
+                <option value="kr" {% if profile.language == "kr" %}selected{% endif %}>Kanuri</option>
+                <option value="ks" {% if profile.language == "ks" %}selected{% endif %}>Kashmiri
+                </option>
+                <option value="ku" {% if profile.language == "ku" %}selected{% endif %}>Kurdish
+                </option>
+                <option value="kv" {% if profile.language == "kv" %}selected{% endif %}>Komi</option>
+                <option value="kw" {% if profile.language == "kw" %}selected{% endif %}>Cornish
+                </option>
+                <option value="ky" {% if profile.language == "ky" %}selected{% endif %}>Kirghiz
+                </option>
+                <option value="la" {% if profile.language == "la" %}selected{% endif %}>Latin</option>
+                <option value="lb" {% if profile.language == "lb" %}selected{% endif %}>Luxembourgish
+                </option>
+                <option value="lg" {% if profile.language == "lg" %}selected{% endif %}>Ganda</option>
+                <option value="li" {% if profile.language == "li" %}selected{% endif %}>Limburgish
+                </option>
+                <option value="ln" {% if profile.language == "ln" %}selected{% endif %}>Lingala
+                </option>
+                <option value="lo" {% if profile.language == "lo" %}selected{% endif %}>Lao</option>
+                <option value="lt" {% if profile.language == "lt" %}selected{% endif %}>Lithuanian
+                </option>
+                <option value="lu" {% if profile.language == "lu" %}selected{% endif %}>Luba-Katanga
+                </option>
+                <option value="lv" {% if profile.language == "lv" %}selected{% endif %}>Latvian
+                </option>
+                <option value="mg" {% if profile.language == "mg" %}selected{% endif %}>Malagasy
+                </option>
+                <option value="mh" {% if profile.language == "mh" %}selected{% endif %}>Marshallese
+                </option>
+                <option value="mi" {% if profile.language == "mi" %}selected{% endif %}>Maori</option>
+                <option value="mk" {% if profile.language == "mk" %}selected{% endif %}>Macedonian
+                </option>
+                <option value="ml" {% if profile.language == "ml" %}selected{% endif %}>Malayalam
+                </option>
+                <option value="mn" {% if profile.language == "mn" %}selected{% endif %}>Mongolian
+                </option>
+                <option value="mr" {% if profile.language == "mr" %}selected{% endif %}>Marathi
+                </option>
+                <option value="ms" {% if profile.language == "ms" %}selected{% endif %}>Malay</option>
+                <option value="mt" {% if profile.language == "mt" %}selected{% endif %}>Maltese
+                </option>
+                <option value="my" {% if profile.language == "my" %}selected{% endif %}>Burmese
+                </option>
+                <option value="na" {% if profile.language == "na" %}selected{% endif %}>Nauru</option>
+                <option value="nb" {% if profile.language == "nb" %}selected{% endif %}>Norwegian
+                    Bokmål</option>
+                <option value="nd" {% if profile.language == "nd" %}selected{% endif %}>North Ndebele
+                </option>
+                <option value="ne" {% if profile.language == "ne" %}selected{% endif %}>Nepali</option>
+                <option value="ng" {% if profile.language == "ng" %}selected{% endif %}>Ndonga</option>
+                <option value="nl" {% if profile.language == "nl" %}selected{% endif %}>Dutch</option>
+                <option value="nn" {% if profile.language == "nn" %}selected{% endif %}>Norwegian
+                    Nynorsk</option>
+                <option value="no" {% if profile.language == "no" %}selected{% endif %}>Norwegian
+                </option>
+                <option value="nr" {% if profile.language == "nr" %}selected{% endif %}>South Ndebele
+                </option>
+                <option value="nv" {% if profile.language == "nv" %}selected{% endif %}>Navajo</option>
+                <option value="ny" {% if profile.language == "ny" %}selected{% endif %}>Chichewa
+                </option>
+                <option value="oc" {% if profile.language == "oc" %}selected{% endif %}>Occitan
+                </option>
+                <option value="oj" {% if profile.language == "oj" %}selected{% endif %}>Ojibwe</option>
+                <option value="om" {% if profile.language == "om" %}selected{% endif %}>Oromo</option>
+                <option value="or" {% if profile.language == "or" %}selected{% endif %}>Oriya</option>
+                <option value="os" {% if profile.language == "os" %}selected{% endif %}>Ossetian
+                </option>
+                <option value="pa" {% if profile.language == "pa" %}selected{% endif %}>Panjabi
+                </option>
+                <option value="pi" {% if profile.language == "pi" %}selected{% endif %}>Pali</option>
+                <option value="pl" {% if profile.language == "pl" %}selected{% endif %}>Polish</option>
+                <option value="ps" {% if profile.language == "ps" %}selected{% endif %}>Pushto</option>
+                <option value="pt" {% if profile.language == "pt" %}selected{% endif %}>Portuguese
+                </option>
+                <option value="qu" {% if profile.language == "qu" %}selected{% endif %}>Quechua
+                </option>
+                <option value="rm" {% if profile.language == "rm" %}selected{% endif %}>Romansh
+                </option>
+                <option value="rn" {% if profile.language == "rn" %}selected{% endif %}>Rundi</option>
+                <option value="ro" {% if profile.language == "ro" %}selected{% endif %}>Romanian
+                </option>
+                <option value="ru" {% if profile.language == "ru" %}selected{% endif %}>Russian
+                </option>
+                <option value="rw" {% if profile.language == "rw" %}selected{% endif %}>Kinyarwanda
+                </option>
+                <option value="sa" {% if profile.language == "sa" %}selected{% endif %}>Sanskrit
+                </option>
+                <option value="sc" {% if profile.language == "sc" %}selected{% endif %}>Sardinian
+                </option>
+                <option value="sd" {% if profile.language == "sd" %}selected{% endif %}>Sindhi</option>
+                <option value="se" {% if profile.language == "se" %}selected{% endif %}>Northern Sami
+                </option>
+                <option value="sg" {% if profile.language == "sg" %}selected{% endif %}>Sango</option>
+                <option value="si" {% if profile.language == "si" %}selected{% endif %}>Sinhalese
+                </option>
+                <option value="sk" {% if profile.language == "sk" %}selected{% endif %}>Slovak</option>
+                <option value="sl" {% if profile.language == "sl" %}selected{% endif %}>Slovenian
+                </option>
+                <option value="sm" {% if profile.language == "sm" %}selected{% endif %}>Samoan</option>
+                <option value="sn" {% if profile.language == "sn" %}selected{% endif %}>Shona</option>
+                <option value="so" {% if profile.language == "so" %}selected{% endif %}>Somali</option>
+                <option value="sq" {% if profile.language == "sq" %}selected{% endif %}>Albanian
+                </option>
+                <option value="sr" {% if profile.language == "sr" %}selected{% endif %}>Serbian
+                </option>
+                <option value="ss" {% if profile.language == "ss" %}selected{% endif %}>Swati</option>
+                <option value="st" {% if profile.language == "st" %}selected{% endif %}>Sotho, Southern
+                </option>
+                <option value="su" {% if profile.language == "su" %}selected{% endif %}>Sundanese
+                </option>
+                <option value="sv" {% if profile.language == "sv" %}selected{% endif %}>Swedish
+                </option>
+                <option value="sw" {% if profile.language == "sw" %}selected{% endif %}>Swahili
+                </option>
+                <option value="ta" {% if profile.language == "ta" %}selected{% endif %}>Tamil</option>
+                <option value="te" {% if profile.language == "te" %}selected{% endif %}>Telugu</option>
+                <option value="tg" {% if profile.language == "tg" %}selected{% endif %}>Tajik</option>
+                <option value="th" {% if profile.language == "th" %}selected{% endif %}>Thai</option>
+                <option value="ti" {% if profile.language == "ti" %}selected{% endif %}>Tigrinya
+                </option>
+                <option value="tk" {% if profile.language == "tk" %}selected{% endif %}>Turkmen
+                </option>
+                <option value="tl" {% if profile.language == "tl" %}selected{% endif %}>Tagalog
+                </option>
+                <option value="tn" {% if profile.language == "tn" %}selected{% endif %}>Tswana</option>
+                <option value="to" {% if profile.language == "to" %}selected{% endif %}>Tonga</option>
+                <option value="tr" {% if profile.language == "tr" %}selected{% endif %}>Turkish
+                </option>
+                <option value="ts" {% if profile.language == "ts" %}selected{% endif %}>Tsonga</option>
+                <option value="tt" {% if profile.language == "tt" %}selected{% endif %}>Tatar</option>
+                <option value="tw" {% if profile.language == "tw" %}selected{% endif %}>Twi</option>
+                <option value="ty" {% if profile.language == "ty" %}selected{% endif %}>Tahitian
+                </option>
+                <option value="ug" {% if profile.language == "ug" %}selected{% endif %}>Uighur</option>
+                <option value="uk" {% if profile.language == "uk" %}selected{% endif %}>Ukrainian
+                </option>
+                <option value="ur" {% if profile.language == "ur" %}selected{% endif %}>Urdu</option>
+                <option value="uz" {% if profile.language == "uz" %}selected{% endif %}>Uzbek</option>
+                <option value="ve" {% if profile.language == "ve" %}selected{% endif %}>Venda</option>
+                <option value="vi" {% if profile.language == "vi" %}selected{% endif %}>Vietnamese
+                </option>
+                <option value="vo" {% if profile.language == "vo" %}selected{% endif %}>Volapük
+                </option>
+                <option value="wa" {% if profile.language == "wa" %}selected{% endif %}>Walloon
+                </option>
+                <option value="wo" {% if profile.language == "wo" %}selected{% endif %}>Wolof</option>
+                <option value="xh" {% if profile.language == "xh" %}selected{% endif %}>Xhosa</option>
+                <option value="yi" {% if profile.language == "yi" %}selected{% endif %}>Yiddish
+                </option>
+                <option value="yo" {% if profile.language == "yo" %}selected{% endif %}>Yoruba</option>
+                <option value="za" {% if profile.language == "za" %}selected{% endif %}>Zhuang</option>
+                <option value="zh" {% if profile.language == "zh" %}selected{% endif %}>Chinese
+                </option>
+                <option value="zu" {% if profile.language == "zu" %}selected{% endif %}>Zulu</option>
+            </select>
+        </div>
+
+        <div class="mb-5">
             <label for="indexing_type-none">Post Indexing</label>
-            <p class="help">
-                The default is <strong>No indexing</strong>. Selecting <strong>Post metadata</strong> indexing will
-                enable <a href="{% url 'activity:activity' %}">activity metrics</a> to be generated for your Mastodon
-                account. Selecting <strong>Post content</strong> indexing will allow searching your own posts. Remove
-                indexed posts on <a href="{% url 'activity:activity' %}">activity metrics</a>.
+            <p class="help mb-1">
+                How posts should be indexed. Selecting <strong>Post metadata</strong> or <strong>Post content</strong>
+                will enable <a href="{% url 'activity:activity' %}">activity metrics</a> to be generated for your
+                Mastodon account. Selecting <strong>Post content</strong> will allow searching your own posts. Indexed
+                posts can be removed on <a href="{% url 'activity:activity' %}">activity</a>.
             </p>
 
             <div>
@@ -369,20 +377,40 @@
                     {% if profile.indexing_type == 1 %}checked{% endif %}></input>
                 <label for="indexing_type-none" style="font-variant-caps: initial;">No indexing</label>
             </div>
-
             <div>
                 <input type="radio" name="indexing_type" id="indexing_type-metadata"
                     value="{{ profile.IndexingType.METADATA }}"
                     {% if profile.indexing_type == 2 %}checked{% endif %}></input>
                 <label for="indexing_type-metadata" style="font-variant-caps: initial;">Post metadata</label><br />
             </div>
-
             <div>
                 <input type="radio" name="indexing_type" id="indexing_type-content"
                     value="{{ profile.IndexingType.CONTENT }}"
                     {% if profile.indexing_type == 3 %}checked{% endif %}></input>
                 <label for="indexing_type-content" style="font-variant-caps: initial;">Post content</label>
             </div>
+        </div>
+
+        <div class="mb-5" id="scheduled">
+            <label for="scheduled_type">Scheduled Summaries</label>
+            <p class="help mb-1">
+                When summaries should be emailed.
+            </p>
+
+            <select name="scheduled_type" class="mb-4">
+                <option value="1" {% if profile.scheduled_type == 1 %}selected{% endif %}>Never</option>
+                <option value="2" {% if profile.scheduled_type == 2 %}selected{% endif %}>Daily</option>
+                <option value="3" {% if profile.scheduled_type == 3 %}selected{% endif %}>Every Monday</option>
+            </select>
+
+            <p class="help mb-1"
+                style="{% if profile.scheduled_type > 1 and not profile.scheduled_email_address %}color: var(--red-600);{% endif %}">
+                The email address to send summaries to.
+            </p>
+
+            <input type="email" name="scheduled_email_address" placeholder="summaries@mastodon.com"
+                class="{% if profile.scheduled_type > 1 and not profile.scheduled_email_address %}error{% endif %}"
+                value="{{ profile.scheduled_email_address }}"></input>
         </div>
 
         <div style="padding-top: 1em; text-align: right;">

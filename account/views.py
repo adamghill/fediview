@@ -164,10 +164,24 @@ def account(request):
 
                 message = f"{message} and start to index posts"
 
+        profile.scheduled_type = int(request.POST.get("scheduled_type", "1"))
+        profile.scheduled_email_address = request.POST.get("scheduled_email_address")
+
+        missing_email = False
+
+        if profile.scheduled_type > 1 and not profile.scheduled_email_address:
+            message = f"{message}, but email address is invalid"
+            missing_email = True
+
         profile.save()
         messages.success(request, message)
 
-        return redirect("account:account")
+        url = reverse("account:account")
+
+        if missing_email:
+            url += "#scheduled"
+
+        return redirect(url)
 
     return {}
 

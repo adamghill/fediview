@@ -32,6 +32,11 @@ class Profile(TimeStampedModel):
         METADATA = 2
         CONTENT = 3
 
+    class ScheduledType(models.IntegerChoices):
+        NEVER = 1
+        DAILY = 2
+        WEEKLY = 3
+
     account = models.OneToOneField(
         Account, related_name="profile", on_delete=models.CASCADE
     )
@@ -46,3 +51,7 @@ class Profile(TimeStampedModel):
         choices=IndexingType.choices, default=IndexingType.NONE
     )
     last_indexed_at = models.DateTimeField(blank=True, null=True)
+    scheduled_type = models.IntegerField(
+        choices=ScheduledType.choices, default=ScheduledType.NEVER
+    )
+    scheduled_email_address = models.EmailField(blank=True, null=True)
