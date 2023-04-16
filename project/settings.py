@@ -134,8 +134,8 @@ HUEY = {
     "name": "huey",
     "immediate": False,
     "consumer": {
-        "workers": 32,
-        "worker_type": "greenlet",
+        "workers": 4,
+        "worker_type": "thread",
     },
 }
 

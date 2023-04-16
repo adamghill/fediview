@@ -3,13 +3,14 @@
 import os
 import sys
 
-# Apply monkey-patch if we are running the huey consumer.
-if "run_huey" in sys.argv:
-    from gevent import monkey
-
-    monkey.patch_all()
-
 from dotenv import load_dotenv
+
+# Apply monkey-patch if we are running the huey consumer.
+# if "run_huey" in sys.argv:
+#     from gevent import monkey
+
+#     monkey.patch_all()
+
 
 load_dotenv()
 
