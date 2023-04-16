@@ -38,6 +38,9 @@ django-model-utils = "^4.3.1"
 emoji = "^2.2.0"
 django-rq-scheduler = "^2023.3.2"
 cronitor = "^4.6.0"
+huey = "^2.4.5"
+gevent = "^22.10.2"
+django-huey-monitor = "^0.6.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7"
