@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 @job
-@cronitor.job("fediview:index_posts_for_plus_profiles")
 def index_posts_for_plus_profiles():
     profiles = Profile.objects.filter(has_plus=True).exclude(
         indexing_type=Profile.IndexingType.NONE
