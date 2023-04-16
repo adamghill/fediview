@@ -1,5 +1,6 @@
 import logging
 
+import cronitor
 from django_rq import job
 
 from account.models import Profile
@@ -10,12 +11,20 @@ logger = logging.getLogger(__name__)
 
 @job
 def index_posts_for_plus_profiles():
-    profiles = Profile.objects.filter(has_plus=True).exclude(
-        indexing_type=Profile.IndexingType.NONE
-    )
+    monitor = cronitor.Monitor("fediview:index_posts_for_plus_profiles")
+    monitor.ping(state="run")
 
-    logger.info(f"Found {len(profiles)} profiles for indexing")
+    try:
+        profiles = Profile.objects.filter(has_plus=True).exclude(
+            indexing_type=Profile.IndexingType.NONE
+        )
 
-    for profile in profiles:
-        logger.info(f"Index posts for {profile} with rq")
-        index_posts(profile)
+        logger.info(f"Found {len(profiles)} profiles for indexing")
+
+        for profile in profiles:
+            logger.info(f"Index posts for {profile} with rq")
+            index_posts(profile)
+
+        monitor.ping(state="complete")
+    except Exception:
+        monitor.ping(state="fail")
