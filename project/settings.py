@@ -126,6 +126,7 @@ RQ = {"WORKER_CLASS": "rq.SimpleWorker"}
 
 RQ_QUEUES = {
     "default": {"URL": getenv("REDIS_URL"), "ASYNC": False},
+}
 
 HUEY = {
     "name": "huey",
