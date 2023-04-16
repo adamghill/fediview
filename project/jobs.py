@@ -17,5 +17,5 @@ def index_posts_for_plus_profiles():
     logger.info(f"Found {len(profiles)} profiles for indexing")
 
     for profile in profiles:
-        print(f"Index posts for {profile} with rq")
+        logger.info(f"Index posts for {profile} with rq")
         index_posts(profile)
