@@ -43,6 +43,4 @@ COPY --from=builder-base $VENV_PATH $VENV_PATH
 COPY . /app
 WORKDIR /app
 
-EXPOSE 80
-
-CMD python /app/manage.py rqworker default --with-scheduler -v3
+CMD python /app/manage.py rqworker default --with-scheduler
