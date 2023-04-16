@@ -10,8 +10,8 @@ from activity.postgres_indexer import index_posts
 logger = logging.getLogger(__name__)
 
 
-@db_periodic_task(crontab(minute="*/1"))
-def every_one_min():
+@db_periodic_task(crontab(hour="*/1"))
+def index_posts_for_plus_profiles():
     monitor = cronitor.Monitor("fediview:index_posts_for_plus_profiles")
     monitor.ping(state="run")
 
