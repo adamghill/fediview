@@ -126,6 +126,13 @@ RQ = {"WORKER_CLASS": "rq.SimpleWorker"}
 
 RQ_QUEUES = {
     "default": {"URL": getenv("REDIS_URL"), "ASYNC": False},
+
+HUEY = {
+    "name": "huey",
+    "consumer": {
+        "workers": 32,
+        "worker_type": "greenlet",
+    },
 }
 
 STATIC_URL = "static/"
@@ -236,6 +243,8 @@ if ENVIRONMENT == "live":
 
     # Make sure that RQ is async in prod
     RQ_QUEUES["default"]["ASYNC"] = True
+
+    HUEY["connection"] = {"url": getenv("REDIS_URL")}
 
     LOGGING = {
         "version": 1,

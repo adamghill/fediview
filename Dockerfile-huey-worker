@@ -43,4 +43,4 @@ COPY --from=builder-base $VENV_PATH $VENV_PATH
 COPY . /app
 WORKDIR /app
 
-CMD python /app/manage.py run_huey --worker-type greenlet --workers 32
+CMD python /app/manage.py run_huey
