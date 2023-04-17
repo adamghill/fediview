@@ -140,7 +140,7 @@ HUEY = {
     },
 }
 
-Q_CLUSTER = {"workers": 4, "redis": getenv("REDIS_URL")}
+Q_CLUSTER = {"workers": 4, "retry": 601, "timeout": 600, "redis": getenv("REDIS_URL")}
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
