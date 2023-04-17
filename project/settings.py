@@ -35,6 +35,7 @@ THIRD_PARTY_APPS = [
     "coltrane",
     "bx_django_utils",
     "django_rq",
+    "django_q",
     "django_unicorn",
     "huey.contrib.djhuey",
     "huey_monitor",
@@ -139,6 +140,7 @@ HUEY = {
     },
 }
 
+Q_CLUSTER = {"workers": 4, "redis": getenv("REDIS_URL")}
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
