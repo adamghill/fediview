@@ -31,21 +31,13 @@ def huey_index_posts_for_plus_profiles():
         monitor.ping(state="fail")
 
 
+@cronitor.monitor("fediview:index_posts_for_plus_profiles")
 def index_posts_for_plus_profiles():
-    monitor = cronitor.Monitor("fediview:index_posts_for_plus_profiles")
-    monitor.ping(state="run")
+    profiles = Profile.objects.filter(has_plus=True).exclude(
+        indexing_type=Profile.IndexingType.NONE
+    )
 
-    try:
-        profiles = Profile.objects.filter(has_plus=True).exclude(
-            indexing_type=Profile.IndexingType.NONE
-        )
+    logger.info(f"Found {len(profiles)} profiles for indexing")
 
-        logger.info(f"Found {len(profiles)} profiles for indexing")
-
-        for profile in profiles:
-            logger.info(f"Index posts for {profile} with huey")
-            index_posts(profile)
-
-        monitor.ping(state="complete")
-    except Exception:
-        monitor.ping(state="fail")
+    for profile in profiles:
+        index_posts(profile)
