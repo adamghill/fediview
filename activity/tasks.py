@@ -1,6 +1,8 @@
 import logging
 
 import cronitor
+from django_q.brokers import get_broker
+from django_q.tasks import async_task
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task
 
@@ -31,7 +33,6 @@ def huey_index_posts_for_plus_profiles():
         monitor.ping(state="fail")
 
 
-@cronitor.monitor("fediview:index_posts_for_plus_profiles")
 def index_posts_for_plus_profiles():
     profiles = Profile.objects.filter(has_plus=True).exclude(
         indexing_type=Profile.IndexingType.NONE
@@ -39,5 +40,7 @@ def index_posts_for_plus_profiles():
 
     logger.info(f"Found {len(profiles)} profiles for indexing")
 
+    broker = get_broker()
+
     for profile in profiles:
-        index_posts(profile)
+        async_task(index_posts, profile, broker=broker)
