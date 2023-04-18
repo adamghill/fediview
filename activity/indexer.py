@@ -28,13 +28,28 @@ def _get_account_posts(mastodon: Mastodon, profile: Profile) -> Iterator[DigestP
         profile.account.account_id = mastodon.me().get("id")
         profile.account.save()
 
-    posts = mastodon.account_statuses(profile.account.account_id, limit=10000)
+    posts = []
+    try:
+        posts = mastodon.account_statuses(
+            profile.account.account_id, min_id=profile.last_indexed_at, limit=10000
+        )
+    except Exception as e:
+        logger.exception(e)
+
+    logger.info(f"Got {len(posts)} posts for profile id {profile.id}")
 
     while posts:
         for post in posts:
             yield DigestPost.parse_obj(post)
 
-        posts = mastodon.fetch_next(posts)
+        try:
+            posts = mastodon.fetch_next(posts)
+        except Exception as e:
+            posts = []
+            logger.exception(e)
+
+        if posts:
+            logger.info(f"Got {len(posts)} posts for profile id {profile.id}")
 
 
 def _get_count(mastodon: Mastodon, status_type: str):
@@ -45,7 +60,7 @@ def _get_count(mastodon: Mastodon, status_type: str):
     elif status_type == "bookmarks":
         status_function = mastodon.bookmarks
     else:
-        raise Exception("Invlaid status type")
+        raise Exception("Invalid status type")
 
     count = 0
     statuses = status_function(limit=10000)
@@ -210,4 +225,4 @@ def index_posts(profile: Profile) -> None:
     profile.last_indexed_at = now()
     profile.save()
 
-    logger.info(f"Found {post_count} posts")
+    logger.info(f"Indexed {post_count} posts")
