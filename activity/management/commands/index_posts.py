@@ -3,7 +3,7 @@ import logging
 from django.core.management.base import BaseCommand
 
 from account.models import Profile
-from activity.postgres_indexer import index_posts
+from activity.indexer import index_posts
 
 logger = logging.getLogger(__name__)
 

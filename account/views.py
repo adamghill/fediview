@@ -16,7 +16,7 @@ from fbv.decorators import render_html
 from mastodon import Mastodon
 
 from account.models import Account, Instance, User
-from activity.postgres_indexer import index_posts
+from activity.indexer import index_posts
 
 logger = logging.getLogger(__name__)
 

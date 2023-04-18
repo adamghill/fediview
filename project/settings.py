@@ -33,12 +33,9 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "compressor",
     "coltrane",
-    "bx_django_utils",
     "django_rq",
     "django_q",
     "django_unicorn",
-    "huey.contrib.djhuey",
-    "huey_monitor",
     "scheduler",
 ]
 
@@ -129,15 +126,6 @@ RQ = {"WORKER_CLASS": "rq.SimpleWorker"}
 
 RQ_QUEUES = {
     "default": {"URL": getenv("REDIS_URL"), "ASYNC": False},
-}
-
-HUEY = {
-    "name": "huey",
-    "immediate": False,
-    "consumer": {
-        "workers": 4,
-        "worker_type": "thread",
-    },
 }
 
 Q_CLUSTER = {"workers": 4, "retry": 601, "timeout": 600, "redis": getenv("REDIS_URL")}
@@ -250,9 +238,6 @@ if ENVIRONMENT == "live":
 
     # Make sure that RQ is async in prod
     RQ_QUEUES["default"]["ASYNC"] = True
-
-    HUEY["immediate"] = False
-    HUEY["connection"] = {"url": getenv("REDIS_URL")}
 
     LOGGING = {
         "version": 1,

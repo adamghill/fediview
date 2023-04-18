@@ -13,8 +13,8 @@ from django.shortcuts import redirect, reverse
 from fbv.views import render_html
 from rq.job import JobStatus
 
+from activity.indexer import index_posts
 from activity.models import Acct, Post
-from activity.postgres_indexer import index_posts
 
 logger = logging.getLogger(__name__)
 
