@@ -12,7 +12,7 @@ from activity.models import Post
 logger = logging.getLogger(__name__)
 
 
-def save_post_vectors(profile: Profile):
+def save_posts_vectors(profile: Profile):
     posts = Post.objects.filter(acct__account__profile=profile)
 
     if not posts:
@@ -25,7 +25,7 @@ def save_post_vectors(profile: Profile):
     vectors = get_text_embeddings(post_texts)
 
     logger.debug(f"Save post vectors for {profile}")
-    profile.post_vectors = vectors
+    profile.posts_vectors = vectors
     profile.save()
 
 

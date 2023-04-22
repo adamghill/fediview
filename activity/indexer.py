@@ -8,7 +8,7 @@ from mastodon import Mastodon
 
 from account.models import Profile
 from activity.models import Acct, Application, Post, Tag, TextEmoji
-from activity.text_embeddings_retriever import save_post_vectors
+from activity.text_embeddings_retriever import save_posts_vectors
 from digest.models import Post as DigestPost
 
 logger = logging.getLogger(__name__)
@@ -231,5 +231,5 @@ def index_posts(profile: Profile) -> None:
     logger.info(f"Profile id {profile.id}: Indexed {post_count} posts")
 
     logger.info(f"Profile id {profile.id}: Save post vectors")
-    save_post_vectors(profile)
+    save_posts_vectors(profile)
     logger.info(f"Profile id {profile.id}: Post vectors saved")
