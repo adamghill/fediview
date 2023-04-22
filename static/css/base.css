@@ -293,7 +293,16 @@ a.mention,
     text-decoration: none;
     opacity: .8;
     background-color: var(--mastodon-links);
-    padding: 0 .5em;
+    padding: 0 .5em .1em .5em;
+    border-radius: .5em;
+}
+
+.recommended {
+    float: right;
+    text-decoration: none;
+    opacity: .8;
+    background-color: #ffd960;
+    padding: 0 .5em 0 .5em;
     border-radius: .5em;
 }
 

@@ -8,6 +8,7 @@ from mastodon import Mastodon
 
 from account.models import Profile
 from activity.models import Acct, Application, Post, Tag, TextEmoji
+from activity.text_embeddings_retriever import save_post_vectors
 from digest.models import Post as DigestPost
 
 logger = logging.getLogger(__name__)
@@ -19,10 +20,10 @@ def delete_posts(profile: Profile) -> None:
 
 def _get_account_posts(mastodon: Mastodon, profile: Profile) -> Iterator[DigestPost]:
     if profile.indexing_type == profile.IndexingType.NONE:
-        logger.debug(f"Skip indexing posts for profile id {profile.id}")
+        logger.debug(f"Profile id {profile.id}: Skip indexing posts")
         return
 
-    logger.debug(f"Login to mastodon for profile id {profile.id}")
+    logger.debug(f"Profile id {profile.id}: Login to mastodon")
 
     if not profile.account.account_id:
         profile.account.account_id = mastodon.me().get("id")
@@ -36,7 +37,7 @@ def _get_account_posts(mastodon: Mastodon, profile: Profile) -> Iterator[DigestP
     except Exception as e:
         logger.exception(e)
 
-    logger.info(f"Got {len(posts)} posts for profile id {profile.id}")
+    logger.info(f"Profile id {profile.id}: Got {len(posts)} posts")
 
     while posts:
         for post in posts:
@@ -49,7 +50,7 @@ def _get_account_posts(mastodon: Mastodon, profile: Profile) -> Iterator[DigestP
             logger.exception(e)
 
         if posts:
-            logger.info(f"Got {len(posts)} posts for profile id {profile.id}")
+            logger.info(f"Profile id {profile.id}: Got {len(posts)} posts")
 
 
 def _get_count(mastodon: Mastodon, status_type: str):
@@ -76,15 +77,17 @@ def _get_count(mastodon: Mastodon, status_type: str):
 def index_posts(profile: Profile) -> None:
     if profile.indexing_type == profile.IndexingType.NONE.value:
         logger.info(
-            f"Skip indexing posts for profile id {profile.id} with {profile.indexing_type} indexing type"
+            f"Profile id {profile.id}: Skip indexing posts with {profile.indexing_type} indexing type"
         )
         return
 
     if not profile.has_plus:
-        logger.error(f"Skip indexing posts for non-plus profile id {profile.id}")
+        logger.error(
+            f"Profile id {profile.id}: Skip indexing posts for non-plus profile"
+        )
         return
 
-    logger.info(f"Get posts for profile id {profile.id}")
+    logger.info(f"Profile id {profile.id}: Get posts")
 
     mastodon = Mastodon(
         access_token=profile.account.access_token,
@@ -150,7 +153,7 @@ def index_posts(profile: Profile) -> None:
         ).first()
 
         if post:
-            logger.debug(f"Update post {digest_post.id}")
+            logger.debug(f"Profile id {profile.id}: Update post {digest_post.id}")
 
             Post.objects.filter(
                 post_id=digest_post.id, acct__acct_id=digest_post.account.id
@@ -159,7 +162,7 @@ def index_posts(profile: Profile) -> None:
             post.content = post_data.get("content")
             post.text_content = post_data.get("text_content")
         else:
-            logger.debug(f"Create post {digest_post.id}")
+            logger.debug(f"Profile id {profile.id}: Create post {digest_post.id}")
 
             post_data.update(
                 {
@@ -225,4 +228,8 @@ def index_posts(profile: Profile) -> None:
     profile.last_indexed_at = now()
     profile.save()
 
-    logger.info(f"Indexed {post_count} posts")
+    logger.info(f"Profile id {profile.id}: Indexed {post_count} posts")
+
+    logger.info(f"Profile id {profile.id}: Save post vectors")
+    save_post_vectors(profile)
+    logger.info(f"Profile id {profile.id}: Post vectors saved")

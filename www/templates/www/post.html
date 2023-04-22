@@ -8,6 +8,12 @@
     </div>
 
     <div class="status">
+        {% if post.is_recommendation %}
+        <div class="recommended">
+            Recommended
+        </div>
+        {% endif %}
+
         <div class="user">
             <div class="name">
                 {% if post.account.display_name %}

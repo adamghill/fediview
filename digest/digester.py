@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 from dateutil.parser import parse
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
+from django.utils.html import strip_tags
 from mastodon import Mastodon
 from mastodon.errors import (
     MastodonError,
@@ -16,6 +17,7 @@ from mastodon.errors import (
 )
 
 from account.models import Profile
+from activity.text_embeddings_retriever import get_similarity_to_posts_vectors
 from digest.api import fetch_posts_and_boosts
 from digest.models import Account, Card, Post
 from digest.scorers import get_scorer_from_name
@@ -194,13 +196,37 @@ def build_digest(
     threshold_posts = threshold.posts_meeting_criteria(posts, scorer)
     threshold_boosts = threshold.posts_meeting_criteria(boosts, scorer)
 
+    recommended_posts = []
+
+    if profile and profile.posts_vectors is not None:
+        similarity_threshold = 0.8
+
+        # Lower the similarity threshold if there aren't many threshold posts
+        if len(threshold_posts) < 3:
+            similarity_threshold = 0.6
+
+        for post in posts:
+            if list(filter(lambda p: p.id == post.id, threshold_posts)):
+                continue
+
+            context = strip_tags(post.content)
+            similarity = get_similarity_to_posts_vectors(profile, context)
+
+            logger.debug(
+                f"Post id {post.id} has similarity of {similarity} to posts_vectors"
+            )
+
+            if similarity > similarity_threshold:
+                recommended_posts.append(post)
+                post.is_recommendation = True
+
     logger.debug("Posts and boosts scored")
 
     # Update metadata
     for post in posts + boosts:
         post.set_base_url(mastodon.api_base_url)
 
-    for post in threshold_posts + threshold_boosts:
+    for post in threshold_posts + threshold_boosts + recommended_posts:
         if post.account.is_following is None:
             post.account.set_is_following(logged_in_account)
 
@@ -224,8 +250,10 @@ def build_digest(
     """
 
     # Sort posts and boosts
-    sorted_posts = sorted(threshold_posts, key=lambda p: p.score, reverse=True)
-    sorted_boosts = sorted(threshold_boosts, key=lambda p: p.score, reverse=True)
+    sorted_posts = sorted(
+        threshold_posts + recommended_posts, key=lambda p: p.created_at, reverse=True
+    )
+    sorted_boosts = sorted(threshold_boosts, key=lambda p: p.created_at, reverse=True)
 
     # Build catalog of links
     links = _catalog_links(posts + boosts)

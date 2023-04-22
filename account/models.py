@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from model_utils.models import TimeStampedModel
+from ndarraydjango.fields import NDArrayField
 
 
 class User(AbstractUser):
@@ -46,3 +47,6 @@ class Profile(TimeStampedModel):
         choices=IndexingType.choices, default=IndexingType.NONE
     )
     last_indexed_at = models.DateTimeField(blank=True, null=True)
+
+    # Vectors
+    posts_vectors = NDArrayField(blank=True, null=True)
