@@ -881,25 +881,6 @@ sentry = ["raven (>=6.1.0)"]
 testing = ["mock (>=2.0.0)"]
 
 [[package]]
-name = "django-rq-scheduler"
-version = "2023.5.0"
-description = "An async job scheduler for django using redis"
-category = "main"
-optional = false
-python-versions = ">=3.9,<4.0"
-files = [
-    {file = "django_rq_scheduler-2023.5.0-py3-none-any.whl", hash = "sha256:016a689c69efd963942499d1e9c0f88780e9dd63ba4980bf01c24d49055a4ec4"},
-    {file = "django_rq_scheduler-2023.5.0.tar.gz", hash = "sha256:176938f184387d9a84911a1ad0450e7ce4bca7eccc1318173e4078dc514a557c"},
-]
-
-[package.dependencies]
-click = ">=8.1,<9.0"
-croniter = ">=1.3,<2.0"
-django = ">=3.2"
-django-model-utils = ">=4.3,<5.0"
-rq = ">=1.13,<2.0"
-
-[[package]]
 name = "django-unicorn"
 version = "0.49.2"
 description = "A magical full-stack framework for Django."
@@ -4213,4 +4194,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "8218593ed4b82612030bef498a7a4fec52bf8761824d0ef4cdc6984585a03e6c"
+content-hash = "baed4cf71c5b04c03f1f9a7e87ad848b36194f3087dd7d256a743e45489b054d"

@@ -36,7 +36,6 @@ THIRD_PARTY_APPS = [
     "django_rq",
     "django_q",
     "django_unicorn",
-    "scheduler",
 ]
 
 INTERNAL_APPS = [
