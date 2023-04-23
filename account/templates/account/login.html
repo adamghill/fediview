@@ -3,6 +3,16 @@
 
 
 {% block content %}
+{% if error %}
+<div class="errors mb-4">
+    <ul>
+        <li>
+            {{ error }}
+        </li>
+    </ul>
+</div>
+{% endif %}
+
 <div style="width: 500px; margin: 0 auto;">
     <form method="POST" action="{{ request.path }}">{% csrf_token %}
         <label for="url">Instance URL</label>

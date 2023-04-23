@@ -13,7 +13,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django_q.tasks import async_task
 from fbv.decorators import render_html
-from mastodon import Mastodon
+from mastodon import Mastodon, MastodonNetworkError
 
 from account.models import Account, Instance, User
 from activity.indexer import index_posts
@@ -45,13 +45,19 @@ def login(request):
         instance = Instance.objects.filter(api_base_url=api_base_url).first()
 
         if not instance:
-            (client_id, client_secret) = Mastodon.create_app(
-                "fediview.com",
-                scopes=SCOPES,
-                redirect_uris=redirect_uri,
-                website="https://fediview.com",
-                api_base_url=api_base_url,
-            )
+            try:
+                (client_id, client_secret) = Mastodon.create_app(
+                    "fediview.com",
+                    scopes=SCOPES,
+                    redirect_uris=redirect_uri,
+                    website="https://fediview.com",
+                    api_base_url=api_base_url,
+                )
+            except MastodonNetworkError:
+                return {
+                    "ANALYTICS_HTML": settings.ANALYTICS_HTML,
+                    "error": f"Invalid instance url: {api_base_url}",
+                }
 
             instance = Instance(
                 api_base_url=api_base_url,
