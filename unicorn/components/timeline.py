@@ -186,10 +186,14 @@ class TimelineView(UnicornView):
             elif digest.ok:
                 logger.info(f"Profile id {profile.id}: Task failed, but sync digest ok")
             else:
-                logger.error(
-                    f"Profile id {profile.id}: Task failed and sync digest failed"
-                )
-                self.error = "Failed to generate digest. Please try again."
+                if profile:
+                    logger.error(
+                        f"Profile id {profile.id}: Task failed and sync digest failed"
+                    )
+                    self.error = "Failed to generate digest. Please try again."
+                else:
+                    logger.error("Task failed and sync digest failed")
+                    self.error = "Failed to generate digest. Please check instance url and application token."
 
         except UnauthorizedError as e:
             raise ValidationError({"token": str(e)}, code="invalid") from e
