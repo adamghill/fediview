@@ -161,7 +161,7 @@ def account(request):
             if original_indexing_type != profile.indexing_type:
                 task_id = async_task(index_posts, profile)
 
-                logger.info(f"Start indexing posts with {task_id.id}")
+                logger.info(f"Start indexing posts with {task_id}")
 
                 message = f"{message} and start to index posts"
 
