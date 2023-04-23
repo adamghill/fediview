@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class Account(BaseModel):
-    id: int
+    id: str
     acct: str
     username: str
     url: HttpUrl
