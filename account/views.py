@@ -36,11 +36,14 @@ def login(request):
     redirect_uri = get_redirect_uri(request)
 
     if request.is_post:
-        api_base_url = request.POST.get("url").strip()
+        api_base_url = request.POST.get("url", "").strip()
         api_base_url = api_base_url.replace("https://", "").replace("http://", "")
 
         if api_base_url.endswith("/"):
             api_base_url = api_base_url[0:-1]
+
+        if "/" in api_base_url:
+            api_base_url = api_base_url.split("/")[0]
 
         instance = Instance.objects.filter(api_base_url=api_base_url).first()
 

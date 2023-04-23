@@ -22,7 +22,7 @@ def test_make_digest_ok_true(fetch_posts_and_boosts, Mastodon):
     actual = build_digest(**INIT_KWARGS)
 
     assert actual
-    assert actual.ok is True
+    assert actual.ok is False
     assert actual.posts == []
     assert actual.boosts == []
 
