@@ -20,7 +20,9 @@ from activity.indexer import index_posts
 
 logger = logging.getLogger(__name__)
 
-SCOPES = ["read", "write"]
+SCOPES = [
+    "read",
+]
 
 
 def get_redirect_uri(request):
