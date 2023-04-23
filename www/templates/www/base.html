@@ -5,13 +5,13 @@
 
 <head>
     <meta chartset="utf-8" />
-    <meta name="description" content="Generate algorithmic summary for Mastodon">
+    <meta name="description" content="Generate an algorithmic summary for Mastodon timelines">
     <meta name="keywords" content="Mastodon, Fediverse, Algorithm, Summary, Social Media">
     <meta name="author" content="John Doe">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="canonical" href="https://fediview.com/{{ request.get_full_path }}" />
 
-    <title>fediview - {% if title %}{{ title }}{% else %}Generate Summary for Mastodon{% endif %}</title>
+    <title>fediview - {% if title %}{{ title }}{% else %}The algorithmic timeline for Mastodon{% endif %}</title>
 
     {% compress css %}
     <link rel="stylesheet" href="{% static 'css/marx.min.css' %}">
