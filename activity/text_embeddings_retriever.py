@@ -12,9 +12,16 @@ from activity.models import Post
 
 logger = logging.getLogger(__name__)
 
+sentence_transformer = None
+
 
 def save_posts_vectors(profile: Profile):
-    posts = Post.objects.filter(acct__account__profile=profile)
+    POSTS_LIMIT = 100
+    posts = (
+        Post.objects.filter(acct__account__profile=profile)
+        .only("text_content")
+        .order_by("-created_at")[0:POSTS_LIMIT]
+    )
 
     if not posts:
         return
@@ -28,9 +35,6 @@ def save_posts_vectors(profile: Profile):
     logger.debug(f"Save post vectors for {profile}")
     profile.posts_vectors = vectors
     profile.save()
-
-
-sentence_transformer = None
 
 
 def _get_sentence_transformer():
@@ -53,13 +57,13 @@ def get_text_embeddings(text: Union[list[str], str]) -> ndarray:
     sentence_transformer = _get_sentence_transformer()
 
     single_input_flag = type(text) is str
-    text = [text] if single_input_flag else text
-    assert all(type(t) is str for t in text), text
-    batch_size = len(text)
+    texts = [text] if single_input_flag else text
+    assert all(type(t) is str for t in texts), "All items must be strings"
+    batch_size = len(texts)
 
     with torch.no_grad():
         vectors = sentence_transformer.encode(
-            text, batch_size=batch_size, show_progress_bar=False
+            texts, batch_size=batch_size, show_progress_bar=False
         )[0]
 
     return vectors
