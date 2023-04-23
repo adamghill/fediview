@@ -124,6 +124,7 @@ Q_CLUSTER = {
     "workers": 4,
     "retry": 601,
     "timeout": 600,
+    "save_limit": 50,
     # "sync": True,
     "redis": getenv("REDIS_URL"),
 }
