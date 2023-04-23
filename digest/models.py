@@ -96,7 +96,10 @@ class Card(BaseModel):
             try:
                 http_url = parse_obj_as(HttpUrl, url)
                 setattr(self, field_name, http_url)
-            except ValidationError as e:
+            except ValidationError:
+                # Skip validation errors
+                pass
+            except Exception as e:
                 logger.exception(e)
 
 
