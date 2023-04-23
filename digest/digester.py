@@ -141,6 +141,7 @@ def build_digest(
     url: str,
     token: str,
     profile: Profile = None,
+    skip_recommendations: bool = False,
 ) -> Digest:
     """Creates a digest of popular posts and boosts the user has not interacted with."""
 
@@ -198,7 +199,7 @@ def build_digest(
 
     recommended_posts = []
 
-    if profile and profile.posts_vectors is not None:
+    if profile and profile.posts_vectors is not None and not skip_recommendations:
         similarity_threshold = 0.8
 
         # Lower the similarity threshold if there aren't many threshold posts

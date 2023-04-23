@@ -173,6 +173,7 @@ class TimelineView(UnicornView):
                     self.url,
                     self.token,
                     profile=profile,
+                    skip_recommendations=True,
                 )
 
             if task and task.success and task.result:
