@@ -1,14 +1,13 @@
 import logging
 from datetime import datetime, timedelta, timezone
 from os import getenv
-from time import sleep
 
-import django_rq
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import ValidationError
 from django.utils.timezone import now
+from django_q.models import Success
+from django_q.tasks import async_task, fetch
 from django_unicorn.components import UnicornView
-from rq.job import JobStatus
 
 from account.models import Account, Profile
 from digest.digester import (
@@ -22,7 +21,7 @@ from digest.digester import (
 logger = logging.getLogger(__name__)
 
 
-JOB_TIMEOUT = 30
+TASK_TIMEOUT = 60
 
 
 class TimelineView(UnicornView):
@@ -147,7 +146,7 @@ class TimelineView(UnicornView):
             pass
 
         try:
-            job = django_rq.enqueue(
+            task_id = async_task(
                 build_digest,
                 start,
                 end,
@@ -158,32 +157,31 @@ class TimelineView(UnicornView):
                 self.token,
                 profile=profile,
             )
-            logger.info(f"Job enqueued: {job.id}")
+            logger.info(f"Job enqueued: {task_id}")
 
-            # Job gets put into cancel state when `ASYNC=False` and if
-            # the worker times out
-            JOB_OK_STATES = (
-                JobStatus.FINISHED.value,
-                JobStatus.CANCELED.value,
-            )
+            task = fetch(task_id, wait=TASK_TIMEOUT * 1000)
 
-            while job.get_status() not in JOB_OK_STATES:
-                sleep(0.5)
+            if not task:
+                logger.error(f"Run job manually: {task_id}")
 
-                if job.enqueued_at + timedelta(0, JOB_TIMEOUT) < datetime.now():
-                    logger.error(f"Run job manually: {job.id}")
+                digest = build_digest(
+                    start,
+                    end,
+                    self.scorer,
+                    self.threshold,
+                    self.timeline,
+                    self.url,
+                    self.token,
+                    profile=profile,
+                )
 
-                    # Explicitly run the worker since the job hasn't been picked up, yet
-                    job.perform()
-                    job.cancel()
+            if task and task.success and task.result:
+                logger.info(f"Job finished: {task_id}")
+                digest = task.result
 
-                    break
-
-            # Job gets put into cancel state when `ASYNC=False` and if
-            # the worker times out, but there should still be a result
-            if job.get_status() in JOB_OK_STATES and job.result:
-                logger.info(f"Job finished: {job.id}")
-                digest = job.result
+                # Clear result from the database
+                task.result = None
+                task.save()
         except UnauthorizedError as e:
             raise ValidationError({"token": str(e)}, code="invalid") from e
         except InvalidURLError as e:

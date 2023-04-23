@@ -1,6 +1,5 @@
 import logging
 
-import django_rq
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import (
@@ -10,8 +9,8 @@ from django.contrib.postgres.search import (
     TrigramSimilarity,
 )
 from django.shortcuts import redirect, reverse
+from django_q.tasks import async_task, fetch
 from fbv.views import render_html
-from rq.job import JobStatus
 
 from activity.indexer import index_posts
 from activity.models import Acct, Post
@@ -24,21 +23,16 @@ logger = logging.getLogger(__name__)
 def activity(request):
     assert request.user.account.profile.has_plus, "Plus is required"
 
-    job_id = request.GET.get("refresh")
+    task_id = request.GET.get("refresh")
     show_refresh_message = False
 
-    if job_id:
+    if task_id:
         show_refresh_message = True
 
-        job = django_rq.queues.get_queue().fetch_job(job_id)
+        task = fetch(task_id)
 
-        if job:
-            JOB_OK_STATES = (
-                JobStatus.CANCELED.value,
-                JobStatus.FINISHED.value,
-            )
-
-            if job.get_status() in JOB_OK_STATES:
+        if task:
+            if task.success or task.stopped:
                 return redirect("activity:activity")
         else:
             show_refresh_message = False
@@ -103,13 +97,13 @@ def search(request):
 def refresh(request):
     assert request.user.account.profile.has_plus, "Plus is required"
 
-    job = django_rq.enqueue(index_posts, request.user.account.profile)
-    logger.info(f"Refresh indexing posts with {job.id}")
+    task_id = async_task(index_posts, request.user.account.profile)
+    logger.info(f"Refresh indexing posts with task id: {task_id}")
 
     messages.success(request, "Start to index posts")
 
     url = reverse("activity:activity")
-    url = f"{url}?refresh={job.id}"
+    url = f"{url}?refresh={task_id}"
 
     return redirect(url)
 

@@ -230,6 +230,7 @@ def index_posts(profile: Profile) -> None:
 
     logger.info(f"Profile id {profile.id}: Indexed {post_count} posts")
 
-    logger.info(f"Profile id {profile.id}: Save post vectors")
-    save_posts_vectors(profile)
-    logger.info(f"Profile id {profile.id}: Post vectors saved")
+    if post_count > 0:
+        logger.info(f"Profile id {profile.id}: Save post vectors")
+        save_posts_vectors(profile)
+        logger.info(f"Profile id {profile.id}: Post vectors saved")

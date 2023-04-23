@@ -17,7 +17,6 @@ sitemaps = {
 
 urlpatterns = [
     path(f"{settings.ADMIN_SITE_BASE_URL}/", admin.site.urls),
-    path(f"{settings.DJANGO_RQ_SITE_BASE_URL}/", include("django_rq.urls")),
     path("unicorn/", include("django_unicorn.urls")),
     path("favicon.ico", favicon_emoji, {"emoji": "🐘"}),
     path(r"apple-touch-icon.png", favicon_emoji, {"emoji": "🐘"}),

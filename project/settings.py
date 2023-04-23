@@ -33,7 +33,6 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "compressor",
     "coltrane",
-    "django_rq",
     "django_q",
     "django_unicorn",
 ]
@@ -121,13 +120,13 @@ CACHES = {
     },
 }
 
-RQ = {"WORKER_CLASS": "rq.SimpleWorker"}
-
-RQ_QUEUES = {
-    "default": {"URL": getenv("REDIS_URL"), "ASYNC": False},
+Q_CLUSTER = {
+    "workers": 4,
+    "retry": 601,
+    "timeout": 600,
+    # "sync": True,
+    "redis": getenv("REDIS_URL"),
 }
-
-Q_CLUSTER = {"workers": 4, "retry": 601, "timeout": 600, "redis": getenv("REDIS_URL")}
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -164,7 +163,6 @@ GIT_VERSION = getenv("CAPROVER_GIT_COMMIT_SHA")
 
 ANALYTICS_HTML = getenv("ANALYTICS_HTML")
 ADMIN_SITE_BASE_URL = getenv("ADMIN_SITE_BASE_URL", "admin")
-DJANGO_RQ_SITE_BASE_URL = getenv("DJANGO_RQ_SITE_BASE_URL", "django-rq")
 
 LOGGING = {
     "version": 1,
@@ -232,11 +230,8 @@ if ENVIRONMENT == "live":
         }
     }
 
-    # Use the typical worker
-    RQ = {"WORKER_CLASS": "rq.Worker"}
-
-    # Make sure that RQ is async in prod
-    RQ_QUEUES["default"]["ASYNC"] = True
+    # Make sure that Q2 is async in prod
+    Q_CLUSTER["sync"] = False
 
     LOGGING = {
         "version": 1,

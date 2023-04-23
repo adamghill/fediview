@@ -1,7 +1,6 @@
 import logging
 from uuid import uuid4
 
-import django_rq
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login as auth_login
@@ -12,6 +11,7 @@ from django.core.cache import cache
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from django_q.tasks import async_task
 from fbv.decorators import render_html
 from mastodon import Mastodon
 
@@ -159,8 +159,9 @@ def account(request):
         else:
             # Start indexing posts if the user updated their indexing type
             if original_indexing_type != profile.indexing_type:
-                job = django_rq.enqueue(index_posts, profile)
-                logger.info(f"Start indexing posts with {job.id}")
+                task_id = async_task(index_posts, profile)
+
+                logger.info(f"Start indexing posts with {task_id.id}")
 
                 message = f"{message} and start to index posts"
 
