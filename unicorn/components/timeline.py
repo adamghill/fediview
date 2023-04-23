@@ -183,6 +183,14 @@ class TimelineView(UnicornView):
                 # Clear result from the database
                 task.result = None
                 task.save()
+            elif digest.ok:
+                logger.info(f"Profile id {profile.id}: Task failed, but sync digest ok")
+            else:
+                logger.error(
+                    f"Profile id {profile.id}: Task failed and sync digest failed"
+                )
+                self.error = "Failed to generate digest. Please try again."
+
         except UnauthorizedError as e:
             raise ValidationError({"token": str(e)}, code="invalid") from e
         except InvalidURLError as e:
