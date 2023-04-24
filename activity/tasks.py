@@ -19,4 +19,4 @@ def index_posts_for_plus_profiles():
     broker = get_broker()
 
     for profile in profiles:
-        async_task(index_posts, profile, broker=broker)
+        async_task(index_posts, profile, broker=broker, cached=True)

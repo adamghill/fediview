@@ -170,7 +170,7 @@ def account(request):
         else:
             # Start indexing posts if the user updated their indexing type
             if original_indexing_type != profile.indexing_type:
-                task_id = async_task(index_posts, profile)
+                task_id = async_task(index_posts, profile, cached=True)
 
                 logger.info(f"Start indexing posts with {task_id}")
 

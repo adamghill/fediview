@@ -29,7 +29,7 @@ def activity(request):
     if task_id:
         show_refresh_message = True
 
-        task = fetch(task_id)
+        task = fetch(task_id, cached=True)
 
         if task:
             if task.success or task.stopped:
@@ -97,7 +97,7 @@ def search(request):
 def refresh(request):
     assert request.user.account.profile.has_plus, "Plus is required"
 
-    task_id = async_task(index_posts, request.user.account.profile)
+    task_id = async_task(index_posts, request.user.account.profile, cached=True)
     logger.info(f"Refresh indexing posts with task id: {task_id}")
 
     messages.success(request, "Start to index posts")

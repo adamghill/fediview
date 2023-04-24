@@ -156,10 +156,11 @@ class TimelineView(UnicornView):
                 self.url,
                 self.token,
                 profile=profile,
+                cached=True,
             )
             logger.info(f"Job enqueued: {task_id}")
 
-            task = fetch(task_id, wait=TASK_TIMEOUT * 1000)
+            task = fetch(task_id, wait=TASK_TIMEOUT * 1000, cached=True)
 
             if not task:
                 logger.error(f"Run job manually: {task_id}")
