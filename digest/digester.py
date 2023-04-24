@@ -211,18 +211,19 @@ def build_digest(
                 continue
 
             context = strip_tags(post.content)
-            similarity = get_similarity_to_posts_vectors(profile, context)
 
-            logger.debug(
-                f"Post id {post.id} has similarity of {similarity} to posts_vectors"
-            )
+            try:
+                similarity = get_similarity_to_posts_vectors(profile, context)
 
-            print("type similarity", type(similarity))
-            print("similarity", similarity)
+                logger.debug(
+                    f"Post id {post.id} has similarity of {similarity} to posts_vectors"
+                )
 
-            if similarity > similarity_threshold:
-                recommended_posts.append(post)
-                post.is_recommendation = True
+                if similarity > similarity_threshold:
+                    recommended_posts.append(post)
+                    post.is_recommendation = True
+            except Exception as e:
+                logger.exception(e)
 
     logger.debug("Posts and boosts scored")
 
