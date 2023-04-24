@@ -80,4 +80,4 @@ def cosine_similarity(
 def get_similarity_to_posts_vectors(profile: Profile, text: str):
     vectors = get_text_embeddings(text)
 
-    return cosine_similarity(profile.posts_vectors[0], vectors)
+    return cosine_similarity(profile.posts_vectors, vectors)
