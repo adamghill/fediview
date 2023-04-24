@@ -217,6 +217,9 @@ def build_digest(
                 f"Post id {post.id} has similarity of {similarity} to posts_vectors"
             )
 
+            print("type similarity", type(similarity))
+            print("similarity", similarity)
+
             if similarity > similarity_threshold:
                 recommended_posts.append(post)
                 post.is_recommendation = True
