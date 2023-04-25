@@ -127,6 +127,7 @@ Q_CLUSTER = {
     "save_limit": 50,
     # "sync": True,
     "redis": getenv("REDIS_URL"),
+    "cached": True,
 }
 
 STATIC_URL = "static/"
