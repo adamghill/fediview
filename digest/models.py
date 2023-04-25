@@ -113,9 +113,9 @@ class Application(BaseModel):
 
 
 class Post(BaseModel):
-    id: int
+    id: str
     url: Optional[str]
-    reply_id: Optional[int] = Field(alias="in_reply_to_id")
+    reply_id: Optional[str] = Field(alias="in_reply_to_id")
     replies_count: int
     reblogs_count: int
     favourites_count: int
