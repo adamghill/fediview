@@ -235,6 +235,9 @@ if ENVIRONMENT == "live":
     # Make sure that Q2 is async in prod
     Q_CLUSTER["sync"] = False
 
+    # Set Sentry for Q2
+    Q_CLUSTER["error_reporter"] = {"sentry": {"dsn": getenv("SENTRY_DSN")}}
+
     LOGGING = {
         "version": 1,
         "disable_existing_loggers": False,
