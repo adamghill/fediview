@@ -5,7 +5,6 @@ from os import getenv
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import ValidationError
 from django.utils.timezone import now
-from django_q.models import Success
 from django_q.tasks import async_task, fetch
 from django_unicorn.components import UnicornView
 
@@ -156,11 +155,10 @@ class TimelineView(UnicornView):
                 self.url,
                 self.token,
                 profile=profile,
-                cached=True,
             )
             logger.info(f"Job enqueued: {task_id}")
 
-            task = fetch(task_id, wait=TASK_TIMEOUT * 1000, cached=True)
+            task = fetch(task_id, wait=TASK_TIMEOUT * 1000)
 
             if not task:
                 logger.error(f"Run job manually: {task_id}")
