@@ -1,4 +1,4 @@
-{% load cache compress git mastodon static unicorn %}
+{% load cache compress git mastodon settings_tags static unicorn %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -22,7 +22,7 @@
     {% endcompress %}
 
     {% if not debug %}
-    {{ ANALYTICS_HTML|safe }}
+    {% analytics_html %}
     {% endif %}
 
     {% block css %}

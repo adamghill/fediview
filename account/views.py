@@ -60,7 +60,6 @@ def login(request):
                 )
             except MastodonNetworkError:
                 return {
-                    "ANALYTICS_HTML": settings.ANALYTICS_HTML,
                     "error": f"Invalid instance url: {api_base_url}",
                 }
 
@@ -85,7 +84,9 @@ def login(request):
 
         return redirect(auth_request_url)
 
-    return {"ANALYTICS_HTML": settings.ANALYTICS_HTML}
+    return {
+        "scopes": ",".join(request.GET.getlist("scopes", ["read"])),
+    }
 
 
 @render_html("account/auth.html")
