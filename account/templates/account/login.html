@@ -15,8 +15,10 @@
 
 <div style="width: 500px; margin: 0 auto;">
     <form method="POST" action="{{ request.path }}">{% csrf_token %}
+        <input type="hidden" name="scopes" value="{{ scopes }}"></input>
+
         <label for="url">Instance URL</label>
-        <input type="text" name="url" id="url" placeholder="mastodon-instance.social"></input>
+        <input type="text" name="url" id="url" placeholder="mastodon-instance.social" value="{{ instance }}"></input>
 
         <p class="help" style="padding-top: .5em;">
             <strong>read</strong> permissions will be requested to get posts from your

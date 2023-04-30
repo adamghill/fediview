@@ -8,6 +8,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.cache import cache
+from django.http import HttpRequest
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.decorators.http import require_POST
@@ -20,9 +21,8 @@ from activity.indexer import index_posts
 
 logger = logging.getLogger(__name__)
 
-SCOPES = [
-    "read",
-]
+DEFAULT_SCOPES = ["read"]
+ALLOWED_SCOPES = set(["read", "write"])
 
 
 def get_redirect_uri(request):
@@ -33,6 +33,13 @@ def get_redirect_uri(request):
     return site_url + auth_path
 
 
+def get_scopes(request: HttpRequest) -> list:
+    scopes = request.POST.get("scopes", DEFAULT_SCOPES[0]).split(",")
+    assert not set(scopes) - ALLOWED_SCOPES, "Only read and write scopes are allowed"
+
+    return scopes
+
+
 @render_html("account/login.html")
 def login(request):
     redirect_uri = get_redirect_uri(request)
@@ -40,6 +47,8 @@ def login(request):
     if request.is_post:
         api_base_url = request.POST.get("url", "").strip()
         api_base_url = api_base_url.replace("https://", "").replace("http://", "")
+
+        scopes = get_scopes(request)
 
         if api_base_url.endswith("/"):
             api_base_url = api_base_url[0:-1]
@@ -53,7 +62,7 @@ def login(request):
             try:
                 (client_id, client_secret) = Mastodon.create_app(
                     "fediview.com",
-                    scopes=SCOPES,
+                    scopes=scopes,
                     redirect_uris=redirect_uri,
                     website="https://fediview.com",
                     api_base_url=api_base_url,
@@ -77,7 +86,7 @@ def login(request):
             client_id=instance.client_id,
             state=state,
             redirect_uris=redirect_uri,
-            scopes=SCOPES,
+            scopes=scopes,
         )
 
         cache.set(f"oauth:{state}", instance.id, timeout=500)
@@ -85,7 +94,8 @@ def login(request):
         return redirect(auth_request_url)
 
     return {
-        "scopes": ",".join(request.GET.getlist("scopes", ["read"])),
+        "scopes": ",".join(request.GET.getlist("scopes", DEFAULT_SCOPES)),
+        "instance": request.GET.get("instance"),
     }
 
 
@@ -108,10 +118,12 @@ def auth(request):
         user_agent="fediview",
     )
 
+    scopes = get_scopes(request)
+
     access_token = mastodon.log_in(
         code=code,
         redirect_uri=redirect_uri,
-        scopes=SCOPES,
+        scopes=scopes,
     )
 
     # get username for Django user
