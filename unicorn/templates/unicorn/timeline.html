@@ -186,9 +186,9 @@
         </button>
     </div>
 
-    <div u:loading style="padding-top: 10px; text-align: center;">
+    <div u:loading class="pt-4 center">
         <em>Building digest...</em>
-        <div style="padding-top: 3em;">
+        <div class="pt-6 pb-5">
             <img src="{% static 'img/ball-triangle.svg' %}" />
         </div>
     </div>
@@ -256,9 +256,9 @@
         </section>
         {% endif %}
 
-        <div u:loading.remove style="padding-top: 10px; text-align: right;">
+        <div u:loading.remove class="pt-6" style="text-align: right;">
             <button u:click="reconfigure">
-                Update Settings
+                Regenerate
             </button>
         </div>
     </div>

@@ -14,6 +14,22 @@
 .mt-5 { margin-top: 1.5rem; }
 .mt-6 { margin-top: 3rem; }
 
+.mx-0 { padding-top: 0; margin-bottom: 0rem; }
+.mx-1 { padding-top: 0.25rem; margin-bottom: 0.25rem; }
+.mx-2 { padding-top: 0.5rem; margin-bottom: 0.5rem; }
+.mx-3 { padding-top: 0.75rem; margin-bottom: 0.75rem; }
+.mx-4 { padding-top: 1rem; margin-bottom: 1rem; }
+.mx-5 { padding-top: 1.5rem; margin-bottom: 1.5rem; }
+.mx-6 { padding-top: 3rem; margin-bottom: 3rem; }
+
+.my-0 { margin-left: 0; margin-right: 0rem; }
+.my-1 { margin-left: 0.25rem; margin-right: 0.25rem; }
+.my-2 { margin-left: 0.5rem; margin-right: 0.5rem; }
+.my-3 { margin-left: 0.75rem; margin-right: 0.75rem; }
+.my-4 { margin-left: 1rem; margin-right: 1rem; }
+.my-5 { margin-left: 1.5rem; margin-right: 1.5rem; }
+.my-6 { margin-left: 3rem; margin-right: 3rem; }
+
 .pb-0 { padding-bottom: 0; }
 .pb-1 { padding-bottom: 0.25rem; }
 .pb-2 { padding-bottom: 0.5rem; }
@@ -29,3 +45,19 @@
 .pt-4 { padding-top: 1rem; }
 .pt-5 { padding-top: 1.5rem; }
 .pt-6 { padding-top: 3rem; }
+
+.px-0 { padding-top: 0; padding-bottom: 0rem }
+.px-1 { padding-top: 0.25rem; padding-bottom: 0.25rem }
+.px-2 { padding-top: 0.5rem; padding-bottom: 0.5rem }
+.px-3 { padding-top: 0.75rem; padding-bottom: 0.75rem }
+.px-4 { padding-top: 1rem; padding-bottom: 1rem }
+.px-5 { padding-top: 1.5rem; padding-bottom: 1.5rem }
+.px-6 { padding-top: 3rem; padding-bottom: 3rem }
+
+.py-0 { padding-left: 0; padding-right: 0rem }
+.py-1 { padding-left: 0.25rem; padding-right: 0.25rem }
+.py-2 { padding-left: 0.5rem; padding-right: 0.5rem }
+.py-3 { padding-left: 0.75rem; padding-right: 0.75rem }
+.py-4 { padding-left: 1rem; padding-right: 1rem }
+.py-5 { padding-left: 1.5rem; padding-right: 1.5rem }
+.py-6 { padding-left: 3rem; padding-right: 3rem }
