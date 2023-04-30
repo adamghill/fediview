@@ -201,6 +201,8 @@ def build_digest(
     logger.debug("Threshold boosts count", len(threshold_boosts))
 
     # Get recommended posts
+    recommended_posts = []
+
     if profile and profile.posts_vectors is not None and not skip_recommendations:
         similarity_threshold = 0.8
 
@@ -223,7 +225,8 @@ def build_digest(
             except Exception as e:
                 logger.exception(e)
 
-    recommended_posts = [p for p in remaining_posts if p.is_recommendation]
+        recommended_posts = [p for p in remaining_posts if p.is_recommendation]
+
     logger.debug("Recommended posts count", len(recommended_posts))
 
     # Update metadata
