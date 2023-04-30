@@ -18,7 +18,8 @@
         <input type="hidden" name="scopes" value="{{ scopes }}"></input>
 
         <label for="url">Instance URL</label>
-        <input type="text" name="url" id="url" placeholder="mastodon-instance.social" value="{{ instance }}"></input>
+        <input type="text" name="url" id="url" placeholder="mastodon-instance.social"
+            value="{{ instance|default:'' }}"></input>
 
         <p class="help" style="padding-top: .5em;">
             <strong>read</strong> permissions will be requested to get posts from your
