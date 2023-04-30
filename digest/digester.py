@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 from dateutil.parser import parse
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
+from django.utils.html import strip_tags
 from mastodon import Mastodon
 from mastodon.errors import (
     MastodonError,
@@ -16,7 +17,7 @@ from mastodon.errors import (
 )
 
 from account.models import Profile
-from activity.text_embeddings_retriever import is_post_similar_to_posts_vectors
+from activity.text_embeddings_retriever import is_text_similar_to_vectors
 from digest.api import fetch_posts_and_boosts
 from digest.models import Account, Card, Post
 from digest.scorers import get_scorer_from_name
@@ -214,8 +215,10 @@ def build_digest(
         for post in remaining_posts:
             try:
 
-                post.is_recommendation = is_post_similar_to_posts_vectors(
-                    profile, post, similarity_threshold
+                post.is_recommendation = is_text_similar_to_vectors(
+                    profile.posts_vectors,
+                    strip_tags(post.content),
+                    similarity_threshold,
                 )
             except Exception as e:
                 logger.exception(e)
