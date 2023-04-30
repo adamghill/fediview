@@ -8,7 +8,6 @@ from urllib.parse import urlparse
 from dateutil.parser import parse
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
-from django.utils.html import strip_tags
 from mastodon import Mastodon
 from mastodon.errors import (
     MastodonError,
@@ -17,7 +16,7 @@ from mastodon.errors import (
 )
 
 from account.models import Profile
-from activity.text_embeddings_retriever import get_similarity_to_posts_vectors
+from activity.text_embeddings_retriever import is_post_similar_to_posts_vectors
 from digest.api import fetch_posts_and_boosts
 from digest.models import Account, Card, Post
 from digest.scorers import get_scorer_from_name
@@ -195,43 +194,39 @@ def build_digest(
 
     # Score posts and return those that meet our threshold
     threshold_posts = threshold.posts_meeting_criteria(posts, scorer)
+    logger.debug("Threshold posts count", len(threshold_posts))
+
     threshold_boosts = threshold.posts_meeting_criteria(boosts, scorer)
+    logger.debug("Threshold boosts count", len(threshold_boosts))
 
-    recommended_posts = []
-
+    # Get recommended posts
     if profile and profile.posts_vectors is not None and not skip_recommendations:
         similarity_threshold = 0.8
 
         # Lower the similarity threshold if there aren't many threshold posts
+        # TODO: Allow this to be configurable by user
         if len(threshold_posts) < 3:
             similarity_threshold = 0.6
 
-        for post in posts:
-            if list(filter(lambda p: p.id == post.id, threshold_posts)):
-                continue
+        threshold_post_ids = set([p.id for p in threshold_posts])
+        remaining_posts = [p for p in posts if p.id not in threshold_post_ids]
 
-            context = strip_tags(post.content)
-
+        for post in remaining_posts:
             try:
-                similarity = get_similarity_to_posts_vectors(profile, context)
 
-                logger.debug(
-                    f"Post id {post.id} has similarity of {similarity} to posts_vectors"
+                post.is_recommendation = is_post_similar_to_posts_vectors(
+                    profile, post, similarity_threshold
                 )
-
-                if similarity > similarity_threshold:
-                    recommended_posts.append(post)
-                    post.is_recommendation = True
             except Exception as e:
                 logger.exception(e)
 
-    logger.debug("Posts and boosts scored")
+    recommended_posts = [p for p in remaining_posts if p.is_recommendation]
+    logger.debug("Recommended posts count", len(recommended_posts))
 
     # Update metadata
-    for post in posts + boosts:
+    for post in threshold_posts + threshold_boosts + recommended_posts:
         post.set_base_url(mastodon.api_base_url)
 
-    for post in threshold_posts + threshold_boosts + recommended_posts:
         if post.account.is_following is None:
             post.account.set_is_following(logged_in_account)
 
@@ -260,10 +255,14 @@ def build_digest(
     )
     sorted_boosts = sorted(threshold_boosts, key=lambda p: p.created_at, reverse=True)
 
+    logger.debug("Posts and boosts sorted")
+
     # Build catalog of links
     links = _catalog_links(posts + boosts)
     sorted_links = sorted(links, key=lambda l: l.count, reverse=True)
     sorted_links = sorted(links, key=lambda l: l.most_recent_created_at, reverse=True)
+
+    logger.debug("Links built and sorted")
 
     # Build the digest
     digest.posts = sorted_posts

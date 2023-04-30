@@ -3,6 +3,7 @@ from typing import Union
 
 import torch
 from cache_memoize import cache_memoize
+from django.utils.html import strip_tags
 from numpy import dot, ndarray
 from numpy.linalg import norm
 from sentence_transformers.SentenceTransformer import SentenceTransformer
@@ -81,3 +82,17 @@ def get_similarity_to_posts_vectors(profile: Profile, text: str):
     vectors = get_text_embeddings(text)
 
     return cosine_similarity(profile.posts_vectors, vectors)
+
+
+def is_post_similar_to_posts_vectors(
+    profile: Profile, post: Post, similarity_threshold: float
+) -> bool:
+    post_text = strip_tags(post.content)
+    similarity = get_similarity_to_posts_vectors(profile, post_text)
+
+    logger.debug(f"Post id {post.id} has similarity of {similarity} to posts_vectors")
+
+    if similarity > similarity_threshold:
+        return True
+
+    return False

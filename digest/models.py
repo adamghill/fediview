@@ -141,7 +141,7 @@ class Post(BaseModel):
     base_url: Optional[str]
     score: Optional[float]
     home_url: Optional[str]
-    is_recommendation: Optional[str]
+    is_recommendation: bool = False
 
     def __init__(self, **data: Any):
         super().__init__(**data)
