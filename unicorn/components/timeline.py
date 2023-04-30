@@ -20,7 +20,7 @@ from digest.digester import (
 logger = logging.getLogger(__name__)
 
 
-TASK_TIMEOUT = 60
+TASK_TIMEOUT = 25
 
 
 class TimelineView(UnicornView):
@@ -144,6 +144,8 @@ class TimelineView(UnicornView):
         except Exception:
             pass
 
+        task_started_at = datetime.now()
+
         try:
             task_id = async_task(
                 build_digest,
@@ -161,19 +163,22 @@ class TimelineView(UnicornView):
             task = fetch(task_id, wait=TASK_TIMEOUT * 1000)
 
             if not task:
-                logger.error(f"Run job manually: {task_id}")
+                if task_started_at + timedelta(seconds=TASK_TIMEOUT) <= datetime.now():
+                    logger.error("Timed out")
+                else:
+                    logger.error(f"Run job manually: {task_id}")
 
-                digest = build_digest(
-                    start,
-                    end,
-                    self.scorer,
-                    self.threshold,
-                    self.timeline,
-                    self.url,
-                    self.token,
-                    profile=profile,
-                    skip_recommendations=True,
-                )
+                    digest = build_digest(
+                        start,
+                        end,
+                        self.scorer,
+                        self.threshold,
+                        self.timeline,
+                        self.url,
+                        self.token,
+                        profile=profile,
+                        skip_recommendations=True,
+                    )
 
             if task and task.success and task.result:
                 logger.info(f"Job finished: {task_id}")
