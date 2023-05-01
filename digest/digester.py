@@ -222,7 +222,7 @@ def build_digest(
         logger.info(f"Remaining posts count: {len(remaining_posts)}")
 
         # Shuffle the posts and only grab 50 of them
-        remaining_posts = shuffle(remaining_posts)
+        shuffle(remaining_posts)
         remaining_posts = remaining_posts[0:50]
 
         for post in remaining_posts:
