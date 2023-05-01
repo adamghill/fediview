@@ -273,6 +273,11 @@ def build_digest(
     sorted_links = sorted(links, key=lambda l: l.count, reverse=True)
     sorted_links = sorted(links, key=lambda l: l.most_recent_created_at, reverse=True)
 
+    # Set metadata for posts in links
+    for link in sorted_links:
+        for p in link.posts:
+            p.set_base_url(mastodon.api_base_url)
+
     logger.debug("Links built and sorted")
 
     # Build the digest
