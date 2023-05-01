@@ -203,7 +203,12 @@ def build_digest(
     # Get recommended posts
     recommended_posts = []
 
-    if profile and profile.posts_vectors is not None and not skip_recommendations:
+    if (
+        profile
+        and profile.posts_vectors is not None
+        and not skip_recommendations
+        and profile.generate_recommendations
+    ):
         similarity_threshold = 0.8
 
         # Lower the similarity threshold if there aren't many threshold posts

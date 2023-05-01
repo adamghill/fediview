@@ -47,6 +47,7 @@ class Profile(TimeStampedModel):
         choices=IndexingType.choices, default=IndexingType.NONE
     )
     last_indexed_at = models.DateTimeField(blank=True, null=True)
+    generate_recommendations = models.BooleanField(default=False)
 
     # Vectors
     posts_vectors = NDArrayField(blank=True, null=True)

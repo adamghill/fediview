@@ -356,6 +356,21 @@
         </select>
 
         <div style="margin-top: 2em;">
+            <label for="generate-recommendations">Post Recommendations</label>
+            <p class="help">
+                Posts are recommended by comparing posts in the selected timeline to a subset of your previous
+                posts you have written.
+            </p>
+
+            <div>
+                <input type="checkbox" name="generate_recommendations" id="generate-recommendations"
+                    {% if profile.generate_recommendations %}checked{% endif %}></input>
+                <label for="generate-recommendations" style="font-variant-caps: initial;">Generate
+                    Recommendations</label>
+            </div>
+        </div>
+
+        <div style="margin-top: 2em;">
             <label for="indexing_type-none">Post Indexing</label>
             <p class="help">
                 The default is <strong>No indexing</strong>. Selecting <strong>Post metadata</strong> indexing will
