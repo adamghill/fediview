@@ -189,6 +189,10 @@ def account(request):
 
                 message = f"{message} and start to index posts"
 
+        profile.generate_recommendations = (
+            request.POST.get("generate_recommendations", "") == "on"
+        )
+
         profile.save()
         messages.success(request, message)
 
