@@ -43,9 +43,7 @@ def _get_sentence_transformer():
     if sentence_transformer is None:
         DEFAULT_SENTENCE_MODEL = "cambridgeltl/tweet-roberta-base-embeddings-v1"
         logger.debug("Create sentence transformer")
-        sentence_transformer = SentenceTransformer(
-            DEFAULT_SENTENCE_MODEL, cache_folder="."
-        )
+        sentence_transformer = SentenceTransformer(DEFAULT_SENTENCE_MODEL)
         sentence_transformer.to("cpu")
         sentence_transformer.eval()
     else:
