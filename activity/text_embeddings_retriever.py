@@ -56,17 +56,24 @@ def _get_sentence_transformer():
 
 @cache_memoize(60 * 60 * 24)
 def get_text_embeddings(text: Union[list[str], str]) -> ndarray:
+    logger.info("Get sentence transformer")
     sentence_transformer = _get_sentence_transformer()
 
     single_input_flag = type(text) is str
     texts = [text] if single_input_flag else text
     assert all(type(t) is str for t in texts), "All items must be strings"
     batch_size = len(texts)
+    logger.info(f"Batch size: {batch_size}")
+
+    logger.info("Get encodings")
 
     with torch.no_grad():
+        logger.info("Get encodings in context manager")
         vectors = sentence_transformer.encode(
             texts, batch_size=batch_size, show_progress_bar=False
         )[0]
+
+    logger.info("Got vectors")
 
     return vectors
 
@@ -88,10 +95,10 @@ def get_similarity_to_posts_vectors(profile: Profile, text: str):
 def is_text_similar_to_vectors(
     vectors: ndarray, text: str, similarity_threshold: float
 ) -> bool:
-    logger.info(f"Get vectors for {text}")
+    logger.info("Get vectors")
     text_vectors = get_text_embeddings(text)
 
-    logger.info(f"Get cosine similarity for {text}")
+    logger.info("Get cosine similarity")
     similarity = cosine_similarity(vectors, text_vectors)
 
     if similarity > similarity_threshold:
