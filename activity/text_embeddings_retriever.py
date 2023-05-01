@@ -54,6 +54,7 @@ def _get_sentence_transformer():
     return sentence_transformer
 
 
+# @cache_memoize(60 * 60 * 24)
 def get_text_embeddings(text: Union[list[str], str]) -> ndarray:
     logger.info("Get sentence transformer")
     sentence_transformer = _get_sentence_transformer()
