@@ -50,7 +50,6 @@ def get_timeline_posts(
     return mastodon.timeline(min_id=start)
 
 
-@cache_memoize(60 * 5)
 def fetch_posts_and_boosts(
     mastodon: Mastodon,
     logged_in_account: Account,
