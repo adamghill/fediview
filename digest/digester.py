@@ -218,6 +218,8 @@ def build_digest(
 
         threshold_post_ids = set([p.id for p in threshold_posts])
         remaining_posts = [p for p in posts if p.id not in threshold_post_ids]
+        logger.info(f"Remaining posts count: {len(remaining_posts)}")
+        remaining_posts = remaining_posts[0:100]
 
         for post in remaining_posts:
             try:
