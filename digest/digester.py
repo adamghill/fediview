@@ -227,10 +227,13 @@ def build_digest(
                     strip_tags(post.content),
                     similarity_threshold,
                 )
+                logger.info(f"Got similarity for post id: {post.id}")
             except Exception as e:
                 logger.exception(e)
 
+        logger.info("Get recommended posts")
         recommended_posts = [p for p in remaining_posts if p.is_recommendation]
+        logger.info("Got recommended posts")
 
     logger.info(f"Recommended posts count: {len(recommended_posts)}")
 

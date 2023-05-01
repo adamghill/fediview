@@ -88,7 +88,10 @@ def get_similarity_to_posts_vectors(profile: Profile, text: str):
 def is_text_similar_to_vectors(
     vectors: ndarray, text: str, similarity_threshold: float
 ) -> bool:
+    logger.info(f"Get vectors for {text}")
     text_vectors = get_text_embeddings(text)
+
+    logger.info(f"Get cosine similarity for {text}")
     similarity = cosine_similarity(vectors, text_vectors)
 
     if similarity > similarity_threshold:
