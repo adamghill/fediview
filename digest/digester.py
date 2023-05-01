@@ -2,6 +2,7 @@ import logging
 import re
 from dataclasses import dataclass, field
 from datetime import datetime
+from random import shuffle
 from typing import Optional
 from urllib.parse import urlparse
 
@@ -219,7 +220,10 @@ def build_digest(
         threshold_post_ids = set([p.id for p in threshold_posts])
         remaining_posts = [p for p in posts if p.id not in threshold_post_ids]
         logger.info(f"Remaining posts count: {len(remaining_posts)}")
-        remaining_posts = remaining_posts[0:100]
+
+        # Shuffle the posts and only grab 50 of them
+        remaining_posts = shuffle(remaining_posts)
+        remaining_posts = remaining_posts[0:50]
 
         for post in remaining_posts:
             try:
