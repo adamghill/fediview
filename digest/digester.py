@@ -150,7 +150,7 @@ def build_digest(
     assert timeline in ("home", "local", "federated"), "Invalid timeline"
     url = _clean_url(url)
 
-    logger.debug(f"Building digest for {start} to {end}")
+    logger.info(f"Building digest for {start} to {end}")
 
     digest = Digest()
 
@@ -158,12 +158,12 @@ def build_digest(
     try:
         mastodon = Mastodon(access_token=token, api_base_url=url, user_agent="fediview")
 
-        logger.debug("Mastodon API initialized")
+        logger.info("Mastodon API initialized")
 
         logged_in_account = Account.parse_obj(mastodon.me())
         _add_following_to_account(mastodon, logged_in_account)
 
-        logger.debug("User followings retrieved")
+        logger.info("User followings retrieved")
 
         # Fetch all the posts and boosts from the timeline
         (posts, boosts) = fetch_posts_and_boosts(
@@ -175,7 +175,7 @@ def build_digest(
             profile=profile,
         )
 
-        logger.debug("Posts and boosts fetched")
+        logger.info("Posts and boosts fetched")
 
         digest.ok = True
     except MastodonUnauthorizedError as e:
@@ -195,10 +195,10 @@ def build_digest(
 
     # Score posts and return those that meet our threshold
     threshold_posts = threshold.posts_meeting_criteria(posts, scorer)
-    logger.debug("Threshold posts count", len(threshold_posts))
+    logger.info(f"Threshold posts count: {len(threshold_posts)}")
 
     threshold_boosts = threshold.posts_meeting_criteria(boosts, scorer)
-    logger.debug("Threshold boosts count", len(threshold_boosts))
+    logger.info(f"Threshold boosts count: {len(threshold_boosts)}")
 
     # Get recommended posts
     recommended_posts = []
@@ -221,7 +221,7 @@ def build_digest(
 
         for post in remaining_posts:
             try:
-
+                logger.info(f"Get similarity for post id: {post.id}")
                 post.is_recommendation = is_text_similar_to_vectors(
                     profile.posts_vectors,
                     strip_tags(post.content),
@@ -232,7 +232,7 @@ def build_digest(
 
         recommended_posts = [p for p in remaining_posts if p.is_recommendation]
 
-    logger.debug("Recommended posts count", len(recommended_posts))
+    logger.info(f"Recommended posts count: {len(recommended_posts)}")
 
     # Update metadata
     for post in threshold_posts + threshold_boosts + recommended_posts:
@@ -241,7 +241,7 @@ def build_digest(
         if post.account.is_following is None:
             post.account.set_is_following(logged_in_account)
 
-    logger.debug("Post metadata is updated")
+    logger.info("Post metadata is updated")
 
     """
     # Get unique posts from unique accounts
@@ -266,7 +266,7 @@ def build_digest(
     )
     sorted_boosts = sorted(threshold_boosts, key=lambda p: p.created_at, reverse=True)
 
-    logger.debug("Posts and boosts sorted")
+    logger.info("Posts and boosts sorted")
 
     # Build catalog of links
     links = _catalog_links(posts + boosts)
@@ -278,7 +278,7 @@ def build_digest(
         for p in link.posts:
             p.set_base_url(mastodon.api_base_url)
 
-    logger.debug("Links built and sorted")
+    logger.info("Links built and sorted")
 
     # Build the digest
     digest.posts = sorted_posts
