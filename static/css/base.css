@@ -479,9 +479,13 @@ a.active button {
     padding-right: 1em;
 }
 
+.tabs li.active {
+    font-weight: bold;
+}
+
 .tabs li a {
-    border-bottom-color: #485fc7;
-    color: #485fc7;
+    border-bottom-color: var(--link-color);
+    color: var(--link-color);
 }
 
 .tabs a {
