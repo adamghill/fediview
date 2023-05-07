@@ -278,19 +278,6 @@
     <script>
         // Re-init GLightbox so that it picks up any new images that get loaded
         var lightbox = GLightbox({});
-
-        // Send click events to cronitor
-        ['posts', 'boosts', 'links', ].forEach(function (id) {
-            var el = document.getElementById(id);
-
-            if (el) {
-                el.addEventListener('click', function () {
-                    if (typeof (cronitor) !== 'undefined') {
-                        cronitor('track', id);
-                    }
-                });
-            }
-        });
     </script>
     {% endif %}
 </div>

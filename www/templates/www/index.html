@@ -81,10 +81,6 @@
 
             // Save inputs when checkbox is changed
             $saveInput.addEventListener('change', function () {
-                if (typeof (cronitor) !== 'undefined') {
-                    cronitor('track', 'save-url-and-token');
-                }
-
                 saveInputs($saveInput);
             });
         }
