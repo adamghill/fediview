@@ -120,6 +120,11 @@ CACHES = {
     },
 }
 
+# CACHES["default"] = {
+#     "BACKEND": "django.core.cache.backends.redis.RedisCache",
+#     "LOCATION": getenv("REDIS_URL"),
+# }
+
 Q_CLUSTER = {
     "workers": 4,
     "retry": 601,
@@ -129,6 +134,7 @@ Q_CLUSTER = {
     "redis": getenv("REDIS_URL"),
     "cached": True,
     "max_attempts": 5,
+    "max_rss": 1000000,
 }
 
 STATIC_URL = "static/"
