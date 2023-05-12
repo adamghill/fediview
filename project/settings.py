@@ -134,7 +134,7 @@ Q_CLUSTER = {
     "redis": getenv("REDIS_URL"),
     "cached": True,
     "max_attempts": 5,
-    # "max_rss": 1000000,
+    "max_rss": 2000000,
 }
 
 STATIC_URL = "static/"
