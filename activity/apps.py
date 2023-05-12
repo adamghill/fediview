@@ -7,9 +7,8 @@ class Config(AppConfig):
     name = "activity"
 
     def ready(self):
-        # if not settings.DEBUG:
-        #     print("Preload sentence transformer")
-        #     from activity.text_embeddings_retriever import _get_sentence_transformer
+        if not settings.DEBUG:
+            print("Preload sentence transformer")
+            from activity.text_embeddings_retriever import _get_sentence_transformer
 
-        #     _get_sentence_transformer()
-        pass
+            _get_sentence_transformer()
