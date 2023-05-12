@@ -12,6 +12,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           caprover-server-url: ${{ secrets.CAPROVER_SERVER_URL }}
           caprover-app-token: ${{ secrets.CAPROVER_WEB_APP_TOKEN }}
+          docker-file-name: ./Dockerfile
   deploy_worker_to_caprover:
     runs-on: ubuntu-latest
     name: Deploy worker
@@ -23,3 +24,4 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           caprover-server-url: ${{ secrets.CAPROVER_SERVER_URL }}
           caprover-app-token: ${{ secrets.CAPROVER_WORKER_APP_TOKEN }}
+          docker-file-name: ./Dockerfile-q2-worker
