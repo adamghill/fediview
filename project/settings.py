@@ -31,6 +31,7 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+    "axes",
     "compressor",
     "coltrane",
     "django_q",
@@ -55,6 +56,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "axes.middleware.AxesMiddleware",
     "fbv.middleware.RequestMethodMiddleware",
 ]
 
@@ -83,8 +85,12 @@ DATABASES = {"default": dj_database_url.config(conn_max_age=600)}
 AUTH_USER_MODEL = "account.User"
 
 AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
+
+AXES_COOLOFF_TIME = 1
+AXES_USE_USER_AGENT = True
 
 AUTH_PASSWORD_VALIDATORS = [
     {

@@ -41,6 +41,7 @@ django-ndarrayfield = "^1.0.0rc4"
 torch = "^2.0.0"
 numpy = "^1.24.3"
 sentence-transformers = "^2.2.2"
+django-axes = "^5.41.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7"
