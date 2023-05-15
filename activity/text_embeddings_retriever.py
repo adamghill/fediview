@@ -2,6 +2,7 @@ import logging
 from typing import Union
 
 import modal
+from cache_memoize import cache_memoize
 from numpy import dot, ndarray
 from numpy.linalg import norm
 
@@ -38,6 +39,7 @@ def save_posts_vectors(profile: Profile):
         logger.exception(e)
 
 
+@cache_memoize(60 * 60 * 24)
 def get_text_embeddings(text: Union[list[str], str]) -> ndarray:
     global modal_get_text_embeddings_fn
 
@@ -46,10 +48,12 @@ def get_text_embeddings(text: Union[list[str], str]) -> ndarray:
             "text-embeddings", "get_text_embeddings"
         )
 
-    vectors = modal_get_text_embeddings_fn(text)
+    vectors = modal_get_text_embeddings_fn.call(text)
 
     if vectors is None:
         raise Exception("Invalid vectors")
+
+    return vectors
 
 
 def cosine_similarity(
