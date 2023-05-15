@@ -1,8 +1,5 @@
-from typing import Union
-
-from numpy import ndarray
-
 import modal
+from numpy import ndarray
 
 stub = modal.Stub("text-embeddings")
 

@@ -1,10 +1,10 @@
 import logging
 from typing import Union
 
+import modal
 from numpy import dot, ndarray
 from numpy.linalg import norm
 
-import modal
 from account.models import Profile
 from activity.models import Post
 
