@@ -1,0 +1,2 @@
+FROM python:3.10
+RUN pip install torch numpy sentence-transformers

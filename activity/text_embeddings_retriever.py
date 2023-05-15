@@ -1,18 +1,16 @@
 import logging
 from typing import Union
 
-import torch
-from cache_memoize import cache_memoize
 from numpy import dot, ndarray
 from numpy.linalg import norm
-from sentence_transformers.SentenceTransformer import SentenceTransformer
 
+import modal
 from account.models import Profile
 from activity.models import Post
 
 logger = logging.getLogger(__name__)
 
-sentence_transformer = None
+modal_get_text_embeddings_fn = None
 
 
 def save_posts_vectors(profile: Profile):
@@ -30,43 +28,28 @@ def save_posts_vectors(profile: Profile):
 
     logger.debug(f"Generate vectors for {profile}")
 
-    vectors = get_text_embeddings(post_texts)
+    try:
+        vectors = get_text_embeddings(post_texts)
 
-    logger.debug(f"Save post vectors for {profile}")
-    profile.posts_vectors = vectors
-    profile.save()
-
-
-def _get_sentence_transformer():
-    global sentence_transformer
-
-    if sentence_transformer is None:
-        DEFAULT_SENTENCE_MODEL = "cambridgeltl/tweet-roberta-base-embeddings-v1"
-        logger.debug("Create sentence transformer")
-        sentence_transformer = SentenceTransformer(DEFAULT_SENTENCE_MODEL)
-        sentence_transformer.to("cpu")
-        sentence_transformer.eval()
-    else:
-        logger.debug("Use existing sentence transformer")
-
-    return sentence_transformer
+        logger.debug(f"Save post vectors for {profile}")
+        profile.posts_vectors = vectors
+        profile.save()
+    except Exception as e:
+        logger.exception(e)
 
 
-# @cache_memoize(60 * 60 * 24)
 def get_text_embeddings(text: Union[list[str], str]) -> ndarray:
-    sentence_transformer = _get_sentence_transformer()
+    global modal_get_text_embeddings_fn
 
-    single_input_flag = type(text) is str
-    texts = [text] if single_input_flag else text
-    assert all(type(t) is str for t in texts), "All items must be strings"
-    batch_size = len(texts)
+    if modal_get_text_embeddings_fn is None:
+        modal_get_text_embeddings_fn = modal.Function.lookup(
+            "text-embeddings", "get_text_embeddings"
+        )
 
-    with torch.no_grad():
-        vectors = sentence_transformer.encode(
-            texts, batch_size=batch_size, show_progress_bar=False
-        )[0]
+    vectors = modal_get_text_embeddings_fn(text)
 
-    return vectors
+    if vectors is None:
+        raise Exception("Invalid vectors")
 
 
 def cosine_similarity(

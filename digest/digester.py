@@ -228,6 +228,7 @@ def build_digest(
         for post in remaining_posts:
             try:
                 logger.debug(f"Get similarity for post id: {post.id}")
+
                 post.is_recommendation = is_text_similar_to_vectors(
                     profile.posts_vectors,
                     strip_tags(post.content),
