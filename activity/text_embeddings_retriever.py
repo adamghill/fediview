@@ -10,8 +10,6 @@ from activity.models import Post
 
 logger = logging.getLogger(__name__)
 
-modal_get_text_embeddings_fn = None
-
 
 def save_posts_vectors(profile: Profile):
     POSTS_LIMIT = 100
@@ -39,12 +37,9 @@ def save_posts_vectors(profile: Profile):
 
 
 def get_text_embeddings(text: Union[list[str], str]) -> ndarray:
-    global modal_get_text_embeddings_fn
-
-    if modal_get_text_embeddings_fn is None:
-        modal_get_text_embeddings_fn = modal.Function.lookup(
-            "text-embeddings", "get_text_embeddings"
-        )
+    modal_get_text_embeddings_fn = modal.Function.lookup(
+        "text-embeddings", "Roberta.get_text_embeddings"
+    )
 
     vectors = modal_get_text_embeddings_fn.call(text)
 
@@ -66,16 +61,3 @@ def get_similarity_to_posts_vectors(profile: Profile, text: str):
     vectors = get_text_embeddings(text)
 
     return cosine_similarity(profile.posts_vectors, vectors)
-
-
-def is_text_similar_to_vectors(
-    vectors: ndarray, text: str, similarity_threshold: float
-) -> bool:
-    text_vectors = get_text_embeddings(text)
-
-    similarity = cosine_similarity(vectors, text_vectors)
-
-    if similarity > similarity_threshold:
-        return True
-
-    return False

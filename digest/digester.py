@@ -18,7 +18,8 @@ from mastodon.errors import (
 )
 
 from account.models import Profile
-from activity.text_embeddings_retriever import is_text_similar_to_vectors
+from activity.models import PostVectors
+from activity.text_embeddings_retriever import cosine_similarity, get_text_embeddings
 from digest.api import fetch_posts_and_boosts
 from digest.models import Account, Card, Post
 from digest.scorers import get_scorer_from_name
@@ -227,13 +228,23 @@ def build_digest(
 
         for post in remaining_posts:
             try:
-                logger.debug(f"Get similarity for post id: {post.id}")
+                post_vectors = PostVectors.objects.filter(post_id=str(post.id)).first()
+                vectors = None
 
-                post.is_recommendation = is_text_similar_to_vectors(
-                    profile.posts_vectors,
-                    strip_tags(post.content),
-                    similarity_threshold,
-                )
+                if post_vectors:
+                    logger.debug(f"Use existing vectors for {post.id}")
+                    vectors = post_vectors.vectors
+                else:
+                    logger.debug(f"Get text embeddings for {post.id}")
+                    post_content = strip_tags(post.content)
+                    vectors = get_text_embeddings(post_content)
+
+                    PostVectors(post_id=str(post.id), vectors=vectors).save()
+
+                logger.debug(f"Get similarity for {post.id}")
+                similarity = cosine_similarity(profile.posts_vectors, vectors)
+
+                post.is_recommendation = similarity > similarity_threshold
             except Exception as e:
                 logger.exception(e)
 

@@ -1,5 +1,6 @@
 from django.db import models
 from model_utils.models import TimeStampedModel
+from ndarraydjango.fields import NDArrayField
 
 from account.models import Account, Profile
 
@@ -12,7 +13,9 @@ class Acct(TimeStampedModel):
     account = models.OneToOneField(
         Account, blank=True, null=True, related_name="acct", on_delete=models.CASCADE
     )
-    acct_id = models.BigIntegerField()
+    acct_id = (
+        models.BigIntegerField()
+    )  # TODO: Convert this to text to handle non-Mastodon systems
     username = models.CharField(max_length=1024)
     url = models.URLField()
     acct = models.CharField(max_length=1024)
@@ -58,7 +61,9 @@ class TextEmoji(TimeStampedModel):
 
 class Post(TimeStampedModel):
     acct = models.ForeignKey(Acct, related_name="posts", on_delete=models.CASCADE)
-    post_id = models.BigIntegerField()
+    post_id = (
+        models.BigIntegerField()
+    )  # TODO: Convert this to text to handle non-Mastodon systems
     content = models.TextField()
     text_content = models.TextField()
     url = models.URLField()
@@ -81,3 +86,12 @@ class Post(TimeStampedModel):
     tags = models.ManyToManyField(Tag)
     mentions = models.ManyToManyField(Acct)
     text_emojis = models.ManyToManyField(TextEmoji)
+
+
+class PostVectors(TimeStampedModel):
+    """Store a post's vectors so they do not get generated every time."""
+
+    post_id = models.CharField(
+        unique=True
+    )  # This is not a ForeignKey to `Post` so that it can be stored for any post
+    vectors = NDArrayField()
