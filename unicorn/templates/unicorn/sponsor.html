@@ -1,0 +1,13 @@
+<div>
+    {% if unicorn.errors %}
+    <div class="errors mt-4 mb-4 px-2">
+        {{ unicorn.errors.username }}
+    </div>
+    {% endif %}
+
+    {% if has_plus %}
+    Sponsored! ❤️
+    {% else %}
+    <button u:click.prevent="check_username">Check Sponsorship</button>
+    {% endif %}
+</div>

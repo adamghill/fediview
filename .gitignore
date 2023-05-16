@@ -4,3 +4,5 @@ deploykey
 deploykey.pub
 .devbox
 staticfiles
+.vscode
+.coverage

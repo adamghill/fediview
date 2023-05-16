@@ -6,6 +6,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+pytest_plugins = ["tests.account.fixtures", "tests.www.fixtures"]
+
+
 def pytest_configure():
     caches = {
         "default": {
@@ -32,13 +35,18 @@ def pytest_configure():
             "django.contrib.auth",
             "django.contrib.sites",
             "django.contrib.admin",
+            "django.contrib.sessions",
             "compressor",
             "django_unicorn",
             "account",
             "activity",
+            "unicorn",
             "www",
         ),
         MIDDLEWARE=[
+            "django.contrib.sessions.middleware.SessionMiddleware",
+            "django.contrib.auth.middleware.AuthenticationMiddleware",
+            "django.contrib.messages.middleware.MessageMiddleware",
             "fbv.middleware.RequestMethodMiddleware",
         ],
         SITE_ID=1,

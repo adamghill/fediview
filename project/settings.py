@@ -140,7 +140,7 @@ Q_CLUSTER = {
     "redis": getenv("REDIS_URL"),
     "cached": True,
     "max_attempts": 5,
-    "max_rss": 2000000,
+    # "max_rss": 2000000,
 }
 
 STATIC_URL = "static/"
@@ -178,6 +178,10 @@ GIT_VERSION = getenv("CAPROVER_GIT_COMMIT_SHA")
 
 ANALYTICS_HTML = getenv("ANALYTICS_HTML")
 ADMIN_SITE_BASE_URL = getenv("ADMIN_SITE_BASE_URL", "admin")
+
+GITHUB_PERSONAL_ACCESS_TOKEN = getenv("GITHUB_PERSONAL_ACCESS_TOKEN")
+GITHUB_CLIENT_ID = getenv("GITHUB_CLIENT_ID")
+GITHUB_CLIENT_SECRET = getenv("GITHUB_CLIENT_SECRET")
 
 LOGGING = {
     "version": 1,

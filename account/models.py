@@ -51,3 +51,11 @@ class Profile(TimeStampedModel):
 
     # Vectors
     posts_vectors = NDArrayField(blank=True, null=True)
+
+
+class GitHubAccount(TimeStampedModel):
+    account = models.OneToOneField(
+        Account, related_name="github_account", on_delete=models.CASCADE
+    )
+    access_token = models.CharField(max_length=1024)
+    username = models.CharField(max_length=1024)
