@@ -1,13 +1,15 @@
-from modal import Image, Stub, method
+from modal import Image, SharedVolume, Stub, method
 from modal.cls import ClsMixin
 from numpy import ndarray
 
+volume = SharedVolume()
 stub = Stub("text-embeddings")
+
 
 dockerfile_image = Image.from_dockerfile("Dockerfile-modal")
 
 
-@stub.cls(image=dockerfile_image)
+@stub.cls(image=dockerfile_image, shared_volumes={"/root/roberta": volume})
 class Roberta(ClsMixin):
     def __enter__(self):
         self.sentence_transformer = self._get_sentence_transformer()
@@ -15,9 +17,10 @@ class Roberta(ClsMixin):
     def _get_sentence_transformer(self):
         from sentence_transformers.SentenceTransformer import SentenceTransformer
 
-        DEFAULT_SENTENCE_MODEL = "cambridgeltl/tweet-roberta-base-embeddings-v1"
-
-        sentence_transformer = SentenceTransformer(DEFAULT_SENTENCE_MODEL)
+        sentence_transformer = SentenceTransformer(
+            "cambridgeltl/tweet-roberta-base-embeddings-v1",
+            cache_folder="/root/roberta",
+        )
         sentence_transformer.to("cpu")
         sentence_transformer.eval()
 
@@ -33,6 +36,7 @@ class Roberta(ClsMixin):
         batch_size = len(texts)
 
         with torch.no_grad():
+            print("Create vectors")
             vectors = self.sentence_transformer.encode(
                 texts, batch_size=batch_size, show_progress_bar=False
             )[0]

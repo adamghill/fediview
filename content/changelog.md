@@ -8,6 +8,47 @@ body_class: changelog
 
 [All commits](https://github.com/adamghill/fediview/commits/main)
 
+## 2023-05-19
+
+- Poll for results instead of blocking to handle longer timeouts.
+
+## 2023-05-16
+
+- GitHub Sponsor check on plus page.
+
+## 2023-04-30
+
+- Allow users to turn off generating recommendations.
+
+## 2023-04-24
+
+- Fix bug with follow button.
+
+## 2023-04-23
+
+- Change scope to read-only.
+
+## 2023-04-17
+
+- Switch background task library.
+
+## 2023-03-25
+
+- Add follower, following, bookmarks, and favorite counts to activity page.
+- Add job to reindex posts.
+
+## 2023-03-23
+
+- Use custom user agent.
+
+## 2023-03-22
+
+- Split getting digest into steps.
+
+## 2023-03-14
+
+- Add indexing, activity, and search to Plus.
+
 ## 2023-02-11
 
 - Add filter by language to the <a href="{% url 'account:account' %}">account</a> page for <a href="{% url 'www:plus' %}">Fediview Plus</a>.

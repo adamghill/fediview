@@ -239,7 +239,10 @@ def build_digest(
                     post_content = strip_tags(post.content)
                     vectors = get_text_embeddings(post_content)
 
-                    PostVectors(post_id=str(post.id), vectors=vectors).save()
+                    try:
+                        PostVectors(post_id=str(post.id), vectors=vectors).save()
+                    except Exception as e:
+                        logger.exception(e)
 
                 logger.debug(f"Get similarity for {post.id}")
                 similarity = cosine_similarity(profile.posts_vectors, vectors)

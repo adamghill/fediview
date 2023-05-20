@@ -1,6 +1,6 @@
 {% load humanize static unicorn %}
 
-<div>
+<div u:poll-5000="check_results" u:poll.disable="!checking_for_results">
     <div class="stepper-wrapper">
         <div
             class="stepper-item {% if show_configure or has_results %} completed{% endif %}{% if show_authorization %} active{% endif %}">
@@ -179,19 +179,22 @@
         </tr>
     </table>
 
-    <div u:loading.remove style="padding-top: 10px; text-align: right;">
-        <button u:click="get_results" id="getPopularToots" class="plausible-event-name=get-popular-toots"
-            data-track="get-popular-toots">
-            Get Summary
-        </button>
-    </div>
-
-    <div u:loading class="pt-4 center">
+    {% if checking_for_results %}
+    <div class="pt-4 center">
         <em>Building digest...</em>
         <div class="pt-6 pb-5">
             <img src="{% static 'img/ball-triangle.svg' %}" />
         </div>
     </div>
+    {% else %}
+    <div style="padding-top: 10px; text-align: right;">
+        <button u:click="get_results" id="getPopularToots" class="plausible-event-name=get-popular-toots"
+            data-track="get-popular-toots">
+            Get Summary
+        </button>
+    </div>
+    {% endif %}
+
     {% endif %}
 
     {% if has_results %}
