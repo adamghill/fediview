@@ -31,16 +31,19 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+    "anymail",
     "axes",
     "compressor",
     "coltrane",
     "django_q",
     "django_unicorn",
+    "post_office",
 ]
 
 INTERNAL_APPS = [
     "account",
     "activity",
+    "digest",
     "unicorn",
     "www",
 ]
@@ -74,6 +77,22 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
+        },
+    },
+    {
+        "BACKEND": "post_office.template.backends.post_office.PostOfficeTemplates",
+        "APP_DIRS": True,
+        "DIRS": [],
+        "OPTIONS": {
+            "context_processors": [
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.debug",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
+                "django.template.context_processors.request",
+            ]
         },
     },
 ]
@@ -182,6 +201,20 @@ ADMIN_SITE_BASE_URL = getenv("ADMIN_SITE_BASE_URL", "admin")
 GITHUB_PERSONAL_ACCESS_TOKEN = getenv("GITHUB_PERSONAL_ACCESS_TOKEN")
 GITHUB_CLIENT_ID = getenv("GITHUB_CLIENT_ID")
 GITHUB_CLIENT_SECRET = getenv("GITHUB_CLIENT_SECRET")
+
+EMAIL_BACKEND = "anymail.backends.sendgrid.EmailBackend"
+
+ANYMAIL = {
+    "SENDGRID_API_KEY": getenv("SENDGRID_API_KEY"),
+}
+
+DEFAULT_FROM_EMAIL = getenv("SERVER_EMAIL")
+SERVER_EMAIL = getenv("SERVER_EMAIL")
+
+POST_OFFICE = {
+    "TEMPLATE_ENGINE": "post_office",
+    "BACKENDS": {"default": EMAIL_BACKEND},
+}
 
 LOGGING = {
     "version": 1,
