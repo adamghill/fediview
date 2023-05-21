@@ -27,8 +27,7 @@
         {% else %}
         <form method="POST" action="{% url 'activity:refresh' %}">{% csrf_token %}
             <div style="text-align: right;">
-                <button type="submit" style="margin-top: 1em;" class="plausible-event-name=index-posts"
-                    data-track="index-posts">
+                <button type="submit" style="margin-top: 1em;" class="plausible-event-name=index-posts">
                     Index Posts
                 </button>
             </div>
@@ -98,7 +97,7 @@
 
     <div class="pt-4">
         <form method="POST" action="{% url 'activity:refresh' %}">{% csrf_token %}
-            <button type="submit" class="plausible-event-name=refresh-posts" data-track="refresh-posts">
+            <button type="submit" class="plausible-event-name=refresh-posts">
                 Re-index Posts
             </button>
             <p class="help mt-1">
@@ -122,7 +121,6 @@
         <form method="POST" action="{% url 'activity:delete' %}">{% csrf_token %}
             <div style="text-align: right;">
                 <button type="submit" style="margin-top: 1em;" class="danger plausible-event-name=delete-posts"
-                    data-track="delete-posts"
                     onclick="javascript: return confirm('This will remove all of the posts indexed for {{ request.user.username }}. Are you sure?');">
                     Remove Indexed Posts
                 </button>

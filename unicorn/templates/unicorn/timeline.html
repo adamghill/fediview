@@ -69,8 +69,7 @@
     <table style="width: 100%; border-top: 0; margin-bottom: 0; text-align: center;">
         <tr>
             <td>
-                <a href="{% url 'account:login' %}" class="plausible-event-name=timeline-login"
-                    data-track="timeline-login">
+                <a href="{% url 'account:login' %}" class="plausible-event-name=timeline-login">
                     <button>Login with Mastodon</button>
                 </a>
             </td>
@@ -188,8 +187,7 @@
     </div>
     {% else %}
     <div style="padding-top: 10px; text-align: right;">
-        <button u:click="get_results" id="getPopularToots" class="plausible-event-name=get-popular-toots"
-            data-track="get-popular-toots">
+        <button u:click="get_results" id="getPopularToots" class="plausible-event-name=get-popular-toots">
             Get Summary
         </button>
     </div>

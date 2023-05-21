@@ -442,7 +442,6 @@
         <form method=" POST" action="{% url 'account:delete' %}">{% csrf_token %}
             <div style="text-align: right;">
                 <button type="submit" style="margin-top: 1em;" class="danger plausible-event-name=delete-account"
-                    data-track="delete-account"
                     onclick="javascript: return confirm('This will remove all data associated with {{ request.user.username }} and it can not be recovered. Are you sure?');">
                     Delete Fediview Account
                 </button>

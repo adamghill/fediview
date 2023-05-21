@@ -1,8 +1,7 @@
 {% if not user.account.profile.has_plus %}
 <div class="callout">
     Get more features with
-    <a href="{% url 'www:plus' %}" class="plausible-event-name={{ section_name }}-plus"
-        data-track="{{ section_name }}-plus">
+    <a href="{% url 'www:plus' %}" class="plausible-event-name={{ section_name }}-plus">
         Fediview Plus</a>. ✨
 
     <ul style="list-style: none; padding-left: 0;">
