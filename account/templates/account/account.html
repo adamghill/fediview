@@ -11,7 +11,7 @@
 
 <div>
     {% if user.account %}
-    <h4 style="margin-top: 1em;">
+    <h4 style="margin-top: 1em;" id="account">
         Account
     </h4>
     <ul>
@@ -30,7 +30,7 @@
 
     {% with user.account.profile as profile %}
     {% if profile %}
-    <h4 style="margin-top: 2em;">
+    <h4 style="margin-top: 2em;" id="config">
         Saved Configuration
     </h4>
     <ul>
@@ -49,16 +49,78 @@
     {% endif %}
 
     {% if profile %}
-    <h4 style="margin-top: 2em; margin-bottom: 1em">
+    <h4 style="margin-top: 2em; margin-bottom: 1em" id="profile">
         Profile
     </h4>
 
     {% include "account/_plus_callout.html" with section_name="account" %}
 
     <form method="POST" action="{{ request.path }}">{% csrf_token %}
-        <label>Language Filter</label>
+        <div class="mt-5">
+            <label for="send-daily-digest">Email Digest</label>
+            <p class="help">
+                Digests are generated daily and emailed to the email address configured below.
+            </p>
+
+            <div>
+                <input type="email" name="email-address" value="{{ profile.account.user.email }}"></input>
+            </div>
+
+            <div class="mt-2">
+                <input type="checkbox" name="send_daily_digest" id="send-daily-digest"
+                    {% if profile.send_daily_digest %}checked{% endif %}></input>
+                <label for="send-daily-digest" style="font-variant-caps: initial;">Send Daily Email Digest</label>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <label for="generate-recommendations">Recommendations</label>
+            <p class="help">
+                Posts are recommended by comparing their content to a subset of previous posts in your account.
+            </p>
+
+            <div>
+                <input type="checkbox" name="generate_recommendations" id="generate-recommendations"
+                    {% if profile.generate_recommendations %}checked{% endif %}></input>
+                <label for="generate-recommendations" style="font-variant-caps: initial;">Generate
+                    Recommendations</label>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <label for="indexing_type-none">Post Indexing</label>
+            <p class="help">
+                Select the level of post indexing. Removing previously indexed posts can be done on <a
+                    href="{% url 'activity:activity' %}">activity metrics</a>.
+            </p>
+
+            <div>
+                <input type="radio" name="indexing_type" id="indexing_type-none" value="{{ profile.IndexingType.NONE }}"
+                    {% if profile.indexing_type == 1 %}checked{% endif %}></input>
+                <label for="indexing_type-none" style="font-variant-caps: initial;">No indexing</label>
+            </div>
+
+            <div>
+                <input type="radio" name="indexing_type" id="indexing_type-metadata"
+                    value="{{ profile.IndexingType.METADATA }}"
+                    {% if profile.indexing_type == 2 %}checked{% endif %}></input>
+                <label for="indexing_type-metadata" style="font-variant-caps: initial;">Post metadata (required for
+                    <a href="{% url 'activity:activity' %}">activity metrics</a>)</label><br />
+            </div>
+
+            <div>
+                <input type="radio" name="indexing_type" id="indexing_type-content"
+                    value="{{ profile.IndexingType.CONTENT }}"
+                    {% if profile.indexing_type == 3 %}checked{% endif %}></input>
+                <label for="indexing_type-content" style="font-variant-caps: initial;">Post content (required for
+                    <a href="{% url 'activity:activity' %}">activity metrics</a> and <a
+                        href="{% url 'activity:search' %}">searching</a> your own posts)</label>
+            </div>
+        </div>
+
+        <label class="mt-5">Language Filter</label>
         <select name="language">
-            <option value="__all__">Show everything</option>
+            <option value="__all__">Include all languages</option>
             <option value="aa" {% if profile.language == "" %}selected{% endif %}>Afar</option>
             <option value="ab" {% if profile.language == "ab" %}selected{% endif %}>Abkhazian
             </option>
@@ -355,52 +417,7 @@
             <option value="zu" {% if profile.language == "zu" %}selected{% endif %}>Zulu</option>
         </select>
 
-        <div style="margin-top: 2em;">
-            <label for="generate-recommendations">Post Recommendations</label>
-            <p class="help">
-                Posts are recommended by comparing posts in the selected timeline to a subset of your previous
-                posts you have written.
-            </p>
-
-            <div>
-                <input type="checkbox" name="generate_recommendations" id="generate-recommendations"
-                    {% if profile.generate_recommendations %}checked{% endif %}></input>
-                <label for="generate-recommendations" style="font-variant-caps: initial;">Generate
-                    Recommendations</label>
-            </div>
-        </div>
-
-        <div style="margin-top: 2em;">
-            <label for="indexing_type-none">Post Indexing</label>
-            <p class="help">
-                The default is <strong>No indexing</strong>. Selecting <strong>Post metadata</strong> indexing will
-                enable <a href="{% url 'activity:activity' %}">activity metrics</a> to be generated for your Mastodon
-                account. Selecting <strong>Post content</strong> indexing will allow searching your own posts. Remove
-                indexed posts on <a href="{% url 'activity:activity' %}">activity metrics</a>.
-            </p>
-
-            <div>
-                <input type="radio" name="indexing_type" id="indexing_type-none" value="{{ profile.IndexingType.NONE }}"
-                    {% if profile.indexing_type == 1 %}checked{% endif %}></input>
-                <label for="indexing_type-none" style="font-variant-caps: initial;">No indexing</label>
-            </div>
-
-            <div>
-                <input type="radio" name="indexing_type" id="indexing_type-metadata"
-                    value="{{ profile.IndexingType.METADATA }}"
-                    {% if profile.indexing_type == 2 %}checked{% endif %}></input>
-                <label for="indexing_type-metadata" style="font-variant-caps: initial;">Post metadata</label><br />
-            </div>
-
-            <div>
-                <input type="radio" name="indexing_type" id="indexing_type-content"
-                    value="{{ profile.IndexingType.CONTENT }}"
-                    {% if profile.indexing_type == 3 %}checked{% endif %}></input>
-                <label for="indexing_type-content" style="font-variant-caps: initial;">Post content</label>
-            </div>
-        </div>
-
-        <div style="padding-top: 1em; text-align: right;">
+        <div class="mt-6" style="text-align: right;">
             <button {% if not profile.has_plus %}disabled{% endif %}>Save Profile</button>
         </div>
     </form>
@@ -409,7 +426,7 @@
 
     <hr style="margin-top: 5em; border-top: 1px black dashed" />
 
-    <details style="margin-top: 2em;">
+    <details class="mt-5" id="remove">
         <summary>
             <span style="color: var(--red-600);">Remove Account</span>
         </summary>

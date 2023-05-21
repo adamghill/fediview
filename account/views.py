@@ -192,8 +192,13 @@ def account(request):
         profile.generate_recommendations = (
             request.POST.get("generate_recommendations", "") == "on"
         )
+        profile.send_daily_digest = request.POST.get("send_daily_digest", "") == "on"
 
         profile.save()
+
+        profile.account.user.email = request.POST.get("email-address")
+        profile.account.user.save()
+
         messages.success(request, message)
 
         return redirect("account:account")
