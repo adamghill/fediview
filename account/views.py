@@ -18,6 +18,7 @@ from mastodon import Mastodon, MastodonNetworkError
 
 from account.models import Account, Instance, User
 from activity.indexer import index_posts
+from digest.email_sender import send_emails
 
 logger = logging.getLogger(__name__)
 
@@ -198,6 +199,11 @@ def account(request):
 
         profile.account.user.email = request.POST.get("email-address")
         profile.account.user.save()
+
+        if request.POST.get("send_daily_digest_sample"):
+            async_task(send_emails, request.user.account.id)
+
+            message = f"{message} and sample email sent"
 
         messages.success(request, message)
 

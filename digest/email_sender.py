@@ -27,15 +27,21 @@ def _set_email_template():
     email_template.save()
 
 
-def send_emails():
+def send_emails(*account_ids: int) -> None:
     _set_email_template()
 
     start = datetime.now(timezone.utc) - timedelta(days=1)
-    accounts = (
-        Account.objects.filter(profile__has_plus=True)
-        .exclude(user__email__isnull=True)
-        .exclude(user__email="")
-    )
+
+    accounts = []
+
+    if account_ids:
+        accounts = Account.objects.filter(id__in=account_ids)
+    else:
+        accounts = (
+            Account.objects.filter(profile__has_plus=True)
+            .exclude(user__email__isnull=True)
+            .exclude(user__email="")
+        )
 
     for account in accounts:
         logger.info(f"Create digest for account id {account.id}")
