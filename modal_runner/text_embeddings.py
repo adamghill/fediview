@@ -12,19 +12,14 @@ dockerfile_image = Image.from_dockerfile("Dockerfile-modal")
 @stub.cls(image=dockerfile_image, shared_volumes={"/root/roberta": volume})
 class Roberta(ClsMixin):
     def __enter__(self):
-        self.sentence_transformer = self._get_sentence_transformer()
-
-    def _get_sentence_transformer(self):
         from sentence_transformers.SentenceTransformer import SentenceTransformer
 
-        sentence_transformer = SentenceTransformer(
+        self.sentence_transformer = SentenceTransformer(
             "cambridgeltl/tweet-roberta-base-embeddings-v1",
             cache_folder="/root/roberta",
         )
-        sentence_transformer.to("cpu")
-        sentence_transformer.eval()
-
-        return sentence_transformer
+        self.sentence_transformer.to("cpu")
+        self.sentence_transformer.eval()
 
     @method()
     def get_text_embeddings(self, text) -> ndarray:
