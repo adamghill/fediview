@@ -2,7 +2,6 @@ import logging
 from datetime import datetime
 from typing import Optional
 
-from cache_memoize import cache_memoize
 from mastodon import Mastodon
 
 from account.models import Profile
@@ -23,9 +22,6 @@ def get_timeline_posts(
     Defaults to the 'home' timeline.
     """
 
-    # Set our start query
-    # start = datetime.now(timezone.utc) - timedelta(hours=hours)
-
     timeline = timeline.lower()
 
     if ":" in timeline:
@@ -39,7 +35,7 @@ def get_timeline_posts(
                     "Cannot load list timeline: ID must be numeric, e.g. https://example.social/lists/4 would be list:4"
                 )
 
-            return mastodon.timeline_list(timeline_id, min_id=start)
+            return mastodon.timeline_list(timeline_id, min_id=start, max_id=end)
 
     if timeline == "federated":
         return mastodon.timeline_public(min_id=start)
