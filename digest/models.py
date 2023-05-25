@@ -20,13 +20,14 @@ class Account(BaseModel):
     # optionals
     followers_count: Optional[int]
     following_count: Optional[int]
-    display_name: Optional[str]
     avatar: Optional[str]
     emojis: list[dict] = Field(default_factory=list)
     note: Optional[str]
     discoverable: Optional[bool]
 
     # gets set after init
+    display_name: Optional[str]
+    server: Optional[str]
     is_following: Optional[bool]
     additional_posts: list["Post"] = Field(default_factory=list)
     follows: list["Account"] = Field(default_factory=list)
@@ -36,6 +37,10 @@ class Account(BaseModel):
         super().__init__(**data)
 
         self.display_name = self._format_display_name()
+        self.server = self.acct.replace(self.username, "")
+
+        if self.server.startswith("@"):
+            self.server = self.server[1:]
 
         if self.note:
             _note = self.note.lower()

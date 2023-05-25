@@ -123,18 +123,20 @@
             display: flex;
         }
 
-        .username {
+        .server {
             font-size: .85em;
-            line-height: 1.2
+            line-height: 1.2;
+            word-break: break-all;
         }
 
-        .displayname {
+        .username {
             font-weight: bold;
             font-size: 1.5em;
             margin-top: 3px;
+            word-break: break-all;
         }
 
-        .displayname img {
+        .username img {
             height: 16px;
             width: 16px;
             vertical-align: middle;
@@ -262,8 +264,8 @@
                                                     {% endif %}
 
                                                     <a target="_blank" href="{{ post.account.url }}">
-                                                        <div class="displayname">{{ post.account.acct }}</div>
                                                         <div class="username">@{{ post.account.username }}</div>
+                                                        <div class="server">@{{ post.account.server }}</div>
                                                     </a>
                                                 </div>
                                             </div>
