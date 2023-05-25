@@ -132,6 +132,7 @@ b = { cmd = "black . --check --quiet", help = "Run black" }
 i = { cmd = "isort . --check --quiet", help = "Run isort" }
 tm = ["b", "i", "t", "my"]
 w = { cmd = "./manage.py qcluster", help = "Run worker" }
+mo = { cmd = "modal deploy modal_runner/text_embeddings.py", help = "Deploy to modal" }
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
