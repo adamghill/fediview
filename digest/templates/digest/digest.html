@@ -15,7 +15,7 @@
         }
 
         a[href] {
-            color: #5d4f84;
+            color: #485fc7;
         }
 
         .title {
@@ -41,10 +41,9 @@
         .day_title {
             text-align: left;
             font-weight: bold;
-            padding: 0px 10px 10px 10px;
+            padding: 0px 10px 10px 6px;
             font-size: 2em;
             margin-bottom: 14px;
-            margin-left: 15px;
             color: #555759;
         }
 
@@ -73,6 +72,81 @@
             margin-bottom: 14px;
             margin-left: 15px;
             color: #555759;
+        }
+
+        button {
+            -moz-appearance: none;
+            -webkit-appearance: none;
+            align-items: center;
+            border: 1px solid transparent;
+            border-top-color: transparent;
+            border-top-width: 1px;
+            border-right-color: transparent;
+            border-right-width: 1px;
+            border-bottom-color: transparent;
+            border-bottom-width: 1px;
+            border-left-color: transparent;
+            border-left-width: 1px;
+            border-radius: .375em;
+            box-shadow: none;
+            display: inline-flex;
+            font-size: 1rem;
+            height: 2.5em;
+            justify-content: flex-start;
+            line-height: 1.5;
+            padding-bottom: calc(.5em - 1px);
+            padding-left: calc(.75em - 1px);
+            padding-right: calc(.75em - 1px);
+            padding-top: calc(.5em - 1px);
+            position: relative;
+            vertical-align: top;
+            background-color: #fff;
+            border-color: #dbdbdb;
+            border-width: 1px;
+            color: #363636;
+            cursor: pointer;
+            justify-content: center;
+            padding-bottom: calc(.5em - 1px);
+            padding-left: 1em;
+            padding-right: 1em;
+            padding-top: calc(.5em - 1px);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        button.is-success {
+            background-color: #48c78e;
+            border-color: transparent;
+            color: #fff;
+        }
+
+        .box {
+            background-color: #fff;
+            padding: 14px 16px;
+            border: 2px solid #e7eaec;
+            border-radius: 10px;
+            display: flex;
+            width: 100%;
+            max-width: 400px;
+            margin: 0px 5px 15px 5px;
+        }
+
+        .box.danger {
+            border: 2px solid #cc0f35;
+        }
+
+        .box.info {
+            background-color: #eff1fa;
+        }
+
+        .box .footer {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            justify-content: space-between;
+            opacity: .7;
+            padding-top: 15px;
+            border-top: 2px solid #e7eaec;
         }
 
         .post {
@@ -218,6 +292,10 @@
         .placeholder {
             font-size: 2em;
         }
+
+        ul {
+            padding-left: 12px;
+        }
     </style>
 </head>
 
@@ -226,17 +304,16 @@
         <tbody>
             <tr>
                 <td>
-                    <div class="year_title">
-                        <span>{{ now|date:"Y" }}</span>
-                    </div>
-                    <div class="day_title">
-                        <span>{{ now|date:"M j" }}</span>
-                    </div>
-                    <div class="day_title">
-                        <span>
-                            <a href="https://fediview.com">Fediview Digest</a>
-                        </span>
-                    </div>
+                    <table style="margin-left: 10px; margin-top: 10px;">
+                        <tr>
+                            <td style="font-size: 6em; vertical-align: top;">
+                                {{ now|date:"j" }}
+                            </td>
+                            <td style="font-size: 2em; vertical-align: top; top: 14px; position: relative;">
+                                {{ now|date:"M" }}<br />{{ now|date:"Y" }}
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
 
@@ -246,7 +323,40 @@
                         <div class="blocks">
                             <div class="stream">
                                 <div class="stream_title">
-                                    <span>Posts</span>
+                                    <a href="https://fediview.com">Fediview Summary</a>
+                                </div>
+
+                                <div class="box {% if has_plus %}info{% else %}danger{% endif %}">
+                                    <div>
+                                        <div class="content">
+                                            {% if not has_plus %}
+                                            <div>
+                                                This is only
+                                                <strong>{{ total_posts_to_show }}</strong> out of
+                                                {{ total_posts_count }} posts from your personalized summary.
+                                                Upgrade to <a href="https://fediview.com/plus"><strong>Plus</strong></a>
+                                                to get the entire summary in a daily email!
+                                            </div>
+
+                                            <div style="margin: 20px 0px 20px 0px; text-align: center;">
+                                                <a href="https://fediview.com/plus">
+                                                    <button type="button" class="button is-success">
+                                                        Include More Posts
+                                                    </button>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="footer">
+                                            {% endif %}
+
+                                            <div>
+                                                Daily summary created for <a
+                                                    href="{{ profile.account.url }}">{{ profile.account.user.username }}</a>
+                                                from the <em>{{ profile.timeline|capfirst }}</em> timeline.
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="posts">
@@ -299,6 +409,50 @@
                                     </div>
                                     {% endfor %}
                                 </div>
+
+                                {% if not has_plus %}
+                                <div class="box danger">
+                                    <div>
+                                        <div class="content">
+                                            <div>
+                                                Upgrade to <a href="https://fediview.com/plus"><strong>Plus</strong></a>
+                                                to see all {{ total_posts_count }} posts from your daily summary!
+                                            </div>
+
+                                            <div style="margin: 20px 0px 20px 0px; text-align: center;">
+                                                <a href="https://fediview.com/plus">
+                                                    <button type="button" class="is-success">Upgrade to Plus</button>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <div class="box info">
+                                    <div>
+                                        <div class="content">
+                                            <div>
+                                                <div>
+                                                    Daily summary created for <a
+                                                        href="{{ profile.account.url }}">{{ profile.account.user.username }}</a>
+                                                    from the <em>{{ profile.timeline|capfirst }}</em> timeline.
+                                                </div>
+
+                                                <ul>
+                                                    <li><a href="https://fediview.com/account">
+                                                            Update Fediview profile</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="https://fediview.com/account/unsubscribe">Unsubscribe
+                                                            from this email summary</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

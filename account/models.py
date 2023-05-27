@@ -26,6 +26,15 @@ class Account(TimeStampedModel):
     favorites_count = models.BigIntegerField(blank=True, null=True)
     bookmarks_count = models.BigIntegerField(blank=True, null=True)
 
+    def url(self):
+        username_splits = self.user.username.split("@")
+
+        if len(username_splits) == 3:
+            server = username_splits[2]
+            username = username_splits[1]
+
+            return f"https://{server}/@{username}"
+
 
 class Profile(TimeStampedModel):
     class IndexingType(models.IntegerChoices):

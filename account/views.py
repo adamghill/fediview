@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
 from django.conf import settings
@@ -11,6 +12,7 @@ from django.core.cache import cache
 from django.http import HttpRequest
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils.timezone import now
 from django.views.decorators.http import require_POST
 from django_q.tasks import async_task
 from fbv.decorators import render_html
@@ -18,7 +20,8 @@ from mastodon import Mastodon, MastodonNetworkError
 
 from account.models import Account, Instance, User
 from activity.indexer import index_posts
-from digest.email_sender import send_emails
+from digest.digester import build_digest
+from digest.email_sender import get_email_context, send_emails
 
 logger = logging.getLogger(__name__)
 
@@ -160,6 +163,43 @@ def logout(request):
     messages.success(request, "Logout successful")
 
     return redirect("www:index")
+
+
+@login_required
+@render_html("digest/digest.html")
+def sample_email_digest(request):
+    assert settings.DEBUG, "No debug, no service"
+
+    start = datetime.now(timezone.utc) - timedelta(days=1)
+
+    account = (
+        Account.objects.select_related("profile").filter(user=request.user).first()
+    )
+
+    if not (digest := cache.get("digest")):
+        digest = build_digest(
+            start=start,
+            end=None,
+            scorer_name=account.profile.scorer,
+            threshold_name=account.profile.threshold,
+            timeline=account.profile.timeline,
+            url=account.instance.api_base_url,
+            token=account.access_token,
+            profile=account.profile,
+        )
+        cache.set("digest", digest, 60 * 60)
+
+    has_plus = account.profile.has_plus
+
+    if request.GET.get("has_plus"):
+        if request.GET.get("has_plus").lower() == "true":
+            has_plus = True
+        elif request.GET.get("has_plus").lower() == "false":
+            has_plus = False
+
+    context = get_email_context(digest, has_plus)
+
+    return context
 
 
 @login_required

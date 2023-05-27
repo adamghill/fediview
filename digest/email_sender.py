@@ -7,6 +7,7 @@ from post_office import mail
 from post_office.models import EmailTemplate
 
 from account.models import Account
+from digest.digester import Digest
 
 from .digester import build_digest
 
@@ -15,7 +16,6 @@ logger = logging.getLogger(__name__)
 
 def _set_email_template():
     email_template = EmailTemplate.objects.filter(name="digest").first()
-
     template = get_template("digest/digest.html", using="post_office")
 
     if not email_template:
@@ -25,6 +25,25 @@ def _set_email_template():
     email_template.content = ""  # text content
     email_template.html_content = template.template.source
     email_template.save()
+
+
+def get_email_context(digest: Digest, has_plus: bool) -> dict:
+    context = {"now": datetime.now()}
+
+    total_posts_count = len(digest.posts)
+    total_posts_to_show = len(digest.posts)
+
+    context["has_plus"] = has_plus
+
+    if not has_plus:
+        total_posts_to_show = 3
+
+    context["posts"] = digest.posts[:total_posts_to_show]
+    context["total_posts_to_show"] = total_posts_to_show
+    context["total_posts_count"] = total_posts_count
+    context["profile"] = digest.profile
+
+    return context
 
 
 def send_emails(*account_ids: int) -> None:
@@ -64,7 +83,7 @@ def send_emails(*account_ids: int) -> None:
             sender=settings.SERVER_EMAIL,
             template="digest",
             priority="now",
-            context={"posts": digest.posts, "now": datetime.now()},
+            context=get_email_context(digest, account.profile.has_plus),
             render_on_delivery=True,
         )
 

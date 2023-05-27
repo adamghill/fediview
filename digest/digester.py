@@ -83,6 +83,7 @@ class Digest:
     boosts: list[Post] = field(default_factory=list)
     links: list[Link] = field(default_factory=list)
     rendered_at: datetime = None
+    profile: Profile = None
 
 
 def _clean_url(url: str) -> str:
@@ -154,7 +155,7 @@ def build_digest(
 
     logger.info(f"Building digest for {start} to {end}")
 
-    digest = Digest()
+    digest = Digest(profile=profile)
 
     # Get a Mastodon API instance
     try:
