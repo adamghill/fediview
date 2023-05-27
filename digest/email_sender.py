@@ -8,6 +8,7 @@ from post_office.models import EmailTemplate
 
 from account.models import Account
 from digest.digester import Digest
+from digest.management.commands.sanitize_generated_emails import sanitize
 
 from .digester import build_digest
 
@@ -78,13 +79,15 @@ def send_emails(*account_ids: int) -> None:
 
         logger.info(f"Send digest email to account id {account.id}")
 
-        mail.send(
+        email = mail.send(
             recipients=account.user.email,
             sender=settings.SERVER_EMAIL,
             template="digest",
             priority="now",
             context=get_email_context(digest, account.profile.has_plus),
-            render_on_delivery=True,
         )
 
-        logger.info(f"Digest email sent to account id {account.id}")
+        if email.status == 0:
+            logger.info(f"Digest email sent to account id {account.id}")
+
+            sanitize(email.id)

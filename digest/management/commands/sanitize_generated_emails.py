@@ -8,11 +8,17 @@ from post_office.models import STATUS, Email
 logger = logging.getLogger(__name__)
 
 
-def sanitize():
-    yesterday = datetime.now(timezone.utc) - timedelta(days=1)
+def sanitize(*email_ids):
+    an_hour_ago = datetime.now(timezone.utc) - timedelta(hours=1)
+
     emails = Email.objects.filter(
-        status=STATUS.sent, last_updated__lte=yesterday
+        status=STATUS.sent, last_updated__lte=an_hour_ago
     ).exclude(Q(message="") & Q(html_message="") & Q(context__isnull=True))
+
+    if email_ids:
+        emails = Email.objects.filter(status=STATUS.sent, id__in=email_ids).exclude(
+            Q(message="") & Q(html_message="") & Q(context__isnull=True)
+        )
 
     logger.info(f"Found {len(emails)} emails to sanitize")
 
