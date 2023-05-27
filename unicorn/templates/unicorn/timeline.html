@@ -119,7 +119,9 @@
     {% endif %}
 
     {% if show_configure %}
-    <table class="config" u:loading.remove>
+
+    {% if not checking_for_results %}
+    <table class="config">
         <tr>
             <td>
                 <label for="timeline">Timeline</label>
@@ -177,6 +179,7 @@
             <td></td>
         </tr>
     </table>
+    {% endif %}
 
     {% if checking_for_results %}
     <div class="pt-4 center">
