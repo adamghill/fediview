@@ -263,6 +263,11 @@ def build_digest(
         if post.account.is_following is None:
             post.account.set_is_following(logged_in_account)
 
+        try:
+            post.convert_content_markdown()
+        except Exception as e:
+            logger.exception(e)
+
     logger.debug("Post metadata is updated")
 
     """

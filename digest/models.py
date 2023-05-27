@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, Optional, Union
 
+import mistune
 from pydantic import BaseModel, Field, HttpUrl, ValidationError, parse_obj_as
 
 if TYPE_CHECKING:
@@ -160,6 +161,9 @@ class Post(BaseModel):
         self.score = scorer.score(self)
 
         return self.score
+
+    def convert_content_markdown(self) -> None:
+        self.content = str(mistune.html(self.content))[3:-5]
 
     @property
     def home_url(self) -> str:
