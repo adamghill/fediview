@@ -203,6 +203,22 @@ def sample_email_digest(request):
 
 
 @login_required
+@render_html("account/unsubscribe.html")
+def unsubscribe(request):
+    if request.is_post:
+        if request.POST.get("unsubscribe"):
+            profile = request.user.account.profile
+            profile.send_daily_digest = False
+            profile.save()
+
+            messages.success(request, "Unsubscribed from daily email")
+
+            return redirect("account:account")
+
+    return {"support_email": settings.SUPPORT_EMAIL}
+
+
+@login_required
 @render_html("account/account.html")
 def account(request):
     if request.is_post:

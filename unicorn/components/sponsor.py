@@ -91,4 +91,4 @@ class SponsorView(UnicornView):
         else:
             self.errors[
                 "username"
-            ] = f'It does not appear that {self.github_username} is sponsoring "adamghill". Please contact support@adamghill.com if this a mistake.'
+            ] = f'It does not appear that {self.github_username} is sponsoring "adamghill". Please contact {settings.SUPPORT_EMAIL} if this a mistake.'
