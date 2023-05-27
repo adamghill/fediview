@@ -8,6 +8,19 @@ body_class: changelog
 
 [All commits](https://github.com/adamghill/fediview/commits/main)
 
+## 2023-05-27
+
+- Show media in daily emails.
+- Experiment with converting markdown in posts to HTML.
+
+## 2023-05-23
+
+- Use the mean of post's text embeddings to create profile vectors.
+
+## 2023-05-20
+
+- Send daily email digests.
+
 ## 2023-05-19
 
 - Poll for results instead of blocking to handle longer timeouts.
