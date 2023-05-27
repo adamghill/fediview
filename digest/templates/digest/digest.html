@@ -1,3 +1,5 @@
+{% load post_office %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -385,13 +387,28 @@
                                                     {{ post.content|safe }}
                                                 </div>
 
-                                                {% comment %}
-                                                {% if post.media %}
                                                 <div class="medias">
-                                                    {{ post.media }}
+                                                    {% for media in post.media_attachments %}
+                                                    <div class="media">
+                                                        {% if media.type == 'image' %}
+                                                        <img class="media" src="{{ media.url }}" />
+                                                        {% elif media.type == 'video' or media.type == 'gifv'  %}
+                                                        <video controls poster="{{ media.preview_url }}"
+                                                            src="{{ media.url }}">
+                                                            <a href="{{ media.url }}">
+                                                                <img src="{{ media.preview_url }}" />
+                                                            </a>
+                                                        </video>
+                                                        {% elif media.type == 'audio' %}
+                                                        <audio controls src="{{ media.url }}">
+                                                            <a href="{{ media.url }}">
+                                                                Download audio
+                                                            </a>
+                                                        </audio>
+                                                        {% endif %}
+                                                    </div>
+                                                    {% endfor %}
                                                 </div>
-                                                {% endif %}
-                                                {% endcomment %}
                                             </div>
 
                                             <div class="post_footer">
