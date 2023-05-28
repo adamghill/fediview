@@ -81,10 +81,12 @@
                     {% if profile.send_daily_digest %}checked{% endif %}></input>
                 <label for="send-daily-digest" style="font-variant-caps: initial;">Send Daily Email Digest</label>
 
+                {% if show_send_sample_email %}
                 <div style="float: right;">
                     <button name="send_daily_digest_sample" style="align: right" value="true" class="utility">Send
                         Sample Email</button>
                 </div>
+                {% endif %}
             </div>
         </div>
 

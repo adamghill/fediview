@@ -227,9 +227,17 @@ def unsubscribe(request):
 @login_required
 @render_html("account/account.html")
 def account(request):
-    if request.is_post:
-        profile = request.user.account.profile
+    profile = request.user.account.profile
 
+    show_send_sample_email = False
+
+    if (
+        profile.last_sample_email_sent_at is None
+        or profile.last_sample_email_sent_at < (now() - timedelta(hours=1))
+    ):
+        show_send_sample_email = True
+
+    if request.is_post:
         message = "Profile saved"
 
         if profile.has_plus:
@@ -263,8 +271,11 @@ def account(request):
         profile.account.user.email = request.POST.get("email-address")
         profile.account.user.save()
 
-        if request.POST.get("send_daily_digest_sample"):
+        if request.POST.get("send_daily_digest_sample") and show_send_sample_email:
             async_task(send_emails, request.user.account.id)
+
+            profile.last_sample_email_sent_at = now()
+            profile.save()
 
             message = f"{message} and sample email sent"
 
@@ -272,7 +283,7 @@ def account(request):
 
         return redirect("account:account")
 
-    return {}
+    return {"show_send_sample_email": show_send_sample_email}
 
 
 @require_POST
