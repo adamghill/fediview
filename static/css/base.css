@@ -522,11 +522,11 @@ summary {
 }
 
 .callout {
-    background-color: white;
+    background-color: #f5fffd;
     padding: 25px;
     text-align: center;
-    border: 1px solid #E6E3E1;
-    border-radius: 4px;
+    border: 2px solid var(--accent);
+    border-radius: 10px;
     margin-bottom: 2em;
 }
 

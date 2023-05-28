@@ -4,6 +4,7 @@ from os import getenv
 
 from dateparser import parse
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.validators import validate_email
 from django.forms import ValidationError
 from django.utils.timezone import now
 from django_q.tasks import async_task, fetch
@@ -25,6 +26,9 @@ TASK_TIMEOUT = 60 * 5
 
 
 class TimelineView(UnicornView):
+    account: Account = None
+    email_address: str = None
+
     hours: str = "2"
     scorer: str = "SimpleWeighted"
     threshold: str = "normal"
@@ -53,20 +57,22 @@ class TimelineView(UnicornView):
         self.token = getenv("MASTODON_TOKEN", "")
 
         if self.request.user.is_authenticated:
-            account = Account.objects.filter(user=self.request.user).first()
+            self.account = Account.objects.filter(user=self.request.user).first()
 
-            if account:
-                self.url = account.instance.api_base_url
-                self.token = account.access_token
+            if self.account:
+                self.url = self.account.instance.api_base_url
+                self.token = self.account.access_token
                 self.show_authorization = False
                 self.show_configure = True
 
+                self.email_address = self.account.user.email.strip()
+
                 try:
-                    if account.profile:
-                        self.hours = str(account.profile.hours)
-                        self.scorer = account.profile.scorer
-                        self.threshold = account.profile.threshold
-                        self.timeline = account.profile.timeline
+                    if self.account.profile:
+                        self.hours = str(self.account.profile.hours)
+                        self.scorer = self.account.profile.scorer
+                        self.threshold = self.account.profile.threshold
+                        self.timeline = self.account.profile.timeline
                 except ObjectDoesNotExist:
                     pass
 
@@ -244,6 +250,26 @@ class TimelineView(UnicornView):
         except InvalidURLError as e:
             raise ValidationError({"url": str(e)}, code="invalid") from e
 
+    def enable_daily_emails(self):
+        if self.email_address:
+            try:
+                validate_email(self.email_address)
+
+                user = self.account.user
+                user.email = self.email_address
+                user.save()
+
+                self.profile = self.account.profile
+                self.profile.send_daily_digest = True
+                self.profile.save()
+
+                self.call("notify", "Subscribed to daily emails", "success")
+            except Exception as e:
+                logger.exception(e)
+                self.call("notify", "Subscribing to daily emails failed", "error")
+        else:
+            self.call("notify", "Invalid email address", "error")
+
     class Meta:
         javascript_exclude = (
             "token",
@@ -261,4 +287,5 @@ class TimelineView(UnicornView):
             "digest",
             "task_id",
             "task_started_at",
+            "account",
         )

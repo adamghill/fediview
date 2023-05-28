@@ -201,7 +201,7 @@
     {% if has_results %}
     {% include "account/_plus_callout.html" with section_name="timeline" %}
 
-    <div class="results" u:loading.remove>
+    <div class="results">
         <div class="tabs" id="tabs">
             <ul>
                 <li class="{% if are_posts_shown %}active{% endif %}">
@@ -272,7 +272,22 @@
         </section>
         {% endif %}
 
-        <div u:loading.remove class="pt-6" style="text-align: right;">
+        {% if not account.profile.send_daily_digest %}
+        <div class="callout mt-5">
+            Get a daily summary in your inbox automatically!
+
+            <div class="mt-2">
+                <input type="text" u:model.lazy="email_address" id="email-address"
+                    placeholder="mastodon@fediview.com"></input>
+
+                <div style="text-align: right;">
+                    <button class="mt-4" u:click="enable_daily_emails">Get Daily Emails</button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="pt-6" style="text-align: right;">
             <button u:click="reconfigure">
                 Regenerate
             </button>
