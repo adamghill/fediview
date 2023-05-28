@@ -564,6 +564,16 @@ summary {
     font-variant: all-small-caps;
 }
 
+button.utility {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #000;
+}
+
+button.utility:hover {
+    background-color: var(--post-border);
+}
+
 /* .post.additional .avatar {
     display: none;
 }

@@ -229,32 +229,33 @@ def unsubscribe(request):
 def account(request):
     if request.is_post:
         profile = request.user.account.profile
-        assert profile.has_plus, "Plus is required"
 
         message = "Profile saved"
 
-        if request.POST.get("language", "__all__") == "__all__":
-            profile.language = None
-        else:
-            profile.language = request.POST.get("language")
+        if profile.has_plus:
+            if request.POST.get("language", "__all__") == "__all__":
+                profile.language = None
+            else:
+                profile.language = request.POST.get("language")
 
-        original_indexing_type = profile.indexing_type
-        profile.indexing_type = int(request.POST.get("indexing_type", "1"))
+            original_indexing_type = profile.indexing_type
+            profile.indexing_type = int(request.POST.get("indexing_type", "1"))
 
-        if profile.indexing_type == profile.IndexingType.NONE.value:
-            pass
-        else:
-            # Start indexing posts if the user updated their indexing type
-            if original_indexing_type != profile.indexing_type:
-                task_id = async_task(index_posts, profile)
+            if profile.indexing_type == profile.IndexingType.NONE.value:
+                pass
+            else:
+                # Start indexing posts if the user updated their indexing type
+                if original_indexing_type != profile.indexing_type:
+                    task_id = async_task(index_posts, profile)
 
-                logger.info(f"Start indexing posts with {task_id}")
+                    logger.info(f"Start indexing posts with {task_id}")
 
-                message = f"{message} and start to index posts"
+                    message = f"{message} and start to index posts"
 
-        profile.generate_recommendations = (
-            request.POST.get("generate_recommendations", "") == "on"
-        )
+            profile.generate_recommendations = (
+                request.POST.get("generate_recommendations", "") == "on"
+            )
+
         profile.send_daily_digest = request.POST.get("send_daily_digest", "") == "on"
 
         profile.save()
