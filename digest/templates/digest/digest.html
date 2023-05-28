@@ -298,6 +298,15 @@
         ul {
             padding-left: 12px;
         }
+
+        .recommended {
+            float: right;
+            text-decoration: none;
+            opacity: .8;
+            background-color: #ffd960;
+            padding: .2em .5em 0 .5em;
+            border-radius: .5em;
+        }
     </style>
 </head>
 
@@ -365,6 +374,12 @@
                                     {% for post in posts %}
                                     <div class="post">
                                         <div class="status">
+                                            {% if post.is_recommendation %}
+                                            <div class="recommended">
+                                                Recommended
+                                            </div>
+                                            {% endif %}
+
                                             <div class="post_header">
                                                 <div class="user">
                                                     {% if post.account.avatar %}
@@ -383,9 +398,9 @@
                                             </div>
 
                                             <div class="post_content">
-                                                <div class="content">
+                                                <p class="content">
                                                     {{ post.content|safe }}
-                                                </div>
+                                                </p>
 
                                                 <div class="medias">
                                                     {% for media in post.media_attachments %}

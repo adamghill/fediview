@@ -165,6 +165,13 @@ def logout(request):
     return redirect("www:index")
 
 
+def query_string_bool_parse(request: HttpRequest, qs: str) -> bool:
+    if request.GET.get(qs).lower() == "true":
+        return True
+
+    return False
+
+
 @login_required
 @render_html("digest/digest.html")
 def sample_email_digest(request):
@@ -176,7 +183,9 @@ def sample_email_digest(request):
         Account.objects.select_related("profile").filter(user=request.user).first()
     )
 
-    if not (digest := cache.get("digest")):
+    if not (digest := cache.get("digest")) or query_string_bool_parse(
+        request, "no_cache"
+    ):
         digest = build_digest(
             start=start,
             end=None,
@@ -192,10 +201,7 @@ def sample_email_digest(request):
     has_plus = account.profile.has_plus
 
     if request.GET.get("has_plus"):
-        if request.GET.get("has_plus").lower() == "true":
-            has_plus = True
-        elif request.GET.get("has_plus").lower() == "false":
-            has_plus = False
+        has_plus = query_string_bool_parse(request, "has_plus")
 
     context = get_email_context(digest, has_plus)
 
