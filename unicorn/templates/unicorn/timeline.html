@@ -106,7 +106,9 @@
 
         <div style="text-align: right;">
             <div style="float: right; padding-left: 1em;">
-                <button u:click="manually_authorize">Manually Authorize</button>
+                <button u:click="manually_authorize" class="plausible-event-name=manually-authorize">
+                    Manually Authorize
+                </button>
             </div>
 
             <span style="top: 5px; position: relative;">
@@ -281,7 +283,9 @@
                     placeholder="mastodon@fediview.com"></input>
 
                 <div style="text-align: right;">
-                    <button class="mt-4" u:click="enable_daily_emails">Get Daily Emails</button>
+                    <button class="mt-4" u:click="enable_daily_emails" class="plausible-event-name=timeline-emails">
+                        Get Daily Emails
+                    </button>
                 </div>
             </div>
         </div>
