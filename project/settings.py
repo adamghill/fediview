@@ -126,7 +126,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGIN_URL = "account/login"
+LOGIN_URL = "/account/login"
 
 SITE_ID = 1
 
