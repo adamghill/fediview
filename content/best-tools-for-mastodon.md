@@ -1,13 +1,11 @@
 ---
 template: www/base.html
 title: The Best Tools for Mastodon in 2023
+header: The Best Tools for Mastodon in 2023
 publish_date: 2023-02-10
 ---
 
-# The Best Tools for Mastodon in 2023
-*{{ publish_date }}*
-
-Here are the best tools for Mastodon I have found and personally used. All of these tools should be relatively intuitive and usable from a web browser.
+Here are the best tools for Mastodon I have found and personally used.
 
 ## Finding Servers
 

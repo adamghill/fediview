@@ -1,10 +1,9 @@
 ---
 template: www/base.html
 title: Changelog
+header: Changelog
 body_class: changelog
 ---
-
-# Changelog
 
 [All commits](https://github.com/adamghill/fediview/commits/main)
 

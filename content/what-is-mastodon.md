@@ -2,9 +2,8 @@
 template: www/base.html
 publish_date: 2023-01-02
 title: What is Mastodon?
+header: What is Mastodon?
 ---
-
-# What is Mastodon?
 
 `Mastodon` is a social network similar to `Twitter`, but it is free and open-source for administrators to run their own communities, called "instances", centered around a particular topic or theme. It allows users to create short messages, called "toots" or "posts" (depending on your instance), and share them with others. Users can also follow and interact with other users either on their "local" instance or on other instances.
 
