@@ -41,7 +41,7 @@ def get_text_embeddings(text: Union[list[str], str]) -> ndarray:
         "text-embeddings", "Roberta.get_text_embeddings"
     )
 
-    vectors = modal_get_text_embeddings_fn.call(text)
+    vectors = modal_get_text_embeddings_fn.remote(text)
 
     if vectors is None:
         raise Exception("Invalid vectors")
