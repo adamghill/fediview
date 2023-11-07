@@ -1,19 +1,19 @@
 import logging
 
-from modal import Image, SharedVolume, Stub, method
+from modal import Image, Stub, method, NetworkFileSystem
 from modal.cls import ClsMixin
 from numpy import mean, ndarray
 
 logger = logging.getLogger(__name__)
 
-volume = SharedVolume()
+volume = NetworkFileSystem.new()
 stub = Stub("text-embeddings")
 
 
 dockerfile_image = Image.from_dockerfile("Dockerfile-modal")
 
 
-@stub.cls(image=dockerfile_image, shared_volumes={"/root/roberta": volume})
+@stub.cls(image=dockerfile_image, network_file_systems={"/root/roberta": volume})
 class Roberta(ClsMixin):
     cache_folder = "/root/roberta"
 
@@ -31,9 +31,9 @@ class Roberta(ClsMixin):
     def get_text_embeddings(self, text) -> ndarray:
         import torch
 
-        single_input_flag = type(text) is str
+        single_input_flag = isinstance(text, str)
         texts = [text] if single_input_flag else text
-        assert all(type(t) is str for t in texts), "All items must be strings"
+        assert all(isinstance(t, str) for t in texts), "All items must be strings"
         batch_size = 20
 
         with torch.no_grad():
