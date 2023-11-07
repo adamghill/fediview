@@ -17,5 +17,5 @@ Get a digest of popular posts and boosts from your Mastodon (fediverse) timeline
 - [mastodon.py](https://mastodonpy.readthedocs.io/) to interact with mastodon
 - [Marx](https://mblode.github.io/marx/) for classless CSS
 - [Unicorn](https://www.django-unicorn.com) for the SPA feelings
-- [coltrane](https://coltrane.readthedocs.io) render markdown easily
+- [coltrane](https://coltrane.readthedocs.io) to render markdown easily
 - [Django](https://www.djangoproject.com/) for everything else
