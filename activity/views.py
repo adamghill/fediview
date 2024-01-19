@@ -18,6 +18,9 @@ from activity.models import Acct, Post
 logger = logging.getLogger(__name__)
 
 
+SEARCH_LIMIT = 100
+
+
 @login_required
 @render_html("activity/activity.html")
 def activity(request):
@@ -65,7 +68,7 @@ def search(request):
     profile = request.user.account.profile
     assert profile.has_plus, "Plus is required"
 
-    results = None
+    posts = None
     query = request.POST.get("query") or request.GET.get("q")
 
     if request.is_post:
@@ -82,15 +85,17 @@ def search(request):
         vector = SearchVector("text_content")
         search_query = SearchQuery(query)
 
-        results = (
+        posts = (
             Post.objects.filter(acct__account__profile=profile)
             .annotate(similarity=TrigramSimilarity("text_content", query))
             .filter(similarity__gte=0.04)
             .annotate(rank=SearchRank(vector, search_query))
-            .order_by("-rank", "-similarity", "-created_at")
+            .order_by("-rank", "-similarity", "-created_at")[:SEARCH_LIMIT]
         )
 
-    return {"results": results, "query": query}
+    # TODO: Add pagination to results
+
+    return {"posts": posts, "query": query}
 
 
 @login_required

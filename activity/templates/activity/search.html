@@ -25,12 +25,12 @@
         </div>
     </form>
 
-    {% if results %}
-    {% for post in results %}
+    {% if posts %}
+    {% for post in posts %}
     <div class="post">
         <div class="status">
             <div class="status_content">
-                {{ post.text_content }}
+                {{ post.content|safe }}
             </div>
 
             <div class="footer">
