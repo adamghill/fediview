@@ -7,6 +7,10 @@ body_class: changelog
 
 [All commits](https://github.com/adamghill/fediview/commits/main)
 
+## 2024-01-19
+
+- Better mobile styling.
+
 ## 2023-05-27
 
 - Show media in daily emails.
