@@ -126,112 +126,111 @@
             {% endif %}
             {% endblock digitalocean %}
 
-            <table>
-                <tr>
-                    <td>
-                        <p class="footer-header">Articles</p>
-                        <ul>
-                            <li>
-                                <a href="{% url 'coltrane:content' 'faq' %}"
-                                    class="{% if request.path == '/faq' %}active{% endif %} plausible-event-name=footer-faq">
-                                    FAQ
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'coltrane:content' 'what-is-mastodon' %}"
-                                    class="plausible-event-name=footer-what-is-mastodon">What is Mastodon?</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'coltrane:content' 'best-tools-for-mastodon' %}"
-                                    class="plausible-event-name=footer-best-tools-for-mastodon">Tools for
-                                    Mastodon</a>
-                            </li>
-                        </ul>
+            <div id="footer-links">
+                <div class="links">
+                    <p class="footer-header">Articles</p>
+                    <ul>
+                        <li>
+                            <a href="{% url 'coltrane:content' 'faq' %}"
+                                class="{% if request.path == '/faq' %}active{% endif %} plausible-event-name=footer-faq">
+                                FAQ
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'coltrane:content' 'what-is-mastodon' %}"
+                                class="plausible-event-name=footer-what-is-mastodon">What is Mastodon?</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'coltrane:content' 'best-tools-for-mastodon' %}"
+                                class="plausible-event-name=footer-best-tools-for-mastodon">Tools for
+                                Mastodon</a>
+                        </li>
+                    </ul>
+                </div>
 
-                        <br />
-                        <p class="footer-header">Code</p>
-                        <ul>
-                            <li>
-                                <a href="{% url 'coltrane:content' 'changelog' %}"
-                                    class="{% if request.path == '/changelog' %}active{% endif %} plausible-event-name=footer-changelog">
-                                    Changelog
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://github.com/adamghill/fediview">fediview</a> by <a
-                                    href="https://indieweb.social/@adamghill">@adamghill</a>
-                            </li>
-                            <li>
-                                <a href="https://github.com/hodgesmr/mastodon_digest">Digest script</a>
-                                by <a href="https://mastodon.social/@MattHodges">@MattHodges</a>
-                            </li>
-                            <li>
-                                <a href="https://github.com/mauforonda/mastodon_digest">Digest script fork</a>
-                                by <a href="https://hachyderm.io/@mauforonda">@mauforonda</a>
-                            </li>
-                            <li>
-                                <a href="https://github.com/mauforonda/mastodon_links">Links script</a>
-                                by <a href="https://hachyderm.io/@mauforonda">@mauforonda</a>
-                            </li>
-                        </ul>
-                    </td>
-                    <td>
-                        <p class="footer-header">Built with</p>
-                        <ul>
-                            <li>
-                                <a href="https://www.django-unicorn.com">django-unicorn</a>
-                            </li>
-                            <li>
-                                <a href="https://coltrane.readthedocs.io">coltrane</a>
-                            </li>
-                            <li>
-                                <a href="https://github.com/halcy/Mastodon.py">mastodon.py</a>
-                            </li>
-                            <li>
-                                <a href="https://docs.pydantic.dev/">pydantic</a>
-                            </li>
-                            <li>
-                                <a href="https://www.djangoproject.com">Django</a>
-                            </li>
-                            <li>
-                                <a href="https://mblode.github.io/marx/">Marx CSS</a>
-                            </li>
-                            <li>
-                                <a href="https://apvarun.github.io/toastify-js/">Toastify</a>
-                            </li>
-                            <li>
-                                <a href="https://m.do.co/c/617d629f56c0">DigitalOcean</a>
-                            </li>
-                        </ul>
-                    </td>
-                    <td>
-                        <p class="footer-header">Other sites</p>
-                        <ul>
-                            <li>
-                                <a href="https://indieweb.social/@adamghill/">adamghill@indieweb.social</a>
-                            </li>
-                            <li>
-                                <a href="https://devmarks.io">devmarks.io</a>
-                            </li>
-                            <li>
-                                <a href="https://python-utils.adamghill.com">python-utils</a>
-                            </li>
-                            <li>
-                                <a href="https://unsuckjs.com">unsuckjs</a>
-                            </li>
-                            <li>
-                                <a href="https://alldjango.com">alldjango.com</a>
-                            </li>
-                            <li>
-                                <a href="https://sponsorama.dev">sponsorama.dev</a>
-                            </li>
-                            <li>
-                                <a href="https://isitwebscale.adamghill.com">Is It Web Scale?!</a>
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-            </table>
+                <div class="links">
+                    <p class="footer-header">Code</p>
+                    <ul>
+                        <li>
+                            <a href="{% url 'coltrane:content' 'changelog' %}"
+                                class="{% if request.path == '/changelog' %}active{% endif %} plausible-event-name=footer-changelog">
+                                Changelog
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/adamghill/fediview">fediview</a> by <a
+                                href="https://indieweb.social/@adamghill">@adamghill</a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/hodgesmr/mastodon_digest">Digest script</a>
+                            by <a href="https://mastodon.social/@MattHodges">@MattHodges</a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/mauforonda/mastodon_digest">Digest script fork</a>
+                            by <a href="https://hachyderm.io/@mauforonda">@mauforonda</a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/mauforonda/mastodon_links">Links script</a>
+                            by <a href="https://hachyderm.io/@mauforonda">@mauforonda</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="links">
+                    <p class="footer-header">Built with</p>
+                    <ul>
+                        <li>
+                            <a href="https://www.django-unicorn.com">django-unicorn</a>
+                        </li>
+                        <li>
+                            <a href="https://coltrane.readthedocs.io">coltrane</a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/halcy/Mastodon.py">mastodon.py</a>
+                        </li>
+                        <li>
+                            <a href="https://docs.pydantic.dev/">pydantic</a>
+                        </li>
+                        <li>
+                            <a href="https://www.djangoproject.com">Django</a>
+                        </li>
+                        <li>
+                            <a href="https://mblode.github.io/marx/">Marx CSS</a>
+                        </li>
+                        <li>
+                            <a href="https://apvarun.github.io/toastify-js/">Toastify</a>
+                        </li>
+                        <li>
+                            <a href="https://m.do.co/c/617d629f56c0">DigitalOcean</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="links">
+                    <p class="footer-header">Other sites</p>
+                    <ul>
+                        <li>
+                            <a href="https://indieweb.social/@adamghill/">@adamghill</a>
+                        </li>
+                        <li>
+                            <a href="https://devmarks.io">devmarks.io</a>
+                        </li>
+                        <li>
+                            <a href="https://adamghill.com">adamghill.com</a>
+                        </li>
+                        <li>
+                            <a href="https://adamghill.com/python-utils">python-utils</a>
+                        </li>
+                        <li>
+                            <a href="https://unsuckjs.com">unsuckjs</a>
+                        </li>
+                        <li>
+                            <a href="https://alldjango.com">alldjango.com</a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
 
             {% git_version as git_version %}
 

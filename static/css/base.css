@@ -574,6 +574,16 @@ button.utility:hover {
     background-color: var(--post-border);
 }
 
+#footer-links {
+    display: flex;
+    flex-flow: wrap;
+}
+
+footer div.links {
+    text-align: left;
+    max-width: 200px;
+}
+
 /* .post.additional .avatar {
     display: none;
 }
