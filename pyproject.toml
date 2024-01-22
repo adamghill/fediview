@@ -46,7 +46,7 @@ glom = "^23.3.0"
 django-axes = "^5.41.1"
 django-test-plus = "^2.2.1"
 model-bakery = "^1.11.0"
-modal = "0.54.3821"
+modal = "^0"
 django-post-office = "^3.6.3"
 django-anymail = {extras = ["sendgrid"], version = "^10.0"}
 mistune = "3.0.0rc5"
