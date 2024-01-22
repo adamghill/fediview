@@ -4,14 +4,13 @@ from datetime import datetime, timedelta, timezone
 from django.conf import settings
 from django.template.loader import get_template
 from django.utils.timezone import now
+from django_q.tasks import async_task
 from post_office import mail
 from post_office.models import EmailTemplate
 
-from account.models import Account, Profile
-from digest.digester import Digest
+from account.models import Account
+from digest.digester import Digest, build_digest
 from digest.management.commands.sanitize_generated_emails import sanitize
-
-from .digester import build_digest
 
 logger = logging.getLogger(__name__)
 
@@ -48,10 +47,49 @@ def get_email_context(digest: Digest, has_plus: bool) -> dict:
     return context
 
 
-def send_emails(*account_ids: int) -> None:
-    _set_email_template()
+def send_email(account: Account) -> None:
+    profile = account.profile
+
+    if profile.is_time_to_send_daily_digest is False:
+        return
+
+    # Set a marker to prevent multiple emails being sent at once
+    profile.last_daily_digest_sent_at = now()
+    profile.save()
+
+    logger.info(f"Create digest for account id {account.id}")
 
     start = datetime.now(timezone.utc) - timedelta(days=1)
+
+    digest = build_digest(
+        start=start,
+        end=None,
+        scorer_name=account.profile.scorer,
+        threshold_name=account.profile.threshold,
+        timeline=account.profile.timeline,
+        url=account.instance.api_base_url,
+        token=account.access_token,
+        profile=account.profile,
+    )
+
+    logger.info(f"Send digest email to account id {account.id}")
+
+    email = mail.send(
+        recipients=account.user.email,
+        sender=settings.SERVER_EMAIL,
+        template="digest",
+        priority="now",
+        context=get_email_context(digest, account.profile.has_plus),
+    )
+
+    if email.status == 0:
+        logger.info(f"Digest email sent to account id {account.id}")
+
+        sanitize(email.id)
+
+
+def send_emails(*account_ids: int) -> None:
+    _set_email_template()
 
     accounts = []
 
@@ -65,39 +103,4 @@ def send_emails(*account_ids: int) -> None:
         )
 
     for account in accounts:
-        profile = account.profile
-
-        if profile.is_time_to_send_daily_digest is False:
-            continue
-
-        # Set the marker so that multiple emails aren't sent accidentally
-        profile.last_daily_digest_sent_at = now()
-        profile.save()
-
-        logger.info(f"Create digest for account id {account.id}")
-
-        digest = build_digest(
-            start=start,
-            end=None,
-            scorer_name=account.profile.scorer,
-            threshold_name=account.profile.threshold,
-            timeline=account.profile.timeline,
-            url=account.instance.api_base_url,
-            token=account.access_token,
-            profile=account.profile,
-        )
-
-        logger.info(f"Send digest email to account id {account.id}")
-
-        email = mail.send(
-            recipients=account.user.email,
-            sender=settings.SERVER_EMAIL,
-            template="digest",
-            priority="now",
-            context=get_email_context(digest, account.profile.has_plus),
-        )
-
-        if email.status == 0:
-            logger.info(f"Digest email sent to account id {account.id}")
-
-            sanitize(email.id)
+        async_task(send_email, account)
