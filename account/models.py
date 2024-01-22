@@ -1,5 +1,8 @@
+from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.utils.timezone import now
 from model_utils.models import TimeStampedModel
 from ndarraydjango.fields import NDArrayField
 
@@ -15,9 +18,7 @@ class Instance(TimeStampedModel):
 
 
 class Account(TimeStampedModel):
-    instance = models.ForeignKey(
-        Instance, related_name="accounts", on_delete=models.PROTECT
-    )
+    instance = models.ForeignKey(Instance, related_name="accounts", on_delete=models.PROTECT)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     access_token = models.CharField(max_length=1024)
     account_id = models.BigIntegerField(blank=True, null=True)
@@ -42,9 +43,7 @@ class Profile(TimeStampedModel):
         METADATA = 2
         CONTENT = 3
 
-    account = models.OneToOneField(
-        Account, related_name="profile", on_delete=models.CASCADE
-    )
+    account = models.OneToOneField(Account, related_name="profile", on_delete=models.CASCADE)
     hours = models.IntegerField()
     scorer = models.CharField(max_length=255)
     threshold = models.CharField(max_length=255)
@@ -52,21 +51,54 @@ class Profile(TimeStampedModel):
     last_retrieval = models.DateTimeField(blank=True, null=True)
     has_plus = models.BooleanField(default=False)
     language = models.CharField(blank=True, null=True, max_length=10)
-    indexing_type = models.IntegerField(
-        choices=IndexingType.choices, default=IndexingType.NONE
-    )
+    indexing_type = models.IntegerField(choices=IndexingType.choices, default=IndexingType.NONE)
     last_indexed_at = models.DateTimeField(blank=True, null=True)
     generate_recommendations = models.BooleanField(default=False)
-    send_daily_digest = models.BooleanField(default=False)
     last_sample_email_sent_at = models.DateTimeField(blank=True, null=True)
+
+    # daily digest
+    send_daily_digest = models.BooleanField(default=False)
+    daily_digest_hour = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0), MaxValueValidator(11)])
+    daily_digest_am = models.BooleanField(default=True)
+    daily_digest_timezone = models.CharField(default="UTC")  # currently unused
+    last_daily_digest_sent_at = models.DateTimeField(blank=True, null=True)
 
     # Vectors
     posts_vectors = NDArrayField(blank=True, null=True)
 
+    @property
+    def daily_digest_zero_based_index_hour(self) -> int:
+        # `daily_digest_hour` is 0-based index like `datetime.hour`
+        hour = self.daily_digest_hour
+
+        # Handle afternoon hours
+        if self.daily_digest_am is False:
+            hour = hour + 12
+
+        return hour
+
+    @property
+    def is_one_day_since_last_daily_digest(self) -> bool:
+        if self.last_daily_digest_sent_at is None:
+            return True
+
+        next_daily_digest_send_at = self.last_daily_digest_sent_at + relativedelta(days=1)
+
+        if now() >= next_daily_digest_send_at:
+            return True
+
+        return False
+
+    @property
+    def is_time_to_send_daily_digest(self) -> bool:
+        if self.is_one_day_since_last_daily_digest:
+            if now().hour >= self.daily_digest_zero_based_index_hour:
+                return True
+
+        return False
+
 
 class GitHubAccount(TimeStampedModel):
-    account = models.OneToOneField(
-        Account, related_name="github_account", on_delete=models.CASCADE
-    )
+    account = models.OneToOneField(Account, related_name="github_account", on_delete=models.CASCADE)
     access_token = models.CharField(max_length=1024)
     username = models.CharField(max_length=1024)
