@@ -3,10 +3,11 @@ from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 from django.template.loader import get_template
+from django.utils.timezone import now
 from post_office import mail
 from post_office.models import EmailTemplate
 
-from account.models import Account
+from account.models import Account, Profile
 from digest.digester import Digest
 from digest.management.commands.sanitize_generated_emails import sanitize
 
@@ -29,7 +30,7 @@ def _set_email_template():
 
 
 def get_email_context(digest: Digest, has_plus: bool) -> dict:
-    context = {"now": datetime.now()}
+    context = {"now": now()}
 
     total_posts_count = len(digest.posts)
     total_posts_to_show = len(digest.posts)
@@ -58,12 +59,21 @@ def send_emails(*account_ids: int) -> None:
         accounts = Account.objects.filter(id__in=account_ids)
     else:
         accounts = (
-            Account.objects.filter(profile__has_plus=True)
+            Account.objects.filter(profile__send_daily_digest=True)
             .exclude(user__email__isnull=True)
             .exclude(user__email="")
         )
 
     for account in accounts:
+        profile = account.profile
+
+        if profile.is_time_to_send_daily_digest is False:
+            continue
+
+        # Set the marker so that multiple emails aren't sent accidentally
+        profile.last_daily_digest_sent_at = now()
+        profile.save()
+
         logger.info(f"Create digest for account id {account.id}")
 
         digest = build_digest(
