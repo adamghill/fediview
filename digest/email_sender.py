@@ -49,9 +49,7 @@ def get_email_context(digest: Digest, has_plus: bool) -> dict:
 
 def send_email(account: Account) -> None:
     profile = account.profile
-
-    if profile.is_time_to_send_daily_digest is False:
-        return
+    assert profile.is_time_to_send_daily_digest, "Ensure that it is time to send the email for this profile"
 
     # Set a marker to prevent multiple emails being sent at once
     profile.last_daily_digest_sent_at = now()
@@ -103,4 +101,5 @@ def send_emails(*account_ids: int) -> None:
         )
 
     for account in accounts:
-        async_task(send_email, account)
+        if account.profile.is_time_to_send_daily_digest is True:
+            async_task(send_email, account)

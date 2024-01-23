@@ -59,6 +59,9 @@ class Profile(TimeStampedModel):
     # daily digest
     send_daily_digest = models.BooleanField(default=False)
     daily_digest_hour = models.PositiveIntegerField(default=1, validators=[MinValueValidator(0), MaxValueValidator(11)])
+    daily_digest_minute = models.PositiveIntegerField(
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(60)]
+    )
     daily_digest_am = models.BooleanField(default=True)
     daily_digest_timezone = models.CharField(default="UTC")  # currently unused
     last_daily_digest_sent_at = models.DateTimeField(blank=True, null=True)
@@ -67,7 +70,7 @@ class Profile(TimeStampedModel):
     posts_vectors = NDArrayField(blank=True, null=True)
 
     @property
-    def daily_digest_zero_based_index_hour(self) -> int:
+    def daily_digest_hour_with_afternoon(self) -> int:
         # `daily_digest_hour` is 0-based index like `datetime.hour`
         hour = self.daily_digest_hour
 
@@ -78,7 +81,7 @@ class Profile(TimeStampedModel):
         return hour
 
     @property
-    def is_one_day_since_last_daily_digest(self) -> bool:
+    def is_at_least_one_day_since_last_daily_digest(self) -> bool:
         if self.last_daily_digest_sent_at is None:
             return True
 
@@ -91,9 +94,10 @@ class Profile(TimeStampedModel):
 
     @property
     def is_time_to_send_daily_digest(self) -> bool:
-        if self.is_one_day_since_last_daily_digest:
-            if now().hour >= self.daily_digest_zero_based_index_hour:
-                return True
+        if self.is_at_least_one_day_since_last_daily_digest:
+            if now().hour >= self.daily_digest_hour_with_afternoon:
+                if now().minute >= self.daily_digest_minute:
+                    return True
 
         return False
 
