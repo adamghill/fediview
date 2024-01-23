@@ -1,11 +1,16 @@
-import pytest
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+import time_machine
 from dateutil.relativedelta import relativedelta
 from django.utils.timezone import now
 
 from account.models import Profile
 
+UTC_TZ = ZoneInfo("UTC")
 
-@pytest.mark.freeze_time("2024-01-21 02:12:12.516515")
+
+@time_machine.travel(datetime(2024, 1, 21, 2, 12, tzinfo=UTC_TZ))
 def test_last_sent_24_hours_ago():
     last_daily_digest_sent_at = now() + relativedelta(hours=-24)
 
@@ -15,7 +20,7 @@ def test_last_sent_24_hours_ago():
     assert actual is True
 
 
-@pytest.mark.freeze_time("2024-01-21 02:12:12.516515")
+@time_machine.travel(datetime(2024, 1, 21, 2, 12, tzinfo=UTC_TZ))
 def test_last_sent_23_hours_ago():
     last_daily_digest_sent_at = now() + relativedelta(hours=-23)
 

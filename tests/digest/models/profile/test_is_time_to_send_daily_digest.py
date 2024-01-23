@@ -1,8 +1,14 @@
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 import pytest
+import time_machine
 from dateutil.relativedelta import relativedelta
 from django.utils.timezone import now
 
 from account.models import Profile
+
+UTC_TZ = ZoneInfo("UTC")
 
 DAILY_DIGEST_HOURS = [
     (1, True),
@@ -12,7 +18,7 @@ DAILY_DIGEST_HOURS = [
 
 
 @pytest.mark.parametrize("daily_digest_hour, expected", DAILY_DIGEST_HOURS)
-@pytest.mark.freeze_time("2024-01-21 02:12:12.516515")
+@time_machine.travel(datetime(2024, 1, 21, 2, 12, tzinfo=UTC_TZ))
 def test_first_send(daily_digest_hour, expected):
     """Is it time to send the daily digest for the first daily digest send"""
 
@@ -23,7 +29,7 @@ def test_first_send(daily_digest_hour, expected):
 
 
 @pytest.mark.parametrize("daily_digest_hour, expected", DAILY_DIGEST_HOURS)
-@pytest.mark.freeze_time("2024-01-21 02:12:12.516515")
+@time_machine.travel(datetime(2024, 1, 21, 2, 12, tzinfo=UTC_TZ))
 def test_last_send_23_hours_ago(daily_digest_hour, expected):
     """Is it time to send the daily digest since it's been 23 hours since the last send"""
 
@@ -38,7 +44,7 @@ def test_last_send_23_hours_ago(daily_digest_hour, expected):
 
 
 @pytest.mark.parametrize("daily_digest_hour, expected", DAILY_DIGEST_HOURS)
-@pytest.mark.freeze_time("2024-01-21 02:12:12.516515")
+@time_machine.travel(datetime(2024, 1, 21, 2, 12, tzinfo=UTC_TZ))
 def test_last_send_24_hours_ago(daily_digest_hour, expected):
     """Is it time to send the daily digest since it's been 24 hours since the last send"""
 

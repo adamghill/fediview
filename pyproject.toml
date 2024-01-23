@@ -61,7 +61,7 @@ mypy = "^0.930"
 coverage = {version = "^6", extras = ["toml"]}
 pytest-cov = "^3"
 pytest-django = "^4"
-pytest-freezegun = "^0.4.2"
+time-machine = "^2.13.0"
 
 [tool.pytest.ini_options]
 addopts = "--quiet --failed-first --reuse-db --nomigrations -p no:warnings -m 'not integration'"
