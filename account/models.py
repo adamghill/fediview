@@ -85,7 +85,7 @@ class Profile(TimeStampedModel):
         if self.last_daily_digest_sent_at is None:
             return True
 
-        next_daily_digest_send_at = self.last_daily_digest_sent_at + relativedelta(days=1)
+        next_daily_digest_send_at = self.last_daily_digest_sent_at + relativedelta(hours=23)
 
         if now() >= next_daily_digest_send_at:
             return True
