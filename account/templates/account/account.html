@@ -91,7 +91,10 @@
 
             {% if profile.has_plus %}
             <div class="mt-2">
-                <label style="font-variant-caps: initial;">When to send the daily digest</label>
+                <label class="mt-4">When to send the daily digest</label>
+                <p class="help">Time is approximate and depends on processing time, API latency, and email
+                    deliverability</p>
+
                 <div style="display: flex;">
                     <select style="width: 80px; margin-right: 6px;" name="daily_digest_hour">
                         <option value="0" {% if profile.daily_digest_hour == 0 %}selected{% endif %}>1</option>
