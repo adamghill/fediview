@@ -88,7 +88,60 @@
                 </div>
                 {% endif %}
             </div>
+
+            {% if profile.has_plus %}
+            <div class="mt-2">
+                <label style="font-variant-caps: initial;">When to send the daily digest</label>
+                <div style="display: flex;">
+                    <select style="width: 80px; margin-right: 6px;" name="daily_digest_hour">
+                        <option value="0" {% if profile.daily_digest_hour == 0 %}selected{% endif %}>1</option>
+                        <option value="1" {% if profile.daily_digest_hour == 1 %}selected{% endif %}>2</option>
+                        <option value="2" {% if profile.daily_digest_hour == 2 %}selected{% endif %}>3</option>
+                        <option value="3" {% if profile.daily_digest_hour == 3 %}selected{% endif %}>4</option>
+                        <option value="4" {% if profile.daily_digest_hour == 4 %}selected{% endif %}>5</option>
+                        <option value="5" {% if profile.daily_digest_hour == 5 %}selected{% endif %}>6</option>
+                        <option value="6" {% if profile.daily_digest_hour == 6 %}selected{% endif %}>7</option>
+                        <option value="7" {% if profile.daily_digest_hour == 7 %}selected{% endif %}>8</option>
+                        <option value="8" {% if profile.daily_digest_hour == 8 %}selected{% endif %}>9</option>
+                        <option value="9" {% if profile.daily_digest_hour == 9 %}selected{% endif %}>10</option>
+                        <option value="10" {% if profile.daily_digest_hour == 10 %}selected{% endif %}>11</option>
+                        <option value="11" {% if profile.daily_digest_hour == 11 %}selected{% endif %}>12</option>
+                    </select>
+                    <span style="top: 6px; position: relative; font-weight: 600; padding-right: 5px;">:</span>
+                    <select style="width: 80px; margin-right: 6px;" name="daily_digest_minute">
+                        <option value="0" {% if profile.daily_digest_minute == 0 %}selected{% endif %}>00</option>
+                        <option value="15" {% if profile.daily_digest_minute == 15 %}selected{% endif %}>15</option>
+                        <option value="30" {% if profile.daily_digest_minute == 30 %}selected{% endif %}>30</option>
+                        <option value="45" {% if profile.daily_digest_minute == 45 %}selected{% endif %}>45</option>
+                    </select>
+
+                    <select style="width: 80px; margin-right: 10px;" name="daily_digest_am">
+                        <option value="am" {% if profile.daily_digest_am %}selected{% endif %}>AM</option>
+                        <option value="pm" {% if not profile.daily_digest_am %}selected{% endif %}>PM</option>
+                    </select>
+
+                    <div style="top: 6px; position: relative;">
+                        UTC
+                    </div>
+
+                    {% comment %}
+                    <select style="width: 200px;">
+                        <option value="UTC" selected>UTC</option>
+
+                        {% for timezone in timezones %}
+                        {% if timezone != "UTC" %}
+                        <option value="{{ timezone }}"
+                            {% if profile.daily_digest_timezone == timezone %}selected{% endif %}>
+                            {{ timezone }}
+                        </option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                    {% endcomment %}
+                </div>
+            </div>
         </div>
+        {% endif %}
 
         {% if profile.has_plus %}
         <div class="mt-6">

@@ -17,6 +17,7 @@ from django.views.decorators.http import require_POST
 from django_q.tasks import async_task
 from fbv.decorators import render_html
 from mastodon import Mastodon, MastodonNetworkError
+from pytz import common_timezones
 
 from account.models import Account, Instance, User
 from activity.indexer import index_posts
@@ -179,13 +180,9 @@ def sample_email_digest(request):
 
     start = datetime.now(timezone.utc) - timedelta(days=1)
 
-    account = (
-        Account.objects.select_related("profile").filter(user=request.user).first()
-    )
+    account = Account.objects.select_related("profile").filter(user=request.user).first()
 
-    if not (digest := cache.get("digest")) or query_string_bool_parse(
-        request, "no_cache"
-    ):
+    if not (digest := cache.get("digest")) or query_string_bool_parse(request, "no_cache"):
         digest = build_digest(
             start=start,
             end=None,
@@ -231,10 +228,7 @@ def account(request):
 
     show_send_sample_email = False
 
-    if (
-        profile.last_sample_email_sent_at is None
-        or profile.last_sample_email_sent_at < (now() - timedelta(hours=1))
-    ):
+    if profile.last_sample_email_sent_at is None or profile.last_sample_email_sent_at < (now() - timedelta(hours=1)):
         show_send_sample_email = True
 
     if request.is_post:
@@ -251,20 +245,27 @@ def account(request):
 
             if profile.indexing_type == profile.IndexingType.NONE.value:
                 pass
-            else:
+            elif original_indexing_type != profile.indexing_type:
                 # Start indexing posts if the user updated their indexing type
-                if original_indexing_type != profile.indexing_type:
-                    task_id = async_task(index_posts, profile)
+                task_id = async_task(index_posts, profile)
 
-                    logger.info(f"Start indexing posts with {task_id}")
+                logger.info(f"Start indexing posts with {task_id}")
 
-                    message = f"{message} and start to index posts"
+                message = f"{message} and start to index posts"
 
-            profile.generate_recommendations = (
-                request.POST.get("generate_recommendations", "") == "on"
-            )
+            profile.generate_recommendations = request.POST.get("generate_recommendations", "") == "on"
 
         profile.send_daily_digest = request.POST.get("send_daily_digest", "") == "on"
+
+        current_hour_and_minute = (profile.daily_digest_hour, profile.daily_digest_minute)
+        profile.daily_digest_hour = request.POST.get("daily_digest_hour", "1")
+        profile.daily_digest_minute = request.POST.get("daily_digest_minute", "0")
+        profile.daily_digest_am = request.POST.get("daily_digest_am", "am") == "am"
+
+        if current_hour_and_minute != (profile.daily_digest_hour, profile.daily_digest_minute):
+            # reset the last daily digest sent so that user will get the email the next time they hit hour:minute
+            # and not have to wait 24 hours after the last send + hour:minute
+            profile.last_daily_digest_sent_at = None
 
         profile.save()
 
@@ -283,7 +284,7 @@ def account(request):
 
         return redirect("account:account")
 
-    return {"show_send_sample_email": show_send_sample_email}
+    return {"show_send_sample_email": show_send_sample_email, "timezones": common_timezones}
 
 
 @require_POST
