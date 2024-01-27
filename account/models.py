@@ -53,6 +53,7 @@ class Profile(TimeStampedModel):
     language = models.CharField(blank=True, null=True, max_length=10)
     indexing_type = models.IntegerField(choices=IndexingType.choices, default=IndexingType.NONE)
     last_indexed_at = models.DateTimeField(blank=True, null=True)
+    last_index_error = models.TextField(blank=True, null=True)
     generate_recommendations = models.BooleanField(default=False)
     last_sample_email_sent_at = models.DateTimeField(blank=True, null=True)
 

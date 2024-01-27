@@ -1,10 +1,11 @@
 import logging
-from typing import Iterator
+from collections.abc import Iterator
 
 from django.utils.html import strip_tags
 from django.utils.timezone import now
 from emoji import distinct_emoji_list
 from mastodon import Mastodon
+from mastodon.errors import MastodonAPIError
 
 from account.models import Profile
 from activity.models import Acct, Application, Post, Tag, TextEmoji
@@ -31,9 +32,7 @@ def _get_account_posts(mastodon: Mastodon, profile: Profile) -> Iterator[DigestP
 
     posts = []
     try:
-        posts = mastodon.account_statuses(
-            profile.account.account_id, min_id=profile.last_indexed_at, limit=10000
-        )
+        posts = mastodon.account_statuses(profile.account.account_id, min_id=profile.last_indexed_at, limit=10000)
     except Exception as e:
         logger.exception(e)
 
@@ -75,162 +74,164 @@ def _get_count(mastodon: Mastodon, status_type: str):
 
 
 def index_posts(profile: Profile) -> None:
-    if profile.indexing_type == profile.IndexingType.NONE.value:
-        logger.info(
-            f"Profile id {profile.id}: Skip indexing posts with {profile.indexing_type} indexing type"
+    try:
+        if profile.indexing_type == profile.IndexingType.NONE.value:
+            logger.info(f"Profile id {profile.id}: Skip indexing posts with {profile.indexing_type} indexing type")
+            return
+
+        if not profile.has_plus:
+            logger.error(f"Profile id {profile.id}: Skip indexing posts for non-plus profile")
+            return
+
+        logger.info(f"Profile id {profile.id}: Get posts")
+
+        mastodon = Mastodon(
+            access_token=profile.account.access_token,
+            api_base_url=profile.account.instance.api_base_url,
+            user_agent="fediview",
         )
-        return
 
-    if not profile.has_plus:
-        logger.error(
-            f"Profile id {profile.id}: Skip indexing posts for non-plus profile"
-        )
-        return
+        profile.account.favorites_count = _get_count(mastodon, "favourites")
+        profile.account.bookmarks_count = _get_count(mastodon, "bookmarks")
 
-    logger.info(f"Profile id {profile.id}: Get posts")
+        account_dict = mastodon.me()
+        profile.account.followers_count = account_dict.get("followers_count")
+        profile.account.following_count = account_dict.get("following_count")
+        profile.account.save()
 
-    mastodon = Mastodon(
-        access_token=profile.account.access_token,
-        api_base_url=profile.account.instance.api_base_url,
-        user_agent="fediview",
-    )
+        posts = _get_account_posts(mastodon, profile)
+        post_count = 0
 
-    profile.account.favorites_count = _get_count(mastodon, "favourites")
-    profile.account.bookmarks_count = _get_count(mastodon, "bookmarks")
+        for digest_post in posts:
+            acct = Acct.get_or_create(digest_post.account, profile)
 
-    account_dict = mastodon.me()
-    profile.account.followers_count = account_dict.get("followers_count")
-    profile.account.following_count = account_dict.get("following_count")
-    profile.account.save()
+            if not digest_post.content:
+                # Skip anything without content, e.g. `Announce` statuses
+                continue
 
-    posts = _get_account_posts(mastodon, profile)
-    post_count = 0
+            if digest_post.visibility not in (
+                "public",
+                "unlisted",
+            ):
+                # Skip storing direct messages
+                continue
 
-    for digest_post in posts:
-        acct = Acct.get_or_create(digest_post.account, profile)
+            text_content = strip_tags(digest_post.content)
 
-        if not digest_post.content:
-            # Skip anything without content, e.g. `Announce` statuses
-            continue
+            post_data = {
+                "url": digest_post.url,
+                "created_at": digest_post.created_at,
+                "reply_id": digest_post.reply_id,
+                "is_poll": digest_post.is_poll,
+                "visibility": digest_post.visibility or None,
+                "replies_count": digest_post.replies_count,
+                "reblogs_count": digest_post.reblogs_count,
+                "favourites_count": digest_post.favourites_count,
+                "edited_at": digest_post.edited_at,
+                "is_favourited": digest_post.favourited,
+                "is_reblogged": digest_post.reblogged,
+                "is_muted": digest_post.muted,
+                "is_bookmarked": digest_post.bookmarked,
+                "is_pinned": digest_post.pinned,
+                "language": digest_post.language,
+            }
 
-        if digest_post.visibility not in (
-            "public",
-            "unlisted",
-        ):
-            # Skip storing direct messages
-            continue
+            if profile.indexing_type == profile.IndexingType.CONTENT:
+                post_data.update(
+                    {
+                        "content": digest_post.content,
+                        "text_content": text_content,
+                    }
+                )
 
-        text_content = strip_tags(digest_post.content)
+            post = Post.objects.filter(post_id=digest_post.id, acct__acct_id=digest_post.account.id).first()
 
-        post_data = {
-            "url": digest_post.url,
-            "created_at": digest_post.created_at,
-            "reply_id": digest_post.reply_id,
-            "is_poll": digest_post.is_poll,
-            "visibility": digest_post.visibility or None,
-            "replies_count": digest_post.replies_count,
-            "reblogs_count": digest_post.reblogs_count,
-            "favourites_count": digest_post.favourites_count,
-            "edited_at": digest_post.edited_at,
-            "is_favourited": digest_post.favourited,
-            "is_reblogged": digest_post.reblogged,
-            "is_muted": digest_post.muted,
-            "is_bookmarked": digest_post.bookmarked,
-            "is_pinned": digest_post.pinned,
-            "language": digest_post.language,
-        }
+            if post:
+                logger.debug(f"Profile id {profile.id}: Update post {digest_post.id}")
 
-        if profile.indexing_type == profile.IndexingType.CONTENT:
-            post_data.update(
-                {
-                    "content": digest_post.content,
-                    "text_content": text_content,
-                }
-            )
+                Post.objects.filter(post_id=digest_post.id, acct__acct_id=digest_post.account.id).update(**post_data)
 
-        post = Post.objects.filter(
-            post_id=digest_post.id, acct__acct_id=digest_post.account.id
-        ).first()
+                post.content = post_data.get("content")
+                post.text_content = post_data.get("text_content")
+            else:
+                logger.debug(f"Profile id {profile.id}: Create post {digest_post.id}")
 
-        if post:
-            logger.debug(f"Profile id {profile.id}: Update post {digest_post.id}")
+                post_data.update(
+                    {
+                        "acct": acct,
+                        "post_id": digest_post.id,
+                    }
+                )
+                post = Post(**post_data)
+                post.save()
 
-            Post.objects.filter(
-                post_id=digest_post.id, acct__acct_id=digest_post.account.id
-            ).update(**post_data)
+            # Remove all mentions every time to make sure it is as accurate as possible
+            post.mentions.all().delete()
 
-            post.content = post_data.get("content")
-            post.text_content = post_data.get("text_content")
-        else:
-            logger.debug(f"Profile id {profile.id}: Create post {digest_post.id}")
+            for digest_account in digest_post.mentions:
+                acct = Acct.get_or_create(digest_account, profile)
 
-            post_data.update(
-                {
-                    "acct": acct,
-                    "post_id": digest_post.id,
-                }
-            )
-            post = Post(**post_data)
-            post.save()
+                post.mentions.add(acct)
 
-        # Remove all mentions every time to make sure it is as accurate as possible
-        post.mentions.all().delete()
+            # Remove all tags every time to make sure it is as accurate as possible
+            post.tags.all().delete()
 
-        for digest_account in digest_post.mentions:
-            acct = Acct.get_or_create(digest_account, profile)
+            for digest_tag in digest_post.tags:
+                tag = Tag.objects.filter(name=digest_tag.name).first()
 
-            post.mentions.add(acct)
+                if not tag:
+                    tag = Tag(name=digest_tag.name)
+                    tag.save()
 
-        # Remove all tags every time to make sure it is as accurate as possible
-        post.tags.all().delete()
+                post.tags.add(tag)
 
-        for digest_tag in digest_post.tags:
-            tag = Tag.objects.filter(name=digest_tag.name).first()
-
-            if not tag:
-                tag = Tag(name=digest_tag.name)
-                tag.save()
-
-            post.tags.add(tag)
-
-        if digest_post.application:
-            application = Application.objects.filter(
-                name=digest_post.application.name,
-                website=digest_post.application.website,
-            ).first()
-
-            if not application:
-                application = Application(
+            if digest_post.application:
+                application = Application.objects.filter(
                     name=digest_post.application.name,
                     website=digest_post.application.website,
-                )
-                application.save()
+                ).first()
 
-            post.application = application
-            post.save()
+                if not application:
+                    application = Application(
+                        name=digest_post.application.name,
+                        website=digest_post.application.website,
+                    )
+                    application.save()
 
-        # Remove all emojis every time to make sure it is as accurate as possible
-        post.text_emojis.all().delete()
+                post.application = application
+                post.save()
 
-        emojis = distinct_emoji_list(text_content)
+            # Remove all emojis every time to make sure it is as accurate as possible
+            post.text_emojis.all().delete()
 
-        for emoji in emojis:
-            text_emoji = TextEmoji.objects.filter(text=emoji).first()
+            emojis = distinct_emoji_list(text_content)
 
-            if not text_emoji:
-                text_emoji = TextEmoji(text=emoji)
-                text_emoji.save()
+            for emoji in emojis:
+                text_emoji = TextEmoji.objects.filter(text=emoji).first()
 
-            post.text_emojis.add(text_emoji)
+                if not text_emoji:
+                    text_emoji = TextEmoji(text=emoji)
+                    text_emoji.save()
 
-        post_count += 1
+                post.text_emojis.add(text_emoji)
 
-    profile.last_indexed_at = now()
-    profile.save()
+            post_count += 1
 
-    logger.info(f"Profile id {profile.id}: Indexed {post_count} posts")
+        profile.last_indexed_at = now()
+        profile.save()
 
-    if post_count > 0:
-        logger.info(f"Profile id {profile.id}: Save post vectors")
-        save_posts_vectors(profile)
-        logger.info(f"Profile id {profile.id}: Post vectors saved")
+        logger.info(f"Profile id {profile.id}: Indexed {post_count} posts")
+
+        if post_count > 0:
+            logger.info(f"Profile id {profile.id}: Save post vectors")
+            save_posts_vectors(profile)
+            logger.info(f"Profile id {profile.id}: Post vectors saved")
+    except MastodonAPIError as e:
+        if "Your login is currently disabled" in str(e):
+            logger.info("Setting profile to not get indexed in the future")
+            profile.indexing_type = Profile.IndexingType.NONE
+            profile.last_index_error = str(e)
+
+            profile.save()
+        else:
+            raise
