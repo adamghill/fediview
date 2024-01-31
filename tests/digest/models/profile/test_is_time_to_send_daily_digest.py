@@ -31,24 +31,27 @@ def test_first_send(daily_digest_hour, expected):
 @pytest.mark.parametrize("daily_digest_hour, expected", DAILY_DIGEST_HOURS)
 @time_machine.travel(datetime(2024, 1, 21, 2, 12, tzinfo=UTC_TZ))
 def test_last_send_23_hours_ago(daily_digest_hour, expected):
-    """Is it time to send the daily digest since it's been 23 hours since the last send"""
+    """Is it time to send the daily digest since it's been 59 minutes?
 
-    yesterday_sent_at = now() + relativedelta(hours=-23)
+    Should always be `False`
+    """
+
+    yesterday_sent_at = now() + relativedelta(minutes=-59)
     profile = Profile(
         daily_digest_hour=daily_digest_hour, daily_digest_am=True, last_daily_digest_sent_at=yesterday_sent_at
     )
     actual = profile.is_time_to_send_daily_digest
 
-    # ignore expected because they should all be False
+    # Ignore expected because they should all be False because it hasn't been enough time
     assert actual is False
 
 
 @pytest.mark.parametrize("daily_digest_hour, expected", DAILY_DIGEST_HOURS)
 @time_machine.travel(datetime(2024, 1, 21, 2, 12, tzinfo=UTC_TZ))
 def test_last_send_24_hours_ago(daily_digest_hour, expected):
-    """Is it time to send the daily digest since it's been 24 hours since the last send"""
+    """Is it time to send the daily digest since it's been an hour?"""
 
-    yesterday_sent_at = now() + relativedelta(hours=-24)
+    yesterday_sent_at = now() + relativedelta(hours=-1)
     profile = Profile(
         daily_digest_hour=daily_digest_hour, daily_digest_am=True, last_daily_digest_sent_at=yesterday_sent_at
     )

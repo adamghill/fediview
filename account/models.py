@@ -82,11 +82,16 @@ class Profile(TimeStampedModel):
         return hour
 
     @property
-    def is_at_least_one_day_since_last_daily_digest(self) -> bool:
+    def is_at_least_one_hour_since_last_daily_digest(self) -> bool:
+        """Whether there is no last send date or it has been at least an hour since the last send.
+
+        This is to prevent duplicate emails from being sent for the same day.
+        """
+
         if self.last_daily_digest_sent_at is None:
             return True
 
-        next_daily_digest_send_at = self.last_daily_digest_sent_at + relativedelta(hours=23)
+        next_daily_digest_send_at = self.last_daily_digest_sent_at + relativedelta(hours=1)
 
         if now() >= next_daily_digest_send_at:
             return True
@@ -95,7 +100,7 @@ class Profile(TimeStampedModel):
 
     @property
     def is_time_to_send_daily_digest(self) -> bool:
-        if self.is_at_least_one_day_since_last_daily_digest:
+        if self.is_at_least_one_hour_since_last_daily_digest:
             if now().hour >= self.daily_digest_hour_with_afternoon:
                 if now().minute >= self.daily_digest_minute:
                     return True
