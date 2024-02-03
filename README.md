@@ -19,4 +19,3 @@ Get a digest of popular posts and boosts from your Mastodon (fediverse) timeline
 - [Unicorn](https://www.django-unicorn.com) for the SPA feelings
 - [coltrane](https://coltrane.readthedocs.io) to render markdown easily
 - [Django](https://www.djangoproject.com/) for everything else
-
