@@ -2,6 +2,7 @@ import logging
 from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
+from django.db import transaction
 from django.template.loader import get_template
 from django.utils.timezone import now
 from django_q.tasks import async_task
@@ -51,9 +52,11 @@ def send_email(account: Account) -> None:
     profile = account.profile
     assert profile.is_time_to_send_daily_digest, "Ensure that it is time to send the email for this profile"
 
-    # Set a marker to prevent multiple emails being sent at once
-    profile.last_daily_digest_sent_at = now()
-    profile.save()
+    # This should not a transaction, but somewhat grasping at straws here
+    with transaction.atomic():
+        # Set a marker to prevent multiple emails being sent at once
+        profile.last_daily_digest_sent_at = now()
+        profile.save()
 
     logger.info(f"Create digest for account id {account.id}")
 
@@ -102,4 +105,10 @@ def send_emails(*account_ids: int) -> None:
 
     for account in accounts:
         if account.profile.is_time_to_send_daily_digest is True:
+            # This should not a transaction, but somewhat grasping at straws here
+            with transaction.atomic():
+                # Set a marker to prevent multiple emails being sent at once
+                account.profile.profile.last_daily_digest_sent_at = now()
+                account.profile.profile.save()
+
             async_task(send_email, account)
