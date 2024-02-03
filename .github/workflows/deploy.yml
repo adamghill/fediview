@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy web
     steps:
+      - uses: easimon/maximize-build-space@v10
       - uses: actions/checkout@v3
       - uses: adamghill/build-docker-and-deploy-to-caprover@v1
         with:
@@ -24,6 +25,7 @@ jobs:
     name: Deploy worker
     needs: deploy_web
     steps:
+      - uses: easimon/maximize-build-space@v10
       - uses: actions/checkout@v3
       - uses: adamghill/build-docker-and-deploy-to-caprover@v1
         with:
