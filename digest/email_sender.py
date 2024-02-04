@@ -104,4 +104,9 @@ def send_emails(*account_ids: int) -> None:
         logger.info(f"Checking for accounts for hour: {now().hour}; minute: {now().minute}")
 
         if account.profile.is_time_to_send_daily_digest is True:
+            # Set a marker to prevent multiple emails being sent at once
+            # This gets duplicated in `send_email` but want to ensure that async tasks don't pile up
+            account.profile.last_daily_digest_sent_at = now()
+            account.profile.save()
+
             async_task(send_email, account)
