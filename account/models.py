@@ -101,8 +101,8 @@ class Profile(TimeStampedModel):
     @property
     def is_time_to_send_daily_digest(self) -> bool:
         if self.is_at_least_one_hour_since_last_daily_digest:
-            if now().hour >= self.daily_digest_hour_with_afternoon:
-                if now().minute >= self.daily_digest_minute:
+            if now().hour == self.daily_digest_hour_with_afternoon:
+                if now().minute >= self.daily_digest_minute and now().minute < self.daily_digest_minute + 15:
                     return True
 
         return False
