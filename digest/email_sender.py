@@ -50,13 +50,10 @@ def get_email_context(digest: Digest, has_plus: bool) -> dict:
 
 def send_email(account: Account) -> None:
     profile = account.profile
-    assert profile.is_time_to_send_daily_digest, "Ensure that it is time to send the email for this profile"
 
-    # This should not a transaction, but somewhat grasping at straws here
-    with transaction.atomic():
-        # Set a marker to prevent multiple emails being sent at once
-        profile.last_daily_digest_sent_at = now()
-        profile.save()
+    # Set a marker to prevent multiple emails being sent at once
+    profile.last_daily_digest_sent_at = now()
+    profile.save()
 
     logger.info(f"Create digest for account id {account.id}")
 
@@ -104,11 +101,7 @@ def send_emails(*account_ids: int) -> None:
         )
 
     for account in accounts:
-        if account.profile.is_time_to_send_daily_digest is True:
-            # This should not a transaction, but somewhat grasping at straws here
-            with transaction.atomic():
-                # Set a marker to prevent multiple emails being sent at once
-                account.profile.profile.last_daily_digest_sent_at = now()
-                account.profile.profile.save()
+        logger.info(f"Checking for accounts for hour: {now().hour}; minute: {now().minute}")
 
+        if account.profile.is_time_to_send_daily_digest is True:
             async_task(send_email, account)
