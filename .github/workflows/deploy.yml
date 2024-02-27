@@ -17,16 +17,13 @@ jobs:
       - name: Delete huge unnecessary tools folder
         run: rm -rf /opt/hostedtoolcache
       - uses: actions/checkout@v3
-      - uses: adamghill/build-docker-and-deploy-to-caprover@2.8.0
+      - uses: adamghill/build-docker-and-deploy-to-caprover@2
         with:
           caprover-app-name: fediview-web
           github-token: ${{ secrets.GITHUB_TOKEN }}
           caprover-server-url: ${{ secrets.CAPROVER_SERVER_URL }}
           caprover-app-token: ${{ secrets.CAPROVER_WEB_APP_TOKEN }}
           docker-file-name: ./Dockerfile
-      - name: Sleep for 30 seconds
-        run: sleep 30s
-        shell: bash
 
   deploy_worker:
     name: Deploy worker
@@ -39,7 +36,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: adamghill/build-docker-and-deploy-to-caprover@2.8.0
+      - uses: adamghill/build-docker-and-deploy-to-caprover@2
         with:
           caprover-app-name: fediview-q2-worker
           github-token: ${{ secrets.GITHUB_TOKEN }}
