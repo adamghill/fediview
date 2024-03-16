@@ -24,7 +24,7 @@ jobs:
           caprover-server-url: ${{ secrets.CAPROVER_SERVER_URL }}
           caprover-app-token: ${{ secrets.CAPROVER_WEB_APP_TOKEN }}
           docker-file-name: ./Dockerfile
-          image-name: fediview-web
+          image-name: adamghill/fediview-web
 
   deploy_worker:
     name: Deploy worker
@@ -44,4 +44,4 @@ jobs:
           caprover-server-url: ${{ secrets.CAPROVER_SERVER_URL }}
           caprover-app-token: ${{ secrets.CAPROVER_WORKER_APP_TOKEN }}
           docker-file-name: ./Dockerfile-q2-worker
-          image-name: fediview-worker
+          image-name: adamghill/fediview-worker
