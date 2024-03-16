@@ -17,13 +17,14 @@ jobs:
       - name: Delete huge unnecessary tools folder
         run: rm -rf /opt/hostedtoolcache
       - uses: actions/checkout@v3
-      - uses: adamghill/build-docker-and-deploy-to-caprover@docker-image-name
+      - uses: adamghill/build-docker-and-deploy-to-caprover@main
         with:
           caprover-app-name: fediview-web
           github-token: ${{ secrets.GITHUB_TOKEN }}
           caprover-server-url: ${{ secrets.CAPROVER_SERVER_URL }}
           caprover-app-token: ${{ secrets.CAPROVER_WEB_APP_TOKEN }}
           docker-file-name: ./Dockerfile
+          image-name: fediview-web
 
   deploy_worker:
     name: Deploy worker
@@ -36,10 +37,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: adamghill/build-docker-and-deploy-to-caprover@docker-image-name
+      - uses: adamghill/build-docker-and-deploy-to-caprover@main
         with:
           caprover-app-name: fediview-q2-worker
           github-token: ${{ secrets.GITHUB_TOKEN }}
           caprover-server-url: ${{ secrets.CAPROVER_SERVER_URL }}
           caprover-app-token: ${{ secrets.CAPROVER_WORKER_APP_TOKEN }}
           docker-file-name: ./Dockerfile-q2-worker
+          image-name: fediview-worker
