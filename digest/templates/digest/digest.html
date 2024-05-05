@@ -406,7 +406,7 @@
                                                     {% for media in post.media_attachments %}
                                                     <div class="media">
                                                         {% if media.type == 'image' %}
-                                                        <img class="media" src="{{ media.url }}" />
+                                                        <img class="media" src="{{ media.url }}" width="320" />
                                                         {% elif media.type == 'video' or media.type == 'gifv'  %}
                                                         <video controls poster="{{ media.preview_url }}"
                                                             src="{{ media.url }}">
