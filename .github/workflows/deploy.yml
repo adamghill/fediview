@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - main
+      - test-action
   workflow_dispatch:
 
 jobs:
