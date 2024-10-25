@@ -160,6 +160,7 @@ Q_CLUSTER = {
     "cached": True,
     "max_attempts": 5,
     # "max_rss": 2000000,
+    "name": "fediview",
 }
 
 STATIC_URL = "static/"
