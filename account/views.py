@@ -273,7 +273,7 @@ def account(request):
         profile.account.user.save()
 
         if request.POST.get("send_daily_digest_sample") and show_send_sample_email:
-            async_task(send_emails, request.user.account.id)
+            async_task(send_emails, request.user.account.id, force=True)
 
             profile.last_sample_email_sent_at = now()
             profile.save()

@@ -91,7 +91,7 @@ def send_email(account: Account) -> None:
         sanitize(email.id)
 
 
-def send_emails(*account_ids: int) -> None:
+def send_emails(*account_ids: int, force: bool = False) -> None:
     _set_email_template()
 
     accounts = []
@@ -108,7 +108,7 @@ def send_emails(*account_ids: int) -> None:
     for account in accounts:
         logger.info(f"Checking time to send for account {account.id} for hour: {now().hour}; minute: {now().minute}")
 
-        if account.profile.is_time_to_send_daily_digest is True:
+        if account.profile.is_time_to_send_daily_digest is True or force is True:
             logger.info(f"Time to send for account {account.id}")
 
             # Set a marker to prevent multiple emails being sent at once
