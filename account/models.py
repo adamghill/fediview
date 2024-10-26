@@ -36,6 +36,9 @@ class Account(TimeStampedModel):
 
             return f"https://{server}/@{username}"
 
+    def __str__(self):
+        return self.user.username
+
 
 class Profile(TimeStampedModel):
     class IndexingType(models.IntegerChoices):
@@ -107,8 +110,14 @@ class Profile(TimeStampedModel):
 
         return False
 
+    def __str__(self):
+        return str(self.account)
+
 
 class GitHubAccount(TimeStampedModel):
     account = models.OneToOneField(Account, related_name="github_account", on_delete=models.CASCADE)
     access_token = models.CharField(max_length=1024)
     username = models.CharField(max_length=1024)
+
+    def __str__(self):
+        return self.username
