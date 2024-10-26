@@ -72,8 +72,13 @@ def send_email(account: Account) -> None:
 
     logger.info(f"Send digest email to account id {account.id}")
 
+    recipients = [account.user.email]
+
+    if settings.MONITORING_EMAIL_ADDRESS and account.user.is_superuser:
+        recipients.extend(settings.MONITORING_EMAIL_ADDRESS.split(","))
+
     email = mail.send(
-        recipients=account.user.email,
+        recipients=recipients,
         sender=settings.SERVER_EMAIL,
         template="digest",
         priority="now",
