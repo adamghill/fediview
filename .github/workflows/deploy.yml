@@ -16,7 +16,9 @@ jobs:
     steps:
       - name: Delete huge unnecessary tools folder
         run: rm -rf /opt/hostedtoolcache
-      - uses: actions/checkout@v3
+
+      - uses: actions/checkout@v4
+
       - uses: adamghill/build-docker-and-deploy-to-caprover@2.14.0
         with:
           caprover-app-name: fediview-web
@@ -36,7 +38,11 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Delete huge unnecessary tools folder
+        run: rm -rf /opt/hostedtoolcache
+
       - uses: adamghill/build-docker-and-deploy-to-caprover@2.14.0
         with:
           caprover-app-name: fediview-q2-worker
