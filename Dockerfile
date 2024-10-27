@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.9
-FROM ubuntu:noble AS build
+FROM python:3.10-slim AS build
 
 # The following does not work in Podman unless you build in Docker
 # compatibility mode: <https://github.com/containers/podman/issues/8477>
@@ -17,7 +17,6 @@ apt-get install -qyy \
     build-essential \
     ca-certificates \
     python3-setuptools \
-    python3.12-dev \
     libssl-dev \
     libffi-dev
 EOT
@@ -33,7 +32,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 ENV UV_LINK_MODE=copy \
     UV_COMPILE_BYTECODE=1 \
     UV_PYTHON_DOWNLOADS=never \
-    UV_PYTHON=python3.12 \
+    UV_PYTHON=python3.10 \
     UV_PROJECT_ENVIRONMENT=/app
 
 ### End build prep -- this is where your app Dockerfile should start.
@@ -72,7 +71,7 @@ EOT
 
 ##########################################################################
 
-FROM ubuntu:noble
+FROM python:3.10-slim
 SHELL ["sh", "-exc"]
 
 # Optional: add the application virtualenv to search path.
@@ -95,8 +94,8 @@ apt-get update -qy
 apt-get install -qyy \
     -o APT::Install-Recommends=false \
     -o APT::Install-Suggests=false \
-    python3.12 \
-    libpython3.12 \
+    python3.10 \
+    libpython3.10 \
     libpcre3 \
     libxml2 \
     ca-certificates \
