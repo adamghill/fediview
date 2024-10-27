@@ -32,7 +32,7 @@ def _get_account_posts(mastodon: Mastodon, profile: Profile) -> Iterator[DigestP
 
     posts = []
     try:
-        posts = mastodon.account_statuses(profile.account.account_id, min_id=profile.last_indexed_at, limit=10000)
+        posts = mastodon.account_statuses(profile.account.account_id, min_id=profile.last_indexed_at, limit=1000)
     except Exception as e:
         logger.exception(e)
 
@@ -63,7 +63,7 @@ def _get_count(mastodon: Mastodon, status_type: str):
         raise Exception("Invalid status type")
 
     count = 0
-    statuses = status_function(limit=10000)
+    statuses = status_function(limit=1000)
 
     while statuses:
         count += len(statuses)
