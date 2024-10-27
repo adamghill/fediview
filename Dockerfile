@@ -17,7 +17,9 @@ apt-get install -qyy \
     build-essential \
     ca-certificates \
     python3-setuptools \
-    python3.12-dev
+    python3.12-dev \
+    libssl-dev \
+    libffi-dev
 EOT
 
 # Security-conscious organizations should package/review uv themselves.
@@ -96,7 +98,10 @@ apt-get install -qyy \
     python3.12 \
     libpython3.12 \
     libpcre3 \
-    libxml2
+    libxml2 \
+    ca-certificates \
+    libssl-dev \
+    libffi-dev
 
 apt-get clean
 rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
