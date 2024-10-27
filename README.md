@@ -4,10 +4,10 @@ Get a digest of popular posts and boosts from your Mastodon (fediverse) timeline
 
 ## Run
 
-1. [Install poetry](https://python-poetry.org/docs/#installation)
+1. [Install uv](https://docs.astral.sh/uv/getting-started/installation/)
 1. `cp .env.example .env` and update the values in `.env`
-1. `poetry install`
-1. `poetry run python manage.py 0:8777`
+1. `uv sync --no-install-project`
+1. `uv run --no-project python manage.py runserver 0:8777`
 1. Go to localhost:8777 in your browser
 
 ## Acknowledgements
