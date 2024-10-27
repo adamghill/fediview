@@ -1,23 +1,23 @@
 import logging
 
-from modal import Image, Stub, method, NetworkFileSystem
-from modal.cls import ClsMixin
+from modal import App, Image, NetworkFileSystem, enter, method
 from numpy import mean, ndarray
 
 logger = logging.getLogger(__name__)
 
-volume = NetworkFileSystem.new()
-stub = Stub("text-embeddings")
+nfs = NetworkFileSystem.from_name("my-nfs", create_if_missing=True)
+app = App("text-embeddings")
 
 
 dockerfile_image = Image.from_dockerfile("Dockerfile-modal")
 
 
-@stub.cls(image=dockerfile_image, network_file_systems={"/root/roberta": volume})
-class Roberta(ClsMixin):
+@app.cls(image=dockerfile_image, network_file_systems={"/root/roberta": nfs})
+class Roberta:
     cache_folder = "/root/roberta"
 
-    def __enter__(self):
+    @enter()
+    def enter(self):
         from sentence_transformers.SentenceTransformer import SentenceTransformer
 
         self.sentence_transformer = SentenceTransformer(
@@ -39,9 +39,7 @@ class Roberta(ClsMixin):
         with torch.no_grad():
             logger.info("Create vectors")
 
-            vectors = self.sentence_transformer.encode(
-                texts, batch_size=batch_size, show_progress_bar=False
-            )
+            vectors = self.sentence_transformer.encode(texts, batch_size=batch_size, show_progress_bar=False)
 
             if single_input_flag:
                 vectors = vectors[0]
