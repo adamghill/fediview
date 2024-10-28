@@ -157,10 +157,12 @@ Q_CLUSTER = {
     "save_limit": 50,
     # "sync": True,
     "redis": getenv("REDIS_URL"),
-    "cached": True,
+    "cached": 60,
     "max_attempts": 5,
     # "max_rss": 2000000,
     "name": "fediview",
+    "recycle": 500,
+    "ack_failures": True,
 }
 
 STATIC_URL = "static/"
