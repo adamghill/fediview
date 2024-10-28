@@ -12,7 +12,8 @@ class Command(BaseCommand):
     help = ""
 
     def handle(self, *args, **options):
-        while True:
-            send_emails()
+        # while True:
+        #     send_emails()
 
-            sleep(60)
+        #     sleep(60)
+        pass

@@ -83,7 +83,7 @@ def index_posts(profile: Profile) -> None:
             logger.error(f"Profile id {profile.id}: Skip indexing posts for non-plus profile")
             return
 
-        if profile.account.last_index_error:
+        if profile.last_index_error:
             logger.error(f"Profile id {profile.id}: Skip indexing posts because unauthorized")
             return
 
