@@ -83,6 +83,10 @@ def index_posts(profile: Profile) -> None:
             logger.error(f"Profile id {profile.id}: Skip indexing posts for non-plus profile")
             return
 
+        if profile.account.last_index_error:
+            logger.error(f"Profile id {profile.id}: Skip indexing posts because unauthorized")
+            return
+
         logger.info(f"Profile id {profile.id}: Get posts")
 
         mastodon = Mastodon(
@@ -91,13 +95,19 @@ def index_posts(profile: Profile) -> None:
             user_agent="fediview",
         )
 
-        profile.account.favorites_count = _get_count(mastodon, "favourites")
-        profile.account.bookmarks_count = _get_count(mastodon, "bookmarks")
+        try:
+            profile.account.favorites_count = _get_count(mastodon, "favourites")
+            profile.account.bookmarks_count = _get_count(mastodon, "bookmarks")
 
-        account_dict = mastodon.me()
-        profile.account.followers_count = account_dict.get("followers_count")
-        profile.account.following_count = account_dict.get("following_count")
-        profile.account.save()
+            account_dict = mastodon.me()
+            profile.account.followers_count = account_dict.get("followers_count")
+            profile.account.following_count = account_dict.get("following_count")
+            profile.account.save()
+        except mastodon.errors.MastodonUnauthorizedError as e:
+            profile.account.last_index_error = str(e)
+            profile.account.save()
+
+            return
 
         posts = _get_account_posts(mastodon, profile)
         post_count = 0
