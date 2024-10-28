@@ -100,7 +100,7 @@ def send_emails(*account_ids: int, force: bool = False) -> None:
         accounts = Account.objects.filter(id__in=account_ids)
     else:
         accounts = (
-            Account.objects.filter(profile__send_daily_digest=True)
+            Account.objects.filter(profile__send_daily_digest=True, profile__last_index_error__isnull=True)
             .exclude(user__email__isnull=True)
             .exclude(user__email="")
         )
