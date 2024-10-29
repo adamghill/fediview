@@ -2,13 +2,20 @@
 
 Get a digest of popular posts and boosts from your Mastodon (fediverse) timeline.
 
-## Run
+## Setup
 
 1. [Install uv](https://docs.astral.sh/uv/getting-started/installation/)
 1. `cp .env.example .env` and update the values in `.env`
 1. `uv sync --no-install-project`
+
+## Run website
+
 1. `uv run --no-project python manage.py runserver 0:8777`
 1. Go to localhost:8777 in your browser
+
+## Run background worker
+
+1. `uv run --no-project python manage.py qcluster`
 
 ## Acknowledgements
 
