@@ -159,9 +159,7 @@ Q_CLUSTER = {
     "redis": getenv("REDIS_URL"),
     "cached": 60,
     "max_attempts": 5,
-    # "max_rss": 2000000,
     "name": "fediview",
-    "recycle": 500,
     "ack_failures": True,
 }
 
