@@ -137,7 +137,7 @@ def auth(request):
     server_host = instance.api_base_url.replace("https://", "").replace("http://", "")
     username = f"@{username}@{server_host}"
 
-    user = User.objects.filter(username=username).first()
+    user = User.objects.filter(username__iexact=username).first()
 
     if not user:
         user = User(username=username)
