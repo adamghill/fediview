@@ -50,7 +50,7 @@ def login(request):
     redirect_uri = get_redirect_uri(request)
 
     if request.is_post:
-        api_base_url = request.POST.get("url", "").strip()
+        api_base_url = request.POST.get("url", "").strip().lower()
         api_base_url = api_base_url.replace("https://", "").replace("http://", "")
 
         scopes = get_scopes(request)
@@ -61,7 +61,7 @@ def login(request):
         if "/" in api_base_url:
             api_base_url = api_base_url.split("/")[0]
 
-        instance = Instance.objects.filter(api_base_url=api_base_url).first()
+        instance = Instance.objects.filter(api_base_url__iexact=api_base_url).first()
 
         if not instance:
             try:
