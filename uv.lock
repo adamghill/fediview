@@ -679,7 +679,7 @@ wheels = [
 [[package]]
 name = "fediview"
 version = "0.1.0"
-source = { editable = "." }
+source = { virtual = "." }
 dependencies = [
     { name = "coltrane", extra = ["mistune"] },
     { name = "dj-database-url" },
@@ -753,7 +753,7 @@ requires-dist = [
     { name = "hiredis", specifier = ">=2.1.0,<3.0.0" },
     { name = "httpx", specifier = ">=0.24.0,<0.25.0" },
     { name = "mastodon-py", specifier = ">=1.8.0,<2.0.0" },
-    { name = "mistune", specifier = "==3.0.0rc5" },
+    { name = "mistune", specifier = ">=3" },
     { name = "modal", specifier = ">=0,<1" },
     { name = "model-bakery", specifier = ">=1.11.0,<2.0.0" },
     { name = "numpy", specifier = ">=1.24.3,<2.0.0" },
@@ -1127,11 +1127,11 @@ wheels = [
 
 [[package]]
 name = "mistune"
-version = "3.0.0rc5"
+version = "3.0.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/5f/d7/1c4319fab01106f24fc0ea166f87033b487bab3155696e62e74505ba0325/mistune-3.0.0rc5.tar.gz", hash = "sha256:492d88fed4a8b5a65548f69f378dd8aa607537d1ef4ad7d7a1cf88fb2249a2e0", size = 38918 }
+sdist = { url = "https://files.pythonhosted.org/packages/ef/c8/f0173fe3bf85fd891aee2e7bcd8207dfe26c2c683d727c5a6cc3aec7b628/mistune-3.0.2.tar.gz", hash = "sha256:fc7f93ded930c92394ef2cb6f04a8aabab4117a91449e72dcc8dfa646a508be8", size = 90840 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8a/2a/518e65a5fd0e360144e139fd3ca0597544df4557f0a043f9a8972c7935f4/mistune-3.0.0rc5-py3-none-any.whl", hash = "sha256:4f6a4e6624a99bf1e48a2d2868715a5939d3932f988d54e18d36c8585cd9b479", size = 48253 },
+    { url = "https://files.pythonhosted.org/packages/f0/74/c95adcdf032956d9ef6c89a9b8a5152bf73915f8c633f3e3d88d06bd699c/mistune-3.0.2-py3-none-any.whl", hash = "sha256:71481854c30fdbc938963d3605b72501f5c10a9320ecd412c121c163a1c7d205", size = 47958 },
 ]
 
 [[package]]
