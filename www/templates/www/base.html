@@ -74,11 +74,13 @@
                 {% if request.user.is_authenticated %}
                 <form action="{% url 'account:logout' %}" method="POST" style="text-align: right;">
                     {% csrf_token %}
+                    {% if request.user.account.profile %}
                     <span style="padding-right: .5em;" class="username">
                         <a href="{% url 'account:account' %}" class="plausible-event-name=nav-username">
                             {{ request.user.username|username_no_server }}
                         </a>
                     </span>
+                    {% endif %}
                     <button class="plausible-event-name=nav-logout">Logout</button>
                 </form>
                 {% else %}
