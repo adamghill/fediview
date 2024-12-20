@@ -510,7 +510,6 @@
             Deleting your Fediview account is permanent. Data cannot be recovered after it has been deleted.
         </p>
 
-        <form method=" POST" action="{% url 'account:delete' %}">{% csrf_token %}
             <div style="text-align: right;">
                 <button type="submit" style="margin-top: 1em;" class="danger plausible-event-name=delete-account"
                     onclick="javascript: return confirm('This will remove all data associated with {{ request.user.username }} and it can not be recovered. Are you sure?');">
