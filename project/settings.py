@@ -213,6 +213,7 @@ EMAIL_HOST_USER = getenv("EMAIL_HOST_USER")
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True
 
+
 # EMAIL_BACKEND = "anymail.backends.sendgrid.EmailBackend"
 # ANYMAIL = {
 #     "SENDGRID_API_KEY": getenv("SENDGRID_API_KEY"),
