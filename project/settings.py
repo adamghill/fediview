@@ -206,18 +206,11 @@ GITHUB_PERSONAL_ACCESS_TOKEN = getenv("GITHUB_PERSONAL_ACCESS_TOKEN")
 GITHUB_CLIENT_ID = getenv("GITHUB_CLIENT_ID")
 GITHUB_CLIENT_SECRET = getenv("GITHUB_CLIENT_SECRET")
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = getenv("EMAIL_HOST")
-EMAIL_HOST_PASSWORD = getenv("EMAIL_HOST_PASSWORD")
-EMAIL_HOST_USER = getenv("EMAIL_HOST_USER")
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
-
-
-# EMAIL_BACKEND = "anymail.backends.sendgrid.EmailBackend"
-# ANYMAIL = {
-#     "SENDGRID_API_KEY": getenv("SENDGRID_API_KEY"),
-# }
+EMAIL_BACKEND = "anymail.backends.mailjet.EmailBackend"
+ANYMAIL = {
+    "MAILJET_API_KEY": getenv("MAILJET_API_KEY"),
+    "MAILJET_SECRET_KEY": getenv("MAILJET_SECRET_KEY"),
+}
 
 DEFAULT_FROM_EMAIL = getenv("SERVER_EMAIL")
 SERVER_EMAIL = getenv("SERVER_EMAIL")
